@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"outDir": "build-server",
+		"rootDir": ".",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"sourceMap": true
+	},
+	"include": ["colyseus/**/*", "server.ts", "src/lib/game/shared/**/*", "src/lib/game/colyseus/**/*"]
+}

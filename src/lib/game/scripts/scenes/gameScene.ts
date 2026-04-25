@@ -1,28 +1,45 @@
-import { type GameState } from '../../shared/state/GameState';
-import { type TankState } from '../../shared/state/TankState';
 import { PROJECTILE_TYPES } from '../../shared/projectileTypes';
-import { generateTerrain, getHeightAt, applyCrater } from '../../shared/logic/terrain';
-import { createProjectile, stepProjectile, getTurretTip } from '../../shared/logic/physics';
+import { getHeightAt } from '../../shared/logic/terrain';
+import { getTurretTip } from '../../shared/logic/physics';
+import type { TankState } from '../../shared/state/TankState';
+import type { TerrainState } from '../../shared/state/TerrainState';
 import { TankSprite } from '../../client/view/TankSprite';
 import { TerrainView } from '../../client/view/TerrainView';
 import { ProjectileView } from '../../client/view/ProjectileView';
 import { Scene, GameObjects, Input } from 'phaser';
+import { Client, Room } from 'colyseus.js';
+import type { GameRoomState } from '../../colyseus/schema/GameRoomState';
 
-const PLAYER_COLORS = [0xd4b832, 0xd4b832];
 const PLAYER_NAMES = ['Player 1', 'Player 2'];
-const TANK_X = [180, 1100];
-const MOVE_SPEED = 100;
-const AIM_SPEED = 55;
-const POWER_RATE = 55;
-const MAX_SLOPE_ANGLE = 80;
-const MAX_FUEL_DISTANCE = 200;
+const COLYSEUS_URL = (typeof window !== 'undefined' && window.location.hostname !== 'localhost')
+	? `wss://${window.location.host}`
+	: 'ws://localhost:2567';
+
+type InputSnapshot = {
+	moveLeft: boolean;
+	moveRight: boolean;
+	aimUp: boolean;
+	aimDown: boolean;
+};
 
 export default class GameScene extends Scene {
-	private gs!: GameState;
+	private room: Room<GameRoomState> | null = null;
+	private myPlayerIndex: 0 | 1 = 0;
+	private myPlayerIndexSet = false;
+	private roomReady = false;
 
-	private tankSprites!: [TankSprite, TankSprite];
-	private terrainView!: TerrainView;
-	private projView!: ProjectileView;
+	private tankSprites: [TankSprite, TankSprite] | null = null;
+	private terrainView: TerrainView | null = null;
+	private projView: ProjectileView | null = null;
+
+	private clientTrail: Array<{ x: number; y: number }> = [];
+	private lastProjActive = false;
+	private lastProjX = -Infinity;
+
+	private lastInput: InputSnapshot = { moveLeft: false, moveRight: false, aimUp: false, aimDown: false };
+
+	private terrainDirty = false;
+	private cachedTerrain: TerrainState | null = null;
 
 	private turnText!: GameObjects.Text;
 	private timerText!: GameObjects.Text;
@@ -34,6 +51,7 @@ export default class GameScene extends Scene {
 	private hintText!: GameObjects.Text;
 	private trajectoryGfx!: GameObjects.Graphics;
 	private weaponTexts: GameObjects.Text[] = [];
+	private statusText!: GameObjects.Text;
 
 	private readonly barX = 440;
 	private readonly barY = 688;
@@ -63,51 +81,10 @@ export default class GameScene extends Scene {
 	}
 
 	create() {
-		const { width, height } = this.scale;
-
-		const terrain = generateTerrain(width, height);
-
-		const makeTank = (index: 0 | 1): TankState => ({
-			x: TANK_X[index],
-			y: getHeightAt(terrain, TANK_X[index]),
-			turretAngle: index === 0 ? 60 : 120,
-			health: 100,
-			color: PLAYER_COLORS[index],
-			name: PLAYER_NAMES[index],
-			facing: index === 0 ? 1 : -1
-		});
-
-		this.gs = {
-			terrain,
-			tanks: [makeTank(0), makeTank(1)],
-			projectile: undefined,
-			currentPlayer: 0,
-			phase: 'AIMING',
-			power: 0,
-			powerIncreasing: true,
-			weaponIndex: 0,
-			fuel: 100,
-			turnTimeLeft: 30
-		};
-
 		this.createBackground();
-
-		this.terrainView = new TerrainView(this);
-		this.terrainView.sync(this.gs.terrain);
-
-		this.tankSprites = [
-			new TankSprite(this, this.gs.tanks[0]),
-			new TankSprite(this, this.gs.tanks[1])
-		];
-
-		this.projView = new ProjectileView(this);
-
-		this.input.keyboard!.removeAllKeys(true);
-		this.setupKeys();
 		this.setupUI();
-		this.refreshTurnUI();
-
-		this.input.keyboard!.on('keydown-R', () => this.scene.restart());
+		this.setupKeys();
+		this.connectToServer();
 	}
 
 	private createBackground() {
@@ -143,25 +120,27 @@ export default class GameScene extends Scene {
 	}
 
 	private setupUI() {
-		this.turnText = this.add
-			.text(640, 18, '', {
-				fontSize: '22px',
+		this.statusText = this.add
+			.text(640, 340, 'Connecting...', {
+				fontSize: '28px',
 				color: '#88e8a0',
 				stroke: '#0e0e24',
-				strokeThickness: 4
+				strokeThickness: 5
 			})
+			.setOrigin(0.5)
+			.setDepth(20);
+
+		this.turnText = this.add
+			.text(640, 18, '', { fontSize: '22px', color: '#88e8a0', stroke: '#0e0e24', strokeThickness: 4 })
 			.setOrigin(0.5, 0)
-			.setDepth(10);
+			.setDepth(10)
+			.setVisible(false);
 
 		this.timerText = this.add
-			.text(640, 46, '', {
-				fontSize: '18px',
-				color: '#88e8a0',
-				stroke: '#0e0e24',
-				strokeThickness: 3
-			})
+			.text(640, 46, '', { fontSize: '18px', color: '#88e8a0', stroke: '#0e0e24', strokeThickness: 3 })
 			.setOrigin(0.5, 0)
-			.setDepth(10);
+			.setDepth(10)
+			.setVisible(false);
 
 		this.powerBg = this.add.graphics().setDepth(10);
 		this.powerBg.fillStyle(0x0e0e24, 0.92);
@@ -173,47 +152,31 @@ export default class GameScene extends Scene {
 
 		this.powerLabel = this.add
 			.text(640, this.barY - 22, 'POWER — release to fire', {
-				fontSize: '13px',
-				color: '#88e8a0',
-				stroke: '#0e0e24',
-				strokeThickness: 3
+				fontSize: '13px', color: '#88e8a0', stroke: '#0e0e24', strokeThickness: 3
 			})
 			.setOrigin(0.5, 0)
 			.setDepth(10)
 			.setVisible(false);
 
 		this.hintText = this.add
-			.text(640, 700, '', {
-				fontSize: '11px',
-				color: 'rgba(255,255,255,0.5)',
-				stroke: '#0e0e24',
-				strokeThickness: 2
-			})
+			.text(640, 700, '', { fontSize: '11px', color: 'rgba(255,255,255,0.5)', stroke: '#0e0e24', strokeThickness: 2 })
 			.setOrigin(0.5, 0)
 			.setDepth(10);
 
 		this.fuelBg = this.add.graphics().setDepth(10);
 		this.fuelBg.fillStyle(0x0e0e24, 0.92);
-		this.fuelBg.fillRect(
-			this.fuelBarX - 1,
-			this.fuelBarY - 1,
-			this.fuelBarW + 2,
-			this.fuelBarH + 2
-		);
+		this.fuelBg.fillRect(this.fuelBarX - 1, this.fuelBarY - 1, this.fuelBarW + 2, this.fuelBarH + 2);
+		this.fuelBg.setVisible(false);
 
 		this.fuelFill = this.add.graphics().setDepth(10);
 
 		this.add
 			.text(this.fuelBarX + this.fuelBarW / 2, this.fuelBarY - 18, 'FUEL', {
-				fontSize: '13px',
-				color: '#00ccff',
-				stroke: '#0e0e24',
-				strokeThickness: 3
+				fontSize: '13px', color: '#00ccff', stroke: '#0e0e24', strokeThickness: 3
 			})
 			.setOrigin(0.5, 0)
-			.setDepth(10);
-
-		this.updateFuelBar();
+			.setDepth(10)
+			.setVisible(false);
 
 		this.trajectoryGfx = this.add.graphics().setDepth(8);
 
@@ -221,181 +184,241 @@ export default class GameScene extends Scene {
 		this.weaponTexts = PROJECTILE_TYPES.map((type, i) =>
 			this.add
 				.text(weaponXPositions[i], 50, type.name, {
-					fontSize: '14px',
-					color: '#ffffff',
-					stroke: '#0e0e24',
-					strokeThickness: 3
+					fontSize: '14px', color: '#ffffff', stroke: '#0e0e24', strokeThickness: 3
 				})
 				.setOrigin(0.5)
 				.setDepth(10)
+				.setVisible(false)
 		);
-		this.updateWeaponUI();
 	}
 
-	private updateWeaponUI() {
-		PROJECTILE_TYPES.forEach((type, i) => {
-			const active = i === this.gs.weaponIndex;
-			this.weaponTexts[i]
-				.setText(active ? `[ ${type.name} ]` : type.name)
-				.setColor(active ? '#ffdd55' : 'rgba(200,200,200,0.4)')
-				.setFontSize(active ? 17 : 13);
-		});
+	private async connectToServer() {
+		try {
+			const client = new Client(COLYSEUS_URL);
+			console.log('[game] connecting to', COLYSEUS_URL);
+			const room = await client.joinOrCreate('tank_room') as unknown as Room<GameRoomState>;
+			this.room = room;
+			console.log('[game] joined room', room.roomId, 'sessionId', room.sessionId);
+
+			let prevPhase = '';
+			let stateCount = 0;
+			room.onStateChange((state) => {
+				try {
+					stateCount++;
+					const phaseVal = (state as any).phase;
+					const fi = (state as any).constructor?._definition?.fieldsByIndex;
+					console.log('[game] onStateChange #' + stateCount, 'phase=', phaseVal, 'p0=', (state as any).player0Id);
+					console.log('[game] fieldsByIndex:', JSON.stringify(fi));
+					console.log('[game] state own keys:', Object.getOwnPropertyNames(state as any).slice(0,10));
+					this.statusText.setText(`room:${room.roomId}\nstateChange#${stateCount} phase=${phaseVal}\nfields:${JSON.stringify(fi)}`).setVisible(true);
+					// Set player index on first decoded state
+					if (!this.roomReady && !this.myPlayerIndexSet) {
+						this.myPlayerIndexSet = true;
+						this.myPlayerIndex = (state as any).player0Id === room.sessionId ? 0 : 1;
+					}
+					if (phaseVal !== prevPhase) {
+						prevPhase = phaseVal;
+						this.onPhaseChange(phaseVal);
+					}
+				} catch (e) {
+					console.error('[game] onStateChange error:', e);
+					this.statusText.setText('onStateChange error:\n' + String(e)).setVisible(true);
+				}
+			});
+
+			room.onMessage('explosion', (data: { x: number; y: number; craterRadius: number; blastRadius: number }) => {
+				this.handleExplosionFx(data.x, data.y, data.craterRadius, data.blastRadius);
+				this.terrainDirty = true;
+			});
+
+			room.onLeave.once(() => {
+				this.statusText.setText('Disconnected').setVisible(true);
+			});
+
+			this.statusText.setText('Waiting for Player 2...');
+		} catch (err) {
+			this.statusText.setText('Connection failed.\nCheck the game server is running.');
+			console.error(err);
+		}
 	}
 
-	private refreshTurnUI() {
-		const p = this.gs.currentPlayer;
-		this.turnText.setText(`${PLAYER_NAMES[p]}'s Turn`).setColor('#88e8a0');
-		this.gs.turnTimeLeft = 30;
-		this.updateTimerText();
+	private onPhaseChange(phase: string) {
+		if (phase === 'AIMING' && !this.roomReady) {
+			this.roomReady = true;
+			this.statusText.setVisible(false);
+			this.initViews();
+			this.showGameUI();
+		}
 
-		const hint =
-			p === 0
-				? 'A/D: move   W/S: aim   Q: weapon   SPACE: charge'
-				: '←/→: move   ↑/↓: aim   Q: weapon   ENTER: charge';
-		this.hintText.setText(hint);
+		if (phase === 'OVER') {
+			const winner = this.room!.state.winner;
+			this.showGameOver(winner as 0 | 1);
+		}
 	}
 
-	private updateTimerText() {
-		const secs = Math.ceil(this.gs.turnTimeLeft);
-		const color = secs > 10 ? '#88e8a0' : secs > 5 ? '#ffdd55' : '#ff4444';
-		this.timerText.setText(`${secs}s`).setColor(color);
+	private initViews() {
+		const s = this.room!.state;
+		const terrain = this.buildTerrainState();
+		this.cachedTerrain = terrain;
+
+		this.terrainView = new TerrainView(this);
+		this.terrainView.sync(terrain);
+
+		this.tankSprites = [
+			new TankSprite(this, s.tank0 as unknown as TankState),
+			new TankSprite(this, s.tank1 as unknown as TankState)
+		];
+
+		this.projView = new ProjectileView(this);
 	}
 
-	private updateFuelBar() {
-		this.fuelFill.clear();
-		const pct = this.gs.fuel / 100;
-		const color = pct > 0.5 ? 0x00ccff : pct > 0.25 ? 0xffaa00 : 0xff3333;
-		this.fuelFill.fillStyle(color);
-		this.fuelFill.fillRect(this.fuelBarX, this.fuelBarY, this.fuelBarW * pct, this.fuelBarH);
+	private showGameUI() {
+		this.turnText.setVisible(true);
+		this.timerText.setVisible(true);
+		this.fuelBg.setVisible(true);
+		this.weaponTexts.forEach((t) => t.setVisible(true));
 	}
 
-	private updatePowerBar() {
-		this.powerFill.clear();
-		const pct = this.gs.power / 100;
-		const color = pct < 0.4 ? 0x00ff44 : pct < 0.7 ? 0xffdd00 : 0xff3333;
-		this.powerFill.fillStyle(color);
-		this.powerFill.fillRect(this.barX, this.barY, this.barW * pct, this.barH);
+	update(_time: number) {
+		if (!this.room || !this.roomReady || !this.tankSprites) return;
+
+		const state = this.room.state;
+		const phase = state.phase;
+
+		// Sync terrain if crater happened
+		if (this.terrainDirty) {
+			this.cachedTerrain = this.buildTerrainState();
+			this.terrainView?.sync(this.cachedTerrain!);
+			this.terrainDirty = false;
+		}
+
+		// Sync tank sprites
+		this.tankSprites[0].sync(state.tank0 as unknown as TankState);
+		this.tankSprites[1].sync(state.tank1 as unknown as TankState);
+
+		// Sync projectile with client-side trail
+		if (state.projectile.active) {
+			if (!this.lastProjActive) {
+				this.clientTrail = [];
+				this.lastProjActive = true;
+			}
+			if (state.projectile.x !== this.lastProjX) {
+				this.lastProjX = state.projectile.x;
+				this.clientTrail.push({ x: state.projectile.x, y: state.projectile.y });
+				if (this.clientTrail.length > 35) this.clientTrail.shift();
+			}
+			this.projView!.sync({
+				x: state.projectile.x,
+				y: state.projectile.y,
+				prevX: 0,
+				prevY: 0,
+				vx: 0,
+				vy: 0,
+				trail: this.clientTrail,
+				typeIndex: state.projectile.typeIndex,
+				bouncesLeft: state.projectile.bouncesLeft
+			});
+		} else if (this.lastProjActive) {
+			this.lastProjActive = false;
+			this.clientTrail = [];
+			this.projView!.sync(undefined);
+		}
+
+		// UI updates
+		if (phase === 'AIMING' || phase === 'CHARGING') {
+			const secs = Math.ceil(state.turnTimeLeft);
+			const color = secs > 10 ? '#88e8a0' : secs > 5 ? '#ffdd55' : '#ff4444';
+			this.timerText.setText(`${secs}s`).setColor(color);
+			this.turnText.setText(`${PLAYER_NAMES[state.currentPlayer]}'s Turn`);
+		}
+
+		this.updateFuelBar(state.fuel);
+		this.updateWeaponUI(state.weaponIndex);
+
+		if (phase === 'CHARGING') {
+			this.powerBg.setVisible(true);
+			this.powerFill.setVisible(true);
+			this.powerLabel.setVisible(true);
+			this.updatePowerBar(state.power);
+		} else {
+			this.powerBg.setVisible(false);
+			this.powerFill.setVisible(false);
+			this.powerLabel.setVisible(false);
+		}
+
+		// Trajectory preview (computed locally from server state)
+		if (phase === 'AIMING' || phase === 'CHARGING') {
+			const myTank = state.currentPlayer === 0 ? state.tank0 : state.tank1;
+			this.drawTrajectory(myTank as unknown as TankState, state.weaponIndex, state.power, phase);
+		} else {
+			this.trajectoryGfx.clear();
+		}
+
+		// Input handling
+		if (phase !== 'OVER' && state.currentPlayer === this.myPlayerIndex) {
+			this.handleInput(phase);
+		}
+
+		// Hint text
+		if (phase === 'AIMING' || phase === 'CHARGING') {
+			const p = this.myPlayerIndex;
+			const hint =
+				p === 0
+					? 'A/D: move   W/S: aim   Q: weapon   SPACE: charge'
+					: '←/→: move   ↑/↓: aim   Q: weapon   ENTER: charge';
+			this.hintText.setText(state.currentPlayer === this.myPlayerIndex ? hint : 'Waiting for opponent...');
+		}
 	}
 
-	update(_time: number, delta: number) {
-		if (this.gs.phase === 'OVER') return;
-
-		const p = this.gs.currentPlayer;
-		const tank = this.gs.tanks[p];
-
+	private handleInput(phase: string) {
+		console.log('startfunc')
+		const p = this.myPlayerIndex;
 		const moveLeft = p === 0 ? this.keys.p1Left : this.keys.p2Left;
 		const moveRight = p === 0 ? this.keys.p1Right : this.keys.p2Right;
 		const aimUp = p === 0 ? this.keys.p1AimUp : this.keys.p2AimUp;
 		const aimDown = p === 0 ? this.keys.p1AimDown : this.keys.p2AimDown;
 		const shootKey = p === 0 ? this.keys.p1Shoot : this.keys.p2Shoot;
 
-		if (this.gs.phase === 'AIMING' || this.gs.phase === 'CHARGING') {
-			this.gs.turnTimeLeft -= delta / 1000;
-			this.updateTimerText();
-			if (this.gs.turnTimeLeft <= 0) {
-				this.powerBg.setVisible(false);
-				this.powerFill.setVisible(false);
-				this.powerLabel.setVisible(false);
-				this.nextTurn();
-				return;
-			}
-
-			const aimDelta = (AIM_SPEED * delta) / 1000;
-			if (aimUp.isDown) this.rotateTurret(p, aimDelta);
-			if (aimDown.isDown) this.rotateTurret(p, -aimDelta);
-			this.drawTrajectory(tank);
-		} else {
-			this.trajectoryGfx.clear();
+		// Continuous input: send only when state changes
+		const snap: InputSnapshot = {
+			moveLeft: moveLeft.isDown,
+			moveRight: moveRight.isDown,
+			aimUp: aimUp.isDown,
+			aimDown: aimDown.isDown
+		};
+		if (
+			snap.moveLeft !== this.lastInput.moveLeft ||
+			snap.moveRight !== this.lastInput.moveRight ||
+			snap.aimUp !== this.lastInput.aimUp ||
+			snap.aimDown !== this.lastInput.aimDown
+		) {
+			this.lastInput = snap;
+			console.log('lastinput')
+			this.room!.send('input', snap);
 		}
 
-		if (this.gs.phase === 'AIMING') {
-			const moveStep = (MOVE_SPEED * delta) / 1000;
-			let nx = tank.x;
-			if (moveLeft.isDown && this.gs.fuel > 0) nx -= moveStep;
-			if (moveRight.isDown && this.gs.fuel > 0) nx += moveStep;
-			nx = Math.max(40, Math.min(this.scale.width - 40, nx));
-			if (nx !== tank.x) {
-				const newY = getHeightAt(this.gs.terrain, nx);
-				const slope = Math.abs(newY - tank.y) / Math.abs(nx - tank.x);
-				if (slope <= Math.tan((MAX_SLOPE_ANGLE * Math.PI) / 180)) {
-					this.gs.fuel = Math.max(
-						0,
-						this.gs.fuel - (Math.abs(nx - tank.x) / MAX_FUEL_DISTANCE) * 100
-					);
-					this.updateFuelBar();
-					tank.x = nx;
-					tank.y = newY;
-					this.tankSprites[p].sync(tank);
-				}
-			}
-
+		if (phase === 'AIMING') {
 			if (Input.Keyboard.JustDown(this.keys.weaponKey)) {
-				this.gs.weaponIndex = (this.gs.weaponIndex + 1) % PROJECTILE_TYPES.length;
-				this.updateWeaponUI();
+				this.room!.send('cycle_weapon');
 			}
-
 			if (Input.Keyboard.JustDown(shootKey)) {
-				this.gs.phase = 'CHARGING';
-				this.gs.power = 0;
-				this.gs.powerIncreasing = true;
-				this.powerBg.setVisible(true);
-				this.powerFill.setVisible(true);
-				this.powerLabel.setVisible(true);
+				this.room!.send('charge_start');
 			}
 		}
 
-		if (this.gs.phase === 'CHARGING') {
-			const rate = (POWER_RATE * delta) / 1000;
-			if (this.gs.powerIncreasing) {
-				this.gs.power += rate;
-				if (this.gs.power >= 100) {
-					this.gs.power = 100;
-					this.gs.powerIncreasing = false;
-				}
-			} else {
-				this.gs.power -= rate;
-				if (this.gs.power <= 0) {
-					this.gs.power = 0;
-					this.gs.powerIncreasing = true;
-				}
-			}
-			this.updatePowerBar();
-
-			if (Input.Keyboard.JustUp(shootKey)) {
-				this.fire();
-			}
-		}
-
-		if (this.gs.phase === 'FLYING' && this.gs.projectile) {
-			const result = stepProjectile(this.gs.projectile, this.gs.terrain, this.gs.tanks, delta);
-			this.projView.sync(this.gs.projectile);
-
-			if (result.type === 'oob') {
-				this.gs.projectile = undefined;
-				this.projView.sync(undefined);
-				this.nextTurn();
-				return;
-			}
-			if (result.type === 'explode') {
-				this.explode(result.x, result.y);
-				return;
-			}
+		if (phase === 'CHARGING' && Input.Keyboard.JustUp(shootKey)) {
+			this.room!.send('fire');
 		}
 	}
 
-	private rotateTurret(playerIndex: 0 | 1, delta: number) {
-		const tank = this.gs.tanks[playerIndex];
-		tank.turretAngle = Math.max(5, Math.min(175, tank.turretAngle + delta * tank.facing));
-		this.tankSprites[playerIndex].sync(tank);
-	}
-
-	private drawTrajectory(tank: TankState) {
+	private drawTrajectory(tank: TankState, weaponIndex: number, power: number, phase: string) {
 		this.trajectoryGfx.clear();
+		if (!this.cachedTerrain) return;
 		const tip = getTurretTip(tank);
-		const previewPower = this.gs.phase === 'CHARGING' ? this.gs.power : 50;
+		const previewPower = phase === 'CHARGING' ? power : 50;
 		if (previewPower < 1) return;
 
-		const weapon = PROJECTILE_TYPES[this.gs.weaponIndex];
+		const weapon = PROJECTILE_TYPES[weaponIndex];
 		const rad = (tank.turretAngle * Math.PI) / 180;
 		const speed = previewPower * weapon.speedFactor;
 		const vx = Math.cos(rad) * speed;
@@ -412,7 +435,7 @@ export default class GameScene extends Scene {
 			x += vx * dt;
 			y += vy * dt;
 			if (x < 0 || x > this.scale.width || y > this.scale.height) break;
-			if (y >= getHeightAt(this.gs.terrain, x)) break;
+			if (y >= getHeightAt(this.cachedTerrain, x)) break;
 			if (i % DOT_INTERVAL === DOT_INTERVAL - 1) {
 				const alpha = 0.8 * (1 - dotsDrawn / MAX_DOTS);
 				this.trajectoryGfx.fillStyle(0xffffff, alpha);
@@ -422,32 +445,7 @@ export default class GameScene extends Scene {
 		}
 	}
 
-	private fire() {
-		const tank = this.gs.tanks[this.gs.currentPlayer];
-		const tip = getTurretTip(tank);
-		this.gs.projectile = createProjectile(
-			tip.x,
-			tip.y,
-			tank.turretAngle,
-			this.gs.power,
-			this.gs.weaponIndex
-		);
-		this.gs.phase = 'FLYING';
-		this.powerBg.setVisible(false);
-		this.powerFill.setVisible(false);
-		this.powerLabel.setVisible(false);
-		this.timerText.setVisible(false);
-	}
-
-	private explode(x: number, y: number) {
-		if (this.gs.projectile) {
-			this.gs.projectile = undefined;
-			this.projView.sync(undefined);
-		}
-
-		const weaponType = PROJECTILE_TYPES[this.gs.weaponIndex];
-		const { craterRadius, blastRadius, maxDamage } = weaponType;
-
+	private handleExplosionFx(x: number, y: number, craterRadius: number, blastRadius: number) {
 		this.cameras.main.shake(350, blastRadius * 0.00018);
 
 		const gfx = this.add.graphics().setDepth(5);
@@ -456,31 +454,7 @@ export default class GameScene extends Scene {
 		gfx.fillStyle(0xffffff).fillCircle(x, y, craterRadius * 0.26);
 		this.time.delayedCall(450, () => gfx.destroy());
 
-		let deadTankIndex = -1;
-		for (let i = 0; i < 2; i++) {
-			const t = this.gs.tanks[i];
-			const dist = Math.sqrt((x - t.x) ** 2 + (y - t.y) ** 2);
-			if (dist < blastRadius) {
-				const dmg = Math.round(maxDamage * (1 - dist / blastRadius));
-				t.health = Math.max(0, t.health - dmg);
-				this.tankSprites[i].sync(t);
-				if (t.health === 0) deadTankIndex = i;
-			}
-		}
-
-		applyCrater(this.gs.terrain, x, y, craterRadius);
-		this.terrainView.sync(this.gs.terrain);
-		this.snapTanksToTerrain();
 		this.spawnCraterDust(x, y, craterRadius);
-
-		if (deadTankIndex !== -1) {
-			this.tankSprites[deadTankIndex].explodeAndDestroy(this.gs.tanks[deadTankIndex]);
-			const winner = (deadTankIndex === 0 ? 1 : 0) as 0 | 1;
-			this.time.delayedCall(900, () => this.showGameOver(winner));
-			return;
-		}
-
-		this.time.delayedCall(600, () => this.nextTurn());
 	}
 
 	private spawnCraterDust(x: number, y: number, radius: number) {
@@ -523,47 +497,63 @@ export default class GameScene extends Scene {
 		});
 	}
 
-	private snapTanksToTerrain() {
-		for (let i = 0; i < 2; i++) {
-			this.gs.tanks[i].y = getHeightAt(this.gs.terrain, this.gs.tanks[i].x);
-			this.tankSprites[i].sync(this.gs.tanks[i]);
-		}
+	private updateWeaponUI(activeIndex: number) {
+		PROJECTILE_TYPES.forEach((type, i) => {
+			const active = i === activeIndex;
+			this.weaponTexts[i]
+				.setText(active ? `[ ${type.name} ]` : type.name)
+				.setColor(active ? '#ffdd55' : 'rgba(200,200,200,0.4)')
+				.setFontSize(active ? 17 : 13);
+		});
 	}
 
-	private nextTurn() {
-		this.gs.currentPlayer = (this.gs.currentPlayer === 0 ? 1 : 0) as 0 | 1;
-		this.gs.phase = 'AIMING';
-		this.gs.fuel = 100;
-		this.updateFuelBar();
-		this.timerText.setVisible(true);
-		this.refreshTurnUI();
+	private updatePowerBar(power: number) {
+		this.powerFill.clear();
+		const pct = power / 100;
+		const color = pct < 0.4 ? 0x00ff44 : pct < 0.7 ? 0xffdd00 : 0xff3333;
+		this.powerFill.fillStyle(color);
+		this.powerFill.fillRect(this.barX, this.barY, this.barW * pct, this.barH);
+	}
+
+	private updateFuelBar(fuel: number) {
+		this.fuelFill.clear();
+		const pct = fuel / 100;
+		const color = pct > 0.5 ? 0x00ccff : pct > 0.25 ? 0xffaa00 : 0xff3333;
+		this.fuelFill.fillStyle(color);
+		this.fuelFill.fillRect(this.fuelBarX, this.fuelBarY, this.fuelBarW * pct, this.fuelBarH);
+	}
+
+	private buildTerrainState(): TerrainState {
+		const s = this.room!.state.terrain;
+		return {
+			heights: Array.from(s.heights) as number[],
+			cols: s.cols,
+			floorY: s.floorY,
+			sceneWidth: s.sceneWidth,
+			sceneHeight: s.sceneHeight
+		};
 	}
 
 	private showGameOver(winner: 0 | 1) {
-		this.gs.phase = 'OVER';
-
 		this.add.graphics().setDepth(20).fillStyle(0x0e0e24, 0.88).fillRect(290, 240, 700, 220);
 
 		this.add
 			.text(640, 280, `${PLAYER_NAMES[winner]} Wins!`, {
-				fontSize: '52px',
-				color: '#d4b832',
-				stroke: '#0e0e24',
-				strokeThickness: 6
+				fontSize: '52px', color: '#d4b832', stroke: '#0e0e24', strokeThickness: 6
 			})
 			.setOrigin(0.5)
 			.setDepth(21);
 
 		this.add
 			.text(640, 370, 'Press R to play again', {
-				fontSize: '22px',
-				color: '#88e8a0',
-				stroke: '#0e0e24',
-				strokeThickness: 4
+				fontSize: '22px', color: '#88e8a0', stroke: '#0e0e24', strokeThickness: 4
 			})
 			.setOrigin(0.5)
 			.setDepth(21);
 
-		this.input.keyboard!.once('keydown-R', () => this.scene.restart());
+		this.input.keyboard!.once('keydown-R', () => {
+			this.room?.send('restart');
+			this.scene.restart();
+		});
 	}
 }

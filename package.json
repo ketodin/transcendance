@@ -5,7 +5,11 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
+		"dev:server": "tsx watch colyseus/index.ts",
+		"dev:all": "concurrently \"pnpm run dev\" \"pnpm run dev:server\"",
 		"build": "vite build",
+		"build:server": "tsc --project tsconfig.server.json",
+		"start": "node build-server/server.js",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -20,6 +24,7 @@
 		"@sveltejs/adapter-node": "^5.5.4",
 		"@sveltejs/kit": "^2.57.0",
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
+		"@types/express": "^5.0.6",
 		"@types/node": "^24",
 		"eslint": "^10.2.0",
 		"eslint-config-prettier": "^10.1.8",
@@ -30,8 +35,16 @@
 		"prettier-plugin-svelte": "^3.5.1",
 		"svelte": "^5.55.2",
 		"svelte-check": "^4.4.6",
+		"tsx": "^4.21.0",
 		"typescript": "^6.0.2",
 		"typescript-eslint": "^8.58.1",
 		"vite": "^8.0.7"
+	},
+	"dependencies": {
+		"@colyseus/schema": "^2.0.37",
+		"colyseus": "^0.15.57",
+		"colyseus.js": "^0.15.28",
+		"concurrently": "^9.2.1",
+		"express": "^5.2.1"
 	}
 }
