@@ -25,6 +25,7 @@ type InputState = {
 export class TankRoom extends Room<GameRoomState> {
 	private physicsState!: GameState;
 	private inputs = new Map<string, InputState>();
+	private tickCount = 0;
 
 	onCreate() {
 		this.maxClients = 2;
@@ -32,14 +33,12 @@ export class TankRoom extends Room<GameRoomState> {
 		this.setState(new GameRoomState());
 
 		this.onMessage<InputState>('input', (client, data) => {
-			console.log('-1-1')
 			if (this.isCurrentPlayer(client)) {
 				this.inputs.set(client.sessionId, data);
 			}
 		});
 
 		this.onMessage('charge_start', (client) => {
-			console.log('00')
 			if (!this.isCurrentPlayer(client)) return;
 			if (this.physicsState?.phase !== 'AIMING') return;
 			this.physicsState.phase = 'CHARGING';
@@ -48,17 +47,16 @@ export class TankRoom extends Room<GameRoomState> {
 			this.state.phase = 'CHARGING';
 			this.state.power = 0;
 			this.state.powerIncreasing = true;
+			this.broadcast('phase_change', { phase: 'CHARGING', currentPlayer: this.physicsState.currentPlayer });
 		});
 
 		this.onMessage('fire', (client) => {
-			console.log('11')
 			if (!this.isCurrentPlayer(client)) return;
 			if (this.physicsState?.phase !== 'CHARGING') return;
 			this.fireProjectile();
 		});
 
 		this.onMessage('cycle_weapon', (client) => {
-			console.log('22')
 			if (!this.isCurrentPlayer(client)) return;
 			if (this.physicsState?.phase !== 'AIMING') return;
 			this.physicsState.weaponIndex = (this.physicsState.weaponIndex + 1) % PROJECTILE_TYPES.length;
@@ -66,7 +64,6 @@ export class TankRoom extends Room<GameRoomState> {
 		});
 
 		this.onMessage('restart', () => {
-			console.log('33')
 			if (this.physicsState?.phase === 'OVER') this.initGame();
 		});
 
@@ -92,21 +89,17 @@ export class TankRoom extends Room<GameRoomState> {
 	}
 
 	onLeave(client: Client) {
-		if (
-			this.physicsState &&
-			this.physicsState.phase !== 'OVER' &&
-			this.physicsState.phase !== 'WAITING'
-		) {
+		if (this.physicsState && this.physicsState.phase !== 'OVER') {
 			const winner = this.getPlayerIndex(client) === 0 ? 1 : 0;
 			this.physicsState.phase = 'OVER';
 			this.state.phase = 'OVER';
 			this.state.winner = winner;
+			this.broadcast('phase_change', { phase: 'OVER', currentPlayer: this.physicsState.currentPlayer, winner });
 		}
 	}
 
 	private initGame() {
 		const terrain = generateTerrain(SCENE_WIDTH, SCENE_HEIGHT);
-		console.log('[initGame] 1')
 		const makeTank = (index: 0 | 1): TankState => ({
 			x: TANK_X[index],
 			y: getHeightAt(terrain, TANK_X[index]),
@@ -116,7 +109,6 @@ export class TankRoom extends Room<GameRoomState> {
 			name: `Player ${index + 1}`,
 			facing: index === 0 ? 1 : -1
 		});
-		console.log('2')
 		this.physicsState = {
 			terrain,
 			tanks: [makeTank(0), makeTank(1)],
@@ -129,7 +121,6 @@ export class TankRoom extends Room<GameRoomState> {
 			fuel: 100,
 			turnTimeLeft: 30
 		};
-		console.log('3')
 		this.syncTank(0);
 		this.syncTank(1);
 		this.initTerrainHeights();
@@ -142,6 +133,23 @@ export class TankRoom extends Room<GameRoomState> {
 		this.state.turnTimeLeft = 30;
 		this.state.winner = -1;
 		this.state.projectile.active = false;
+		this.broadcast('game_start', {
+			player0Id: this.state.player0Id,
+			player1Id: this.state.player1Id,
+			currentPlayer: 0,
+			terrain: {
+				heights: Array.from(this.physicsState.terrain.heights),
+				cols: this.physicsState.terrain.cols,
+				floorY: this.physicsState.terrain.floorY,
+				sceneWidth: this.physicsState.terrain.sceneWidth,
+				sceneHeight: this.physicsState.terrain.sceneHeight
+			},
+			tanks: this.physicsState.tanks.map(t => ({ ...t })),
+			fuel: 100,
+			weaponIndex: 0,
+			turnTimeLeft: 30,
+			power: 0
+		});
 	}
 
 	private tick(dt: number) {
@@ -217,6 +225,9 @@ export class TankRoom extends Room<GameRoomState> {
 				this.handleExplosion(result.x, result.y);
 			}
 		}
+
+		this.tickCount++;
+		if (this.tickCount % 2 === 0) this.broadcastGameUpdate();
 	}
 
 	private fireProjectile() {
@@ -233,6 +244,7 @@ export class TankRoom extends Room<GameRoomState> {
 		this.physicsState.phase = 'FLYING';
 		this.state.phase = 'FLYING';
 		this.syncProjectile();
+		this.broadcast('phase_change', { phase: 'FLYING', currentPlayer: this.physicsState.currentPlayer });
 	}
 
 	private handleExplosion(x: number, y: number) {
@@ -258,7 +270,11 @@ export class TankRoom extends Room<GameRoomState> {
 		this.syncTerrainHeights();
 		this.snapTanksToTerrain();
 
-		this.broadcast('explosion', { x, y, craterRadius, blastRadius });
+		this.broadcast('explosion', {
+			x, y, craterRadius, blastRadius,
+			terrainHeights: Array.from(this.physicsState.terrain.heights),
+			tanks: this.physicsState.tanks.map(t => ({ ...t }))
+		});
 
 		if (deadTankIdx !== -1) {
 			const winner = deadTankIdx === 0 ? 1 : 0;
@@ -266,6 +282,7 @@ export class TankRoom extends Room<GameRoomState> {
 			this.physicsState.winner = winner as 0 | 1;
 			this.state.phase = 'OVER';
 			this.state.winner = winner;
+			this.broadcast('phase_change', { phase: 'OVER', currentPlayer: this.physicsState.currentPlayer, winner });
 		} else {
 			this.clock.setTimeout(() => this.nextTurn(), 600);
 		}
@@ -280,6 +297,23 @@ export class TankRoom extends Room<GameRoomState> {
 		this.state.phase = 'AIMING';
 		this.state.fuel = 100;
 		this.state.turnTimeLeft = 30;
+		this.broadcast('phase_change', { phase: 'AIMING', currentPlayer: this.physicsState.currentPlayer });
+	}
+
+	private broadcastGameUpdate() {
+		const ps = this.physicsState;
+		const proj = ps.projectile;
+		this.broadcast('game_update', {
+			tanks: ps.tanks.map(t => ({ ...t })),
+			projectile: proj
+				? { active: true, x: proj.x, y: proj.y, typeIndex: proj.typeIndex, bouncesLeft: proj.bouncesLeft }
+				: { active: false, x: 0, y: 0, typeIndex: 0, bouncesLeft: 0 },
+			turnTimeLeft: ps.turnTimeLeft,
+			power: ps.power,
+			powerIncreasing: ps.powerIncreasing,
+			fuel: ps.fuel,
+			weaponIndex: ps.weaponIndex
+		});
 	}
 
 	private rotateTurret(playerIndex: 0 | 1, delta: number) {

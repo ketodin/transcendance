@@ -22,11 +22,30 @@ type InputSnapshot = {
 	aimDown: boolean;
 };
 
+type ProjectileSnapshot = {
+	active: boolean; x: number; y: number; typeIndex: number; bouncesLeft: number;
+};
+
+type GameUpdateData = {
+	tanks: [TankState, TankState];
+	projectile: ProjectileSnapshot;
+	turnTimeLeft: number;
+	power: number;
+	powerIncreasing: boolean;
+	fuel: number;
+	weaponIndex: number;
+};
+
 export default class GameScene extends Scene {
 	private room: Room<GameRoomState> | null = null;
 	private myPlayerIndex: 0 | 1 = 0;
 	private myPlayerIndexSet = false;
 	private roomReady = false;
+	private localPhase = '';
+	private localCurrentPlayer = 0;
+	private localWinner = -1;
+	private localTerrain: TerrainState | null = null;
+	private localGameData: GameUpdateData | null = null;
 
 	private tankSprites: [TankSprite, TankSprite] | null = null;
 	private terrainView: TerrainView | null = null;
@@ -37,9 +56,6 @@ export default class GameScene extends Scene {
 	private lastProjX = -Infinity;
 
 	private lastInput: InputSnapshot = { moveLeft: false, moveRight: false, aimUp: false, aimDown: false };
-
-	private terrainDirty = false;
-	private cachedTerrain: TerrainState | null = null;
 
 	private turnText!: GameObjects.Text;
 	private timerText!: GameObjects.Text;
@@ -195,40 +211,61 @@ export default class GameScene extends Scene {
 	private async connectToServer() {
 		try {
 			const client = new Client(COLYSEUS_URL);
-			console.log('[game] connecting to', COLYSEUS_URL);
 			const room = await client.joinOrCreate('tank_room') as unknown as Room<GameRoomState>;
 			this.room = room;
-			console.log('[game] joined room', room.roomId, 'sessionId', room.sessionId);
 
-			let prevPhase = '';
-			let stateCount = 0;
-			room.onStateChange((state) => {
-				try {
-					stateCount++;
-					const phaseVal = (state as any).phase;
-					const fi = (state as any).constructor?._definition?.fieldsByIndex;
-					console.log('[game] onStateChange #' + stateCount, 'phase=', phaseVal, 'p0=', (state as any).player0Id);
-					console.log('[game] fieldsByIndex:', JSON.stringify(fi));
-					console.log('[game] state own keys:', Object.getOwnPropertyNames(state as any).slice(0,10));
-					this.statusText.setText(`room:${room.roomId}\nstateChange#${stateCount} phase=${phaseVal}\nfields:${JSON.stringify(fi)}`).setVisible(true);
-					// Set player index on first decoded state
-					if (!this.roomReady && !this.myPlayerIndexSet) {
-						this.myPlayerIndexSet = true;
-						this.myPlayerIndex = (state as any).player0Id === room.sessionId ? 0 : 1;
-					}
-					if (phaseVal !== prevPhase) {
-						prevPhase = phaseVal;
-						this.onPhaseChange(phaseVal);
-					}
-				} catch (e) {
-					console.error('[game] onStateChange error:', e);
-					this.statusText.setText('onStateChange error:\n' + String(e)).setVisible(true);
+			room.onMessage('game_start', (data: {
+				player0Id: string; player1Id: string; currentPlayer: number;
+				terrain: TerrainState; tanks: [TankState, TankState];
+				fuel: number; weaponIndex: number; turnTimeLeft: number; power: number;
+			}) => {
+				if (!this.myPlayerIndexSet) {
+					this.myPlayerIndexSet = true;
+					this.myPlayerIndex = data.player0Id === room.sessionId ? 0 : 1;
+				}
+				this.localCurrentPlayer = data.currentPlayer;
+				this.localPhase = 'AIMING';
+				this.localTerrain = data.terrain;
+				this.localGameData = {
+					tanks: data.tanks,
+					projectile: { active: false, x: 0, y: 0, typeIndex: 0, bouncesLeft: 0 },
+					turnTimeLeft: data.turnTimeLeft,
+					power: data.power,
+					powerIncreasing: true,
+					fuel: data.fuel,
+					weaponIndex: data.weaponIndex
+				};
+				if (!this.roomReady) {
+					this.roomReady = true;
+					this.statusText.setVisible(false);
+					this.initViews();
+					this.showGameUI();
 				}
 			});
 
-			room.onMessage('explosion', (data: { x: number; y: number; craterRadius: number; blastRadius: number }) => {
+			room.onMessage('game_update', (data: GameUpdateData) => {
+				this.localGameData = data;
+			});
+
+			room.onMessage('phase_change', (data: { phase: string; currentPlayer: number; winner?: number }) => {
+				this.localPhase = data.phase;
+				this.localCurrentPlayer = data.currentPlayer;
+				if (data.winner !== undefined) this.localWinner = data.winner;
+				if (data.phase === 'OVER') this.showGameOver(this.localWinner as 0 | 1);
+			});
+
+			room.onMessage('explosion', (data: {
+				x: number; y: number; craterRadius: number; blastRadius: number;
+				terrainHeights: number[]; tanks: [TankState, TankState];
+			}) => {
 				this.handleExplosionFx(data.x, data.y, data.craterRadius, data.blastRadius);
-				this.terrainDirty = true;
+				if (this.localTerrain) {
+					this.localTerrain.heights = data.terrainHeights;
+					this.terrainView?.sync(this.localTerrain);
+				}
+				if (this.localGameData) {
+					this.localGameData.tanks = data.tanks;
+				}
 			});
 
 			room.onLeave.once(() => {
@@ -242,31 +279,13 @@ export default class GameScene extends Scene {
 		}
 	}
 
-	private onPhaseChange(phase: string) {
-		if (phase === 'AIMING' && !this.roomReady) {
-			this.roomReady = true;
-			this.statusText.setVisible(false);
-			this.initViews();
-			this.showGameUI();
-		}
-
-		if (phase === 'OVER') {
-			const winner = this.room!.state.winner;
-			this.showGameOver(winner as 0 | 1);
-		}
-	}
-
 	private initViews() {
-		const s = this.room!.state;
-		const terrain = this.buildTerrainState();
-		this.cachedTerrain = terrain;
-
 		this.terrainView = new TerrainView(this);
-		this.terrainView.sync(terrain);
+		this.terrainView.sync(this.localTerrain!);
 
 		this.tankSprites = [
-			new TankSprite(this, s.tank0 as unknown as TankState),
-			new TankSprite(this, s.tank1 as unknown as TankState)
+			new TankSprite(this, this.localGameData!.tanks[0]),
+			new TankSprite(this, this.localGameData!.tanks[1])
 		];
 
 		this.projView = new ProjectileView(this);
@@ -280,43 +299,34 @@ export default class GameScene extends Scene {
 	}
 
 	update(_time: number) {
-		if (!this.room || !this.roomReady || !this.tankSprites) return;
+		if (!this.roomReady || !this.tankSprites || !this.localGameData) return;
 
-		const state = this.room.state;
-		const phase = state.phase;
-
-		// Sync terrain if crater happened
-		if (this.terrainDirty) {
-			this.cachedTerrain = this.buildTerrainState();
-			this.terrainView?.sync(this.cachedTerrain!);
-			this.terrainDirty = false;
-		}
+		const data = this.localGameData;
+		const phase = this.localPhase;
+		const currentPlayer = this.localCurrentPlayer;
 
 		// Sync tank sprites
-		this.tankSprites[0].sync(state.tank0 as unknown as TankState);
-		this.tankSprites[1].sync(state.tank1 as unknown as TankState);
+		this.tankSprites[0].sync(data.tanks[0]);
+		this.tankSprites[1].sync(data.tanks[1]);
 
 		// Sync projectile with client-side trail
-		if (state.projectile.active) {
+		const proj = data.projectile;
+		if (proj.active) {
 			if (!this.lastProjActive) {
 				this.clientTrail = [];
 				this.lastProjActive = true;
 			}
-			if (state.projectile.x !== this.lastProjX) {
-				this.lastProjX = state.projectile.x;
-				this.clientTrail.push({ x: state.projectile.x, y: state.projectile.y });
+			if (proj.x !== this.lastProjX) {
+				this.lastProjX = proj.x;
+				this.clientTrail.push({ x: proj.x, y: proj.y });
 				if (this.clientTrail.length > 35) this.clientTrail.shift();
 			}
 			this.projView!.sync({
-				x: state.projectile.x,
-				y: state.projectile.y,
-				prevX: 0,
-				prevY: 0,
-				vx: 0,
-				vy: 0,
+				x: proj.x, y: proj.y,
+				prevX: 0, prevY: 0, vx: 0, vy: 0,
 				trail: this.clientTrail,
-				typeIndex: state.projectile.typeIndex,
-				bouncesLeft: state.projectile.bouncesLeft
+				typeIndex: proj.typeIndex,
+				bouncesLeft: proj.bouncesLeft
 			});
 		} else if (this.lastProjActive) {
 			this.lastProjActive = false;
@@ -326,36 +336,35 @@ export default class GameScene extends Scene {
 
 		// UI updates
 		if (phase === 'AIMING' || phase === 'CHARGING') {
-			const secs = Math.ceil(state.turnTimeLeft);
+			const secs = Math.ceil(data.turnTimeLeft);
 			const color = secs > 10 ? '#88e8a0' : secs > 5 ? '#ffdd55' : '#ff4444';
 			this.timerText.setText(`${secs}s`).setColor(color);
-			this.turnText.setText(`${PLAYER_NAMES[state.currentPlayer]}'s Turn`);
+			this.turnText.setText(`${PLAYER_NAMES[currentPlayer]}'s Turn`);
 		}
 
-		this.updateFuelBar(state.fuel);
-		this.updateWeaponUI(state.weaponIndex);
+		this.updateFuelBar(data.fuel);
+		this.updateWeaponUI(data.weaponIndex);
 
 		if (phase === 'CHARGING') {
 			this.powerBg.setVisible(true);
 			this.powerFill.setVisible(true);
 			this.powerLabel.setVisible(true);
-			this.updatePowerBar(state.power);
+			this.updatePowerBar(data.power);
 		} else {
 			this.powerBg.setVisible(false);
 			this.powerFill.setVisible(false);
 			this.powerLabel.setVisible(false);
 		}
 
-		// Trajectory preview (computed locally from server state)
+		// Trajectory preview
 		if (phase === 'AIMING' || phase === 'CHARGING') {
-			const myTank = state.currentPlayer === 0 ? state.tank0 : state.tank1;
-			this.drawTrajectory(myTank as unknown as TankState, state.weaponIndex, state.power, phase);
+			this.drawTrajectory(data.tanks[currentPlayer], data.weaponIndex, data.power, phase);
 		} else {
 			this.trajectoryGfx.clear();
 		}
 
 		// Input handling
-		if (phase !== 'OVER' && state.currentPlayer === this.myPlayerIndex) {
+		if (phase !== 'OVER' && currentPlayer === this.myPlayerIndex) {
 			this.handleInput(phase);
 		}
 
@@ -366,12 +375,11 @@ export default class GameScene extends Scene {
 				p === 0
 					? 'A/D: move   W/S: aim   Q: weapon   SPACE: charge'
 					: '←/→: move   ↑/↓: aim   Q: weapon   ENTER: charge';
-			this.hintText.setText(state.currentPlayer === this.myPlayerIndex ? hint : 'Waiting for opponent...');
+			this.hintText.setText(currentPlayer === this.myPlayerIndex ? hint : 'Waiting for opponent...');
 		}
 	}
 
 	private handleInput(phase: string) {
-		console.log('startfunc')
 		const p = this.myPlayerIndex;
 		const moveLeft = p === 0 ? this.keys.p1Left : this.keys.p2Left;
 		const moveRight = p === 0 ? this.keys.p1Right : this.keys.p2Right;
@@ -393,7 +401,6 @@ export default class GameScene extends Scene {
 			snap.aimDown !== this.lastInput.aimDown
 		) {
 			this.lastInput = snap;
-			console.log('lastinput')
 			this.room!.send('input', snap);
 		}
 
@@ -413,7 +420,7 @@ export default class GameScene extends Scene {
 
 	private drawTrajectory(tank: TankState, weaponIndex: number, power: number, phase: string) {
 		this.trajectoryGfx.clear();
-		if (!this.cachedTerrain) return;
+		if (!this.localTerrain) return;
 		const tip = getTurretTip(tank);
 		const previewPower = phase === 'CHARGING' ? power : 50;
 		if (previewPower < 1) return;
@@ -435,7 +442,7 @@ export default class GameScene extends Scene {
 			x += vx * dt;
 			y += vy * dt;
 			if (x < 0 || x > this.scale.width || y > this.scale.height) break;
-			if (y >= getHeightAt(this.cachedTerrain, x)) break;
+			if (y >= getHeightAt(this.localTerrain!, x)) break;
 			if (i % DOT_INTERVAL === DOT_INTERVAL - 1) {
 				const alpha = 0.8 * (1 - dotsDrawn / MAX_DOTS);
 				this.trajectoryGfx.fillStyle(0xffffff, alpha);
@@ -521,17 +528,6 @@ export default class GameScene extends Scene {
 		const color = pct > 0.5 ? 0x00ccff : pct > 0.25 ? 0xffaa00 : 0xff3333;
 		this.fuelFill.fillStyle(color);
 		this.fuelFill.fillRect(this.fuelBarX, this.fuelBarY, this.fuelBarW * pct, this.fuelBarH);
-	}
-
-	private buildTerrainState(): TerrainState {
-		const s = this.room!.state.terrain;
-		return {
-			heights: Array.from(s.heights) as number[],
-			cols: s.cols,
-			floorY: s.floorY,
-			sceneWidth: s.sceneWidth,
-			sceneHeight: s.sceneHeight
-		};
 	}
 
 	private showGameOver(winner: 0 | 1) {
