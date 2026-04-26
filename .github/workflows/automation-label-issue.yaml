@@ -1,0 +1,14 @@
+name: automation-label-issue
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "stub — not yet implemented"

@@ -1,0 +1,13 @@
+name: automation-state-branch
+
+on:
+  create:
+
+permissions:
+  issues: write
+
+jobs:
+  state:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "stub — not yet implemented"
