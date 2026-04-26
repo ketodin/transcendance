@@ -1,0 +1,33 @@
+name: "fix — Bug fix"
+description: Corrects unintended behavior.
+labels: ["type: fix", "status: todo"]
+body:
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - frontend
+        - backend
+        - auth
+        - game
+        - db
+        - shared
+        - infra
+        - i18n
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is the bug and what is the expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      value: "- [ ] "
+    validations:
+      required: true
