@@ -1,0 +1,20 @@
+name: ci-typecheck-game-server
+
+on:
+  push:
+    branches: ['feat/**', 'fix/**', 'chore/**']
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-typecheck-game-server-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  typecheck-game-server:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "stub — not yet implemented"
