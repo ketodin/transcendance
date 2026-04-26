@@ -1,0 +1,33 @@
+# CODEOWNERS — fill in real GitHub handles before enabling
+# "Require review from Code Owners" in branch protection.
+
+# Default owner — receives review requests for all files not matched below
+# * @<infra-owner>
+
+# Frontend
+# /src/routes/                    @<frontend-owner>
+# /src/lib/components/            @<frontend-owner>
+
+# Backend
+# /src/lib/server/                @<backend-owner>
+
+# Auth — security-sensitive, always requires both the auth owner and a second reviewer
+# /src/lib/server/auth/           @<auth-owner> @<security-reviewer>
+
+# Game
+# /game-server/                   @<game-owner>
+# /src/lib/game/                  @<game-owner>
+
+# Database
+# /prisma/                        @<db-owner>
+
+# Shared package
+# /packages/game-shared/          @<backend-owner> @<game-owner>
+
+# i18n
+# /messages/                      @<frontend-owner>
+
+# Infrastructure — all .github/ changes require infra review
+# /.github/                       @<infra-owner>
+# /docker/                        @<infra-owner>
+# /compose.yaml                   @<infra-owner>
