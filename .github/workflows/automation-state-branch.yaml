@@ -3,6 +3,10 @@ name: automation-state-branch
 on:
   create:
 
+concurrency:
+  group: automation-state-branch-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   issues: write
 
@@ -10,4 +14,21 @@ jobs:
   state:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "stub — not yet implemented"
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install automation dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: .github/scripts
+
+      - name: Transition issue to in progress
+        run: node .github/scripts/automation/automation-state-branch.js
+        env:
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}

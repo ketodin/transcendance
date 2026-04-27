@@ -4,11 +4,33 @@ on:
   pull_request:
     types: [opened, edited]
 
+concurrency:
+  group: automation-label-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 permissions:
+  issues:        write
   pull-requests: write
 
 jobs:
   label:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "stub — not yet implemented"
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install automation dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: .github/scripts
+
+      - name: Apply type and scope labels
+        run: node .github/scripts/automation/automation-label-pr.js
+        env:
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
