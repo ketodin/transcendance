@@ -1,0 +1,19 @@
+name: ci-test-e2e
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+concurrency:
+  group: ci-test-e2e-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "stub — not yet implemented"

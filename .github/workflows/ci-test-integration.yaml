@@ -1,0 +1,19 @@
+name: ci-test-integration
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+concurrency:
+  group: ci-test-integration-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "stub — not yet implemented"

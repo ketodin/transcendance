@@ -1,0 +1,20 @@
+name: ci-test-unit
+
+on:
+  push:
+    branches: ['feat/**', 'fix/**', 'chore/**']
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-test-unit-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "stub — not yet implemented"

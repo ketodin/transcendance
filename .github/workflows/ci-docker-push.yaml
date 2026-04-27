@@ -1,0 +1,14 @@
+name: ci-docker-push
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  docker-push:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "stub — not yet implemented"

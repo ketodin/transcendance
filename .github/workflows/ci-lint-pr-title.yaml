@@ -1,0 +1,19 @@
+name: ci-lint-pr-title
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, edited]
+
+concurrency:
+  group: ci-lint-pr-title-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint-pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "stub — not yet implemented"

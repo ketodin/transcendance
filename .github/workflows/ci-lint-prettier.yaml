@@ -1,0 +1,20 @@
+name: ci-lint-prettier
+
+on:
+  push:
+    branches: ['feat/**', 'fix/**', 'chore/**']
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-lint-prettier-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint-prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "stub — not yet implemented"

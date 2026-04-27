@@ -1,0 +1,20 @@
+name: ci-lint-eslint
+
+on:
+  push:
+    branches: ['feat/**', 'fix/**', 'chore/**']
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-lint-eslint-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint-eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "stub — not yet implemented"
