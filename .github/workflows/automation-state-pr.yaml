@@ -5,7 +5,7 @@ on:
     types: [opened, reopened, ready_for_review, closed]
 
 concurrency:
-  group: automation-state-pr-${{ github.event.pull_request.number }}
+  group: automation-state-pr-${{ github.event.pull_request.number }}-${{ github.event.action }}
   cancel-in-progress: true
 
 permissions:
@@ -13,7 +13,10 @@ permissions:
 
 jobs:
   on-open:
-    if: github.event.action == 'opened' || github.event.action == 'ready_for_review'
+    if: >-
+      github.event.action == 'opened' ||
+      github.event.action == 'reopened' ||
+      github.event.action == 'ready_for_review' 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
