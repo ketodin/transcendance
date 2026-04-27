@@ -1,0 +1,35 @@
+name: "feat — New feature"
+description: New functionality visible in the product.
+labels: ["type: feat", "status: todo"]
+body:
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      description: Which area of the codebase does this change affect?
+      options:
+        - frontend
+        - backend
+        - auth
+        - game
+        - db
+        - shared
+        - infra
+        - i18n
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What needs to be done and why.
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      description: Break the work into checkable steps.
+      value: "- [ ] "
+    validations:
+      required: true
