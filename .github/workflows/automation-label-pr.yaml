@@ -27,7 +27,7 @@ jobs:
           node-version-file: .nvmrc
 
       - name: Install automation dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-workspace
         working-directory: .github/scripts
 
       - name: Apply type and scope labels

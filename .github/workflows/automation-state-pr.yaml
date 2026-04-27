@@ -27,7 +27,7 @@ jobs:
           node-version-file: .nvmrc
 
       - name: Install automation dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-workspace
         working-directory: .github/scripts
 
       - name: Transition linked issues to in review
@@ -50,7 +50,7 @@ jobs:
           node-version-file: .nvmrc
 
       - name: Install automation dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-workspace
         working-directory: .github/scripts
 
       - name: Transition linked issues to done
