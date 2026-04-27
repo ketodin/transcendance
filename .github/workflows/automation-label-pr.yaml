@@ -2,7 +2,7 @@ name: automation-label-pr
 
 on:
   pull_request:
-    types: [opened, edited]
+    types: [opened, reopened, edited]
 
 concurrency:
   group: automation-label-pr-${{ github.event.pull_request.number }}
