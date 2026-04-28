@@ -1,0 +1,14 @@
+name: automation-state-pr
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, closed]
+
+permissions:
+  issues: write
+
+jobs:
+  state:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "stub — not yet implemented"

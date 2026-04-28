@@ -1,0 +1,32 @@
+name: "chore — Tooling / dependencies"
+description: "Dependency updates, config files, tooling maintenance."
+labels: ["type: chore", "status: todo"]
+body:
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - frontend
+        - backend
+        - auth
+        - game
+        - db
+        - shared
+        - infra
+        - i18n
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      value: "- [ ] "
+    validations:
+      required: true

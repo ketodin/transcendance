@@ -1,0 +1,33 @@
+name: "style — Formatting pass"
+description: "Formatting, linting, Prettier/ESLint passes — zero logic change."
+labels: ["type: style", "status: todo"]
+body:
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - frontend
+        - backend
+        - auth
+        - game
+        - db
+        - shared
+        - infra
+        - i18n
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is being formatted and why now.
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      value: "- [ ] "
+    validations:
+      required: true

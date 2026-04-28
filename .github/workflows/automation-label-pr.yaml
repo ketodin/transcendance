@@ -1,0 +1,14 @@
+name: automation-label-pr
+
+on:
+  pull_request:
+    types: [opened, edited]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "stub — not yet implemented"

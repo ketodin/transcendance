@@ -1,0 +1,33 @@
+name: "ci — CI / workflows"
+description: "CI pipelines, GitHub Actions, workflow changes."
+labels: ["type: ci", "status: todo"]
+body:
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - frontend
+        - backend
+        - auth
+        - game
+        - db
+        - shared
+        - infra
+        - i18n
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What pipeline or workflow is being changed and why.
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      value: "- [ ] "
+    validations:
+      required: true

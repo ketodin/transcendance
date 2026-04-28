@@ -1,0 +1,33 @@
+name: "refactor — Code restructure"
+description: Code restructured with no behavior change.
+labels: ["type: refactor", "status: todo"]
+body:
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - frontend
+        - backend
+        - auth
+        - game
+        - db
+        - shared
+        - infra
+        - i18n
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is being restructured and why.
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      value: "- [ ] "
+    validations:
+      required: true
