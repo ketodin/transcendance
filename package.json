@@ -16,7 +16,7 @@
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate",
 		"db:studio": "prisma studio",
-		"postinstall": "prisma generate"
+		"postinstall": "pnpm run prepare && prisma generate"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.4",
