@@ -9,16 +9,21 @@
 </script>
 
 <ModeWatcher />
-<div class="flex flex-col">
+
+<div class="relative flex min-h-screen flex-col">
   <Header />
-  <Sidebar.Provider>
-    <div class="flex flex-1 min-h-screen">
-      <AppSidebar />
-      <main class="flex-1 w-full px-4 py-8">
-        <Sidebar.Trigger />
-        {@render children?.()}
-      </main>
-    </div>
-  </Sidebar.Provider>
+  
+  <div class="flex-1">
+    <Sidebar.Provider>
+      <div class="flex min-h-[calc(100vh-64px)] w-full">
+        <AppSidebar />
+        <main class="flex-1 w-full px-4 py-8">
+          {@render children?.()}
+        </main>
+      </div>
+    </Sidebar.Provider>
+  </div>
+
   <Footer />
 </div>
+
