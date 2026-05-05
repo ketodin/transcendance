@@ -11,10 +11,12 @@ datasource db {
 }
 
 model profile {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid(2))
   createdAt DateTime @default(now())
-  email     String   @unique @index
+  email     String   @unique
   username  String
   bio       String?
   xp        Float   @default(0)
+  @@index([email])
+  @@index([username])
 }

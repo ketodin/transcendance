@@ -6,9 +6,15 @@ export const load: PageServerLoad = (async () => {
 });
 
 
+function formDataToObject(formData: FormData) {
+  return Object.fromEntries(formData.entries());
+}
+
+
 export const actions: Actions = {
 	default: async ({ request }) => {
-		// TODO log the user in
+        // console.log((await request.formData()).username)
+        console.log(formDataToObject(await request.formData()))
 	}
 };
 

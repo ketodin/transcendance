@@ -10,7 +10,7 @@
 
 <div>
 	<h1 class="text-4xl/7 font-bold">Create a new Profile</h1><br>
-	<form>
+	<form method="POST">
 		<label for="username">Username:</label>
 		<input type="text" id="username" name="username" required class="border"><br>
 		<label for="email">Email:</label>
