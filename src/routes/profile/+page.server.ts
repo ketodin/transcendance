@@ -1,5 +1,7 @@
 import type { PageServerLoad, Actions } from './$types';
 import db from "$lib/server/db";
+import z from "zod";
+
 
 export const load: PageServerLoad = (async () => {
 	return { profiles: [ { id: "abc", username: "www", createdAt: Date.now() } ] };
@@ -7,14 +9,25 @@ export const load: PageServerLoad = (async () => {
 
 
 function formDataToObject(formData: FormData) {
-  return Object.fromEntries(formData.entries());
+	return Object.fromEntries(formData.entries());
 }
+
+const Profile = z.strictObject({
+	username: z.string().min(3).max(32),
+	email: z.email(),
+	bio: z.nullable(z.string()),
+})
 
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-        // console.log((await request.formData()).username)
-        console.log(formDataToObject(await request.formData()))
+		const data = formDataToObject(await request.formData())
+		console.log(data)
+		const user = db.profile.create({
+			data: Profile.parse(data)
+		})
+		console.log(user);
+		return user;
 	}
 };
 

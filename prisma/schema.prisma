@@ -10,13 +10,14 @@ datasource db {
   provider = "sqlite"
 }
 
-model profile {
+model Profile {
   id        String   @id @default(cuid(2))
   createdAt DateTime @default(now())
   email     String   @unique
   username  String
   bio       String?
-  xp        Float   @default(0)
+  xp        Float    @default(0)
+
   @@index([email])
-  @@index([username])
+  @@index([xp])
 }
