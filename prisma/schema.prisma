@@ -9,3 +9,12 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+model profile {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  email     String   @unique @index
+  username  String
+  bio       String?
+  xp        Float   @default(0)
+}
