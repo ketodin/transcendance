@@ -1,19 +1,29 @@
 <script lang="ts">
-	import type { Pathname } from '$app/types';
-	import { resolve } from '$app/paths';
-	import { page } from '$app/state';
-	import { locales, localizeHref } from '$lib/paraglide/runtime';
-	import favicon from '$lib/assets/favicon.svg';
-
-	let { children } = $props();
-	import "../app.css";
+  import { ModeWatcher } from "mode-watcher";
+  import Header from "$lib/components/Header.svelte";
+  import Footer from "$lib/components/Footer.svelte";
+  import "../app.css";
+  import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+  import AppSidebar from "$lib/components/app-sidebar.svelte";
+  let { children } = $props();
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
-{@render children()}
+<ModeWatcher />
 
-<div style="display:none">
-	{#each locales as locale (locale)}
-		<a href={resolve(localizeHref(page.url.pathname, { locale }) as Pathname)}>{locale}</a>
-	{/each}
+<div class="relative flex min-h-screen flex-col">
+  <Header />
+  
+  <div class="flex-1">
+    <Sidebar.Provider>
+      <div class="flex min-h-[calc(100vh-64px)] w-full">
+        <AppSidebar />
+        <main class="flex-1 w-full px-4 py-8">
+          {@render children?.()}
+        </main>
+      </div>
+    </Sidebar.Provider>
+  </div>
+
+  <Footer />
 </div>
+
