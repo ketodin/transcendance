@@ -1,0 +1,11 @@
+services:
+  transcendence:
+    build: .
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    environment:
+      DATABASE_URL: file:/prod.db
+      ORIGIN: http://localhost:3000
+    volumes:
+      - ./prod.db:/prod.db
