@@ -475,7 +475,7 @@ export default class GameScene extends Scene {
 
 		if (deadTankIndex !== -1) {
 			this.tankSprites[deadTankIndex].explodeAndDestroy(this.gs.tanks[deadTankIndex]);
-			const winner = (deadTankIndex === 0 ? 1 : 0) as 0 | 1;
+			const winner = deadTankIndex === 0 ? 1 : 0;
 			this.time.delayedCall(900, () => this.showGameOver(winner));
 			return;
 		}
@@ -531,7 +531,7 @@ export default class GameScene extends Scene {
 	}
 
 	private nextTurn() {
-		this.gs.currentPlayer = (this.gs.currentPlayer === 0 ? 1 : 0) as 0 | 1;
+		this.gs.currentPlayer = this.gs.currentPlayer === 0 ? 1 : 0;
 		this.gs.phase = 'AIMING';
 		this.gs.fuel = 100;
 		this.updateFuelBar();
