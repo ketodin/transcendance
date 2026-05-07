@@ -57,6 +57,17 @@ export default defineConfig(
 		}
 	},
 	{
+		// no-unsafe-* disabled for hooks.server.ts: paraglideMiddleware types from
+		// @inlang/paraglide-js are not fully resolved by typescript-eslint's projectService.
+		files: ['src/hooks.server.ts'],
+		rules: {
+			'@typescript-eslint/no-unsafe-return': 'off',
+			'@typescript-eslint/no-unsafe-call': 'off',
+			'@typescript-eslint/no-unsafe-assignment': 'off',
+			'@typescript-eslint/no-unsafe-argument': 'off'
+		}
+	},
+	{
 		// Override or add rule settings here, such as:
 		// 'svelte/button-has-type': 'error'
 		rules: {}
