@@ -41,6 +41,7 @@
 		"phaser": "^4.0.0",
 		"prettier": "^3.8.1",
 		"prettier-plugin-svelte": "^3.5.1",
+		"prettier-plugin-tailwindcss": "^0.8.0",
 		"prisma": "^7.8.0",
 		"shadcn-svelte": "^1.2.7",
 		"svelte": "^5.55.2",
