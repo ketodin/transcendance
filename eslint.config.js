@@ -12,6 +12,14 @@ const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
 
 export default defineConfig(
 	includeIgnoreFile(gitignorePath),
+	{
+		ignores: [
+			'.github/',
+			'src/lib/components/ui/',
+			'*.config.js',
+			'*.config.ts',
+		],
+	},
 	js.configs.recommended,
 	ts.configs.recommendedTypeChecked,
 	svelte.configs.recommended,
@@ -39,17 +47,6 @@ export default defineConfig(
 				parser: ts.parser,
 				svelteConfig
 			},
-		},
-	},
-	{
-		files: [
-			'.github/scripts/**/*.js',
-			'*.config.js',
-			'*.config.ts',
-		],
-		extends: [ts.configs.disableTypeChecked],
-		rules: {
-			'@typescript-eslint/no-require-imports': 'off',
 		},
 	},
 	{
