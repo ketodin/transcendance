@@ -20,14 +20,17 @@
 				<Sidebar.Menu>
 					{#each navItems as item (item.href)}
 						<Sidebar.MenuItem>
-							<Sidebar.MenuButton asChild>
-								<a
-									href={item.href}
-									class="text-muted-foreground hover:text-foreground hover:bg-sidebar-accent mx-1 flex items-center gap-3 rounded-md px-4 py-2 text-sm transition-colors"
-								>
-									<item.icon class="h-4 w-4 shrink-0" />
-									<span>{item.label}</span>
-								</a>
+							<Sidebar.MenuButton>
+								{#snippet child({ props })}
+									<a
+										href={item.href}
+										{...props}
+										class="text-muted-foreground hover:text-foreground hover:bg-sidebar-accent mx-1 flex items-center gap-3 rounded-md px-4 py-2 text-sm transition-colors"
+									>
+										<item.icon class="h-4 w-4 shrink-0" />
+										<span>{item.label}</span>
+									</a>
+								{/snippet}
 							</Sidebar.MenuButton>
 						</Sidebar.MenuItem>
 					{/each}
