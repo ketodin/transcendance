@@ -25,5 +25,5 @@ vite.config.ts.timestamp-*
 src/lib/paraglide
 .inlang/cache/
 
-/src/lib/prisma
+/src/lib/server/prisma
 *.db
