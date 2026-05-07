@@ -1,6 +1,6 @@
-name: "test — Tests"
+name: 'test — Tests'
 description: Adding or updating tests.
-labels: ["type: test", "status: todo"]
+labels: ['type: test', 'status: todo']
 body:
   - type: dropdown
     id: scope
@@ -28,6 +28,6 @@ body:
     id: tasks
     attributes:
       label: Tasks
-      value: "- [ ] "
+      value: '- [ ] '
     validations:
       required: true

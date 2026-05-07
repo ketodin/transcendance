@@ -1,6 +1,6 @@
-name: "docs — Documentation"
+name: 'docs — Documentation'
 description: Documentation only.
-labels: ["type: docs", "status: todo"]
+labels: ['type: docs', 'status: todo']
 body:
   - type: dropdown
     id: scope
@@ -28,6 +28,6 @@ body:
     id: tasks
     attributes:
       label: Tasks
-      value: "- [ ] "
+      value: '- [ ] '
     validations:
       required: true
