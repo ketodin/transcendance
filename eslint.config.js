@@ -13,7 +13,13 @@ const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
 export default defineConfig(
 	includeIgnoreFile(gitignorePath),
 	{
-		ignores: ['.github/', 'src/lib/components/ui/', 'src/paraglide/', '*.config.js', '*.config.ts']
+		ignores: [
+			'.github/',
+			'src/lib/components/ui/',
+			'src/lib/paraglide/',
+			'*.config.js',
+			'*.config.ts'
+		]
 	},
 	js.configs.recommended,
 	ts.configs.recommendedTypeChecked,

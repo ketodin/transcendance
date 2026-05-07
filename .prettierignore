@@ -7,6 +7,3 @@ bun.lockb
 
 # Miscellaneous
 /static/
-
-# Generated
-src/paraglide/

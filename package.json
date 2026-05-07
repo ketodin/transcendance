@@ -8,7 +8,7 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
-		"generate": "pnpm run db:generate && pnpm exec paraglide-js compile --project ./.inlang && svelte-kit sync",
+		"generate": "pnpm run db:generate && pnpm exec paraglide-js compile --project ./.inlang --outdir ./src/lib/paraglide && svelte-kit sync",
 		"lint:prettier": "prettier --check .",
 		"lint:eslint": "eslint .",
 		"lint:prisma": "prisma format --check",
