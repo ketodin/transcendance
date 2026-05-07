@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@prisma/adapter-better-sqlite3':
+        specifier: ^7.8.0
+        version: 7.8.0
     devDependencies:
       '@eslint/compat':
         specifier: ^2.0.4
@@ -26,9 +30,6 @@ importers:
       '@lucide/svelte':
         specifier: ^1.12.0
         version: 1.14.0(svelte@5.55.4(@typescript-eslint/types@8.59.0))
-      '@prisma/adapter-better-sqlite3':
-        specifier: ^7.8.0
-        version: 7.8.0
       '@prisma/client':
         specifier: ^7.8.0
         version: 7.8.0(prisma@7.8.0(@types/react@19.2.14)(better-sqlite3@12.9.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3))(typescript@6.0.3)
