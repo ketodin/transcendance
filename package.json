@@ -8,14 +8,19 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+
+		"generate": "pnpm run db:generate && svelte-kit sync",
+
 		"lint:prettier": "prettier --check .",
 		"lint:eslint": "eslint .",
 		"lint:prisma": "prisma format --check",
-		"lint": "pnpm run lint:prettier && pnpm run lint:eslint && pnpm run lint:prisma",
+		"lint": "pnpm run generate && pnpm run lint:prettier && pnpm run lint:eslint && pnpm run lint:prisma",
+
 		"format": "prettier --write . && prisma format",
-		"typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+
+		"typecheck": "prisma generate && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"typecheck:watch": "prisma generate && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+
 		"db:push": "prisma db push",
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate",
