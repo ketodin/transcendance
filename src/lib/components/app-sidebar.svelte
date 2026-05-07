@@ -1,5 +1,6 @@
 <script lang="ts">
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+	import { t } from "svelte-i18n";
     import {
         Crosshair,
         MessageSquare,
@@ -7,11 +8,11 @@
         Settings,
     } from "@lucide/svelte";
 
-    const navItems = [
-        { icon: Crosshair, label: "Play", href: "/game" },
-        { icon: MessageSquare, label: "Chat", href: "/chat" },
-        { icon: BarChart2, label: "Rankings", href: "/rankings" },
-    ];
+	const navItems = [
+		{ icon: Crosshair, label: "nav.play", href: "/game" },
+		{ icon: MessageSquare, label: "nav.chat", href: "/chat" },
+		{ icon: BarChart2, label: "nav.rankings", href: "/rankings" },
+	];
 </script>
 
 <Sidebar.Root 
@@ -30,7 +31,7 @@
                                     class="flex items-center gap-3 px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors rounded-md mx-1"
                                 >
                                     <item.icon class="h-4 w-4 shrink-0" />
-                                    <span>{item.label}</span>
+									<span>{$t(item.label)}</span>
                                 </a>
                             </Sidebar.MenuButton>
                         </Sidebar.MenuItem>

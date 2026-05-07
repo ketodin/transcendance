@@ -1,0 +1,28 @@
+{
+	"nav": {
+		"play": "Play",
+		"chat": "Chat",
+		"rankings": "Rankings"
+	},
+	"status": {
+		"online": "Online",
+		"player": "Player"
+	},
+	"footer": {
+		"privacy": "Privacy policy",
+		"terms": "Terms of service"
+	},
+	"header": {
+		"login": "Login",
+		"register": "Register",
+		"welcomeBack": "Welcome back",
+		"loginDesc": "Enter your credentials to access your account.",
+		"createAccount": "Create an account",
+		"registerDesc": "Enter your details below to create your account.",
+		"fullName": "Full Name",
+		"email": "Email",
+		"password": "Password",
+		"signIn": "Sign In",
+		"createAccountBtn": "Create Account"
+	}
+}

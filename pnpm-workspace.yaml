@@ -1,3 +1,9 @@
+allowBuilds:
+  '@prisma/engines': set this to true or false
+  better-sqlite3: set this to true or false
+  es5-ext: true
+  esbuild: true
+  prisma: true
 onlyBuiltDependencies:
   - '@prisma/engines'
   - better-sqlite3

@@ -1,0 +1,28 @@
+{
+	"nav": {
+		"play": "Jouer",
+		"chat": "Discussion",
+		"rankings": "Classement"
+	},
+	"status": {
+		"online": "En ligne",
+		"player": "Joueur"
+	},
+	"footer": {
+		"privacy": "Politique de confidentialité",
+		"terms": "Conditions d’utilisation"
+	},
+	"header": {
+		"login": "Connexion",
+		"register": "S’inscrire",
+		"welcomeBack": "Bon retour",
+		"loginDesc": "Entrez vos identifiants pour accéder à votre compte.",
+		"createAccount": "Créer un compte",
+		"registerDesc": "Entrez vos informations ci-dessous pour créer votre compte.",
+		"fullName": "Nom complet",
+		"email": "Email",
+		"password": "Mot de passe",
+		"signIn": "Se connecter",
+		"createAccountBtn": "Créer le compte"
+	}
+}
