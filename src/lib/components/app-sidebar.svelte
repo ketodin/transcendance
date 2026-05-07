@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { Crosshair, MessageSquare, BarChart2, Settings } from '@lucide/svelte';
 
 	const navItems = [
-		{ icon: Crosshair, label: 'Play', href: '/game' },
-		{ icon: MessageSquare, label: 'Chat', href: '/chat' },
-		{ icon: BarChart2, label: 'Rankings', href: '/rankings' }
+		{ icon: Crosshair, label: 'Play', href: resolve('/game') },
+		{ icon: MessageSquare, label: 'Chat', href: resolve('/chat') },
+		{ icon: BarChart2, label: 'Rankings', href: resolve('/rankings') }
 	];
 </script>
 

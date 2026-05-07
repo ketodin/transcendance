@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import SunIcon from '@lucide/svelte/icons/sun';
 	import MoonIcon from '@lucide/svelte/icons/moon';
 	import { toggleMode } from 'mode-watcher';
@@ -10,7 +11,7 @@
 
 <header class="bg-background/80 sticky top-0 z-50 border-b backdrop-blur-sm">
 	<div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4">
-		<a href="/" class="shrink-0 text-xl font-bold tracking-tight"> Transcendence </a>
+		<a href={resolve('/')} class="shrink-0 text-xl font-bold tracking-tight"> Transcendence </a>
 
 		<div class="flex items-center gap-4">
 			<div class="hidden items-center gap-2 md:flex">
