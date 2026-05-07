@@ -13,12 +13,7 @@ const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
 export default defineConfig(
 	includeIgnoreFile(gitignorePath),
 	{
-		ignores: [
-			'.github/',
-			'src/lib/components/ui/',
-			'*.config.js',
-			'*.config.ts',
-		],
+		ignores: ['.github/', 'src/lib/components/ui/', '*.config.js', '*.config.ts']
 	},
 	js.configs.recommended,
 	ts.configs.recommendedTypeChecked,
@@ -31,15 +26,15 @@ export default defineConfig(
 			parserOptions: {
 				projectService: {
 					allowDefaultProject: ['*.config.js', '*.config.ts'],
-					defaultProject: 'tsconfig.json',
+					defaultProject: 'tsconfig.json'
 				},
-				tsconfigRootDir: import.meta.dirname,
-			},
+				tsconfigRootDir: import.meta.dirname
+			}
 		},
 		linterOptions: { reportUnusedDisableDirectives: true },
 		// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
 		// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
-		rules: { 'no-undef': 'off' },
+		rules: { 'no-undef': 'off' }
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
@@ -49,8 +44,8 @@ export default defineConfig(
 				extraFileExtensions: ['.svelte'],
 				parser: ts.parser,
 				svelteConfig
-			},
-		},
+			}
+		}
 	},
 	{
 		// no-unsafe-call disabled for layout.svelte: ModeWatcher is imported from an external
@@ -58,8 +53,8 @@ export default defineConfig(
 		// Tracked upstream: https://github.com/sveltejs/svelte/issues/16264
 		files: ['src/routes/+layout.svelte'],
 		rules: {
-			'@typescript-eslint/no-unsafe-call': 'off',
-		},
+			'@typescript-eslint/no-unsafe-call': 'off'
+		}
 	},
 	{
 		// Override or add rule settings here, such as:
