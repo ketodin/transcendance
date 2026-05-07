@@ -29,7 +29,10 @@ export default defineConfig(
 		languageOptions: {
 			globals: { ...globals.browser, ...globals.node },
 			parserOptions: {
-				projectService: true,
+				projectService: {
+					allowDefaultProject: ['*.config.js', '*.config.ts'],
+					defaultProject: 'tsconfig.json',
+				},
 				tsconfigRootDir: import.meta.dirname,
 			},
 		},
@@ -47,6 +50,15 @@ export default defineConfig(
 				parser: ts.parser,
 				svelteConfig
 			},
+		},
+	},
+	{
+		// no-unsafe-call disabled for layout.svelte: ModeWatcher is imported from an external
+		// .svelte file and typescript-eslint cannot resolve types across that boundary.
+		// Tracked upstream: https://github.com/sveltejs/svelte/issues/16264
+		files: ['src/routes/+layout.svelte'],
+		rules: {
+			'@typescript-eslint/no-unsafe-call': 'off',
 		},
 	},
 	{
