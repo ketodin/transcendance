@@ -18,7 +18,7 @@
 		<Sidebar.Group>
 			<Sidebar.GroupContent>
 				<Sidebar.Menu>
-					{#each navItems as item}
+					{#each navItems as item (item.href)}
 						<Sidebar.MenuItem>
 							<Sidebar.MenuButton asChild>
 								<a
