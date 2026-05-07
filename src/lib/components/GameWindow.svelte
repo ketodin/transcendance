@@ -9,8 +9,8 @@
 
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import StartGame from '$lib/game/scripts/game';
-	import { EventBus } from '$lib/game/scripts/EventBus';
+	import StartGame from '$lib/game/phaser/game';
+	import { EventBus } from '$lib/game/phaser/EventBus';
 
 	let {
 		phaserRef = $bindable()
