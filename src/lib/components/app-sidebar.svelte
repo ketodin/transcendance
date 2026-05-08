@@ -5,12 +5,14 @@
         MessageSquare,
         BarChart2,
         Settings,
+        User
     } from "@lucide/svelte";
 
     const navItems = [
         { icon: Crosshair, label: "Play", href: "/game" },
         { icon: MessageSquare, label: "Chat", href: "/chat" },
         { icon: BarChart2, label: "Rankings", href: "/rankings" },
+        { icon: User, label: "Profiles", href: "/profile" },
     ];
 </script>
 
