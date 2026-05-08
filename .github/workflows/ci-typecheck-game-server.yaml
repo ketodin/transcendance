@@ -29,7 +29,7 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
-      
+
       - run: pnpm generate
 
       - run: .github/scripts/ci/ci-typecheck-game-server.sh
