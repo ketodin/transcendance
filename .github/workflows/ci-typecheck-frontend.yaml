@@ -1,4 +1,4 @@
-ame: ci-typecheck-frontend
+name: ci-typecheck-frontend
 
 on:
   push:
