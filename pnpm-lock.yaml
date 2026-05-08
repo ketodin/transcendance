@@ -120,6 +120,9 @@ importers:
       vite:
         specifier: ^8.0.7
         version: 8.0.9(@types/node@24.12.2)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
 
 packages:
 
@@ -4598,5 +4601,4 @@ snapshots:
       zod: 4.4.3
     optional: true
 
-  zod@4.4.3:
-    optional: true
+  zod@4.4.3: {}
