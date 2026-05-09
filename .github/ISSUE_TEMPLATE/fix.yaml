@@ -1,6 +1,6 @@
-name: "fix — Bug fix"
+name: 'fix — Bug fix'
 description: Corrects unintended behavior.
-labels: ["type: fix", "status: todo"]
+labels: ['type: fix', 'status: todo']
 body:
   - type: dropdown
     id: scope
@@ -28,6 +28,6 @@ body:
     id: tasks
     attributes:
       label: Tasks
-      value: "- [ ] "
+      value: '- [ ] '
     validations:
       required: true

@@ -1,6 +1,6 @@
-name: "refactor — Code restructure"
+name: 'refactor — Code restructure'
 description: Code restructured with no behavior change.
-labels: ["type: refactor", "status: todo"]
+labels: ['type: refactor', 'status: todo']
 body:
   - type: dropdown
     id: scope
@@ -28,6 +28,6 @@ body:
     id: tasks
     attributes:
       label: Tasks
-      value: "- [ ] "
+      value: '- [ ] '
     validations:
       required: true

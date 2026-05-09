@@ -1,6 +1,6 @@
-name: "style — Formatting pass"
-description: "Formatting, linting, Prettier/ESLint passes — zero logic change."
-labels: ["type: style", "status: todo"]
+name: 'style — Formatting pass'
+description: 'Formatting, linting, Prettier/ESLint passes — zero logic change.'
+labels: ['type: style', 'status: todo']
 body:
   - type: dropdown
     id: scope
@@ -28,6 +28,6 @@ body:
     id: tasks
     attributes:
       label: Tasks
-      value: "- [ ] "
+      value: '- [ ] '
     validations:
       required: true
