@@ -106,7 +106,7 @@ export class TankRoom extends Room<GameRoomState> {
 				currentPlayer: this.physicsState.currentPlayer,
 				winner
 			});
-			this.lock();
+			void this.lock();
 		}
 	}
 
@@ -297,7 +297,7 @@ export class TankRoom extends Room<GameRoomState> {
 		if (deadTankIdx !== -1) {
 			const winner = deadTankIdx === 0 ? 1 : 0;
 			this.physicsState.phase = 'OVER';
-			this.physicsState.winner = winner as 0 | 1;
+			this.physicsState.winner = winner satisfies 0 | 1;
 			this.state.phase = 'OVER';
 			this.state.winner = winner;
 			this.broadcast('phase_change', {
@@ -305,14 +305,16 @@ export class TankRoom extends Room<GameRoomState> {
 				currentPlayer: this.physicsState.currentPlayer,
 				winner
 			});
-			this.lock();
+			void this.lock();
 		} else {
 			this.clock.setTimeout(() => this.nextTurn(), 600);
 		}
 	}
 
 	private nextTurn() {
-		this.physicsState.currentPlayer = (this.physicsState.currentPlayer === 0 ? 1 : 0) as 0 | 1;
+		this.physicsState.currentPlayer = (this.physicsState.currentPlayer === 0 ? 1 : 0) satisfies
+			| 0
+			| 1;
 		this.physicsState.phase = 'AIMING';
 		this.physicsState.fuel = 100;
 		this.physicsState.turnTimeLeft = 30;

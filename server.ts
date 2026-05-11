@@ -10,9 +10,7 @@
  */
 import { createServer } from 'http';
 import { Server } from 'colyseus';
-// @ts-ignore - generated at build time
 import { handler } from './build/handler.js';
-// @ts-ignore - compiled at build time
 import { TankRoom } from './build-server/colyseus/rooms/TankRoom.js';
 
 const port = Number(process.env.PORT) || 3000;

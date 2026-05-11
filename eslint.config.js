@@ -31,7 +31,7 @@ export default defineConfig(
 			globals: { ...globals.browser, ...globals.node },
 			parserOptions: {
 				projectService: {
-					allowDefaultProject: ['*.config.js', '*.config.ts'],
+					allowDefaultProject: ['*.config.js', '*.config.ts', 'server.ts'],
 					defaultProject: 'tsconfig.json'
 				},
 				tsconfigRootDir: import.meta.dirname
@@ -41,6 +41,16 @@ export default defineConfig(
 		// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
 		// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
 		rules: { 'no-undef': 'off' }
+	},
+	{
+		files: ['colyseus/**/*.ts'],
+		languageOptions: {
+			parserOptions: {
+				projectService: false,
+				project: './tsconfig.server.json',
+				tsconfigRootDir: import.meta.dirname
+			}
+		}
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],

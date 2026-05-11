@@ -111,7 +111,7 @@ export default class GameScene extends Scene {
 		this.createBackground();
 		this.setupUI();
 		this.setupKeys();
-		this.connectToServer();
+		void this.connectToServer();
 	}
 
 	private createBackground() {
@@ -378,7 +378,7 @@ export default class GameScene extends Scene {
 		this.weaponTexts.forEach((t) => t.setVisible(true));
 	}
 
-	update(_time: number) {
+	update() {
 		if (!this.roomReady || !this.tankSprites || !this.localGameData) return;
 
 		const data = this.localGameData;
@@ -528,7 +528,7 @@ export default class GameScene extends Scene {
 			x += vx * dt;
 			y += vy * dt;
 			if (x < 0 || x > this.scale.width || y > this.scale.height) break;
-			if (y >= getHeightAt(this.localTerrain!, x)) break;
+			if (y >= getHeightAt(this.localTerrain, x)) break;
 			if (i % DOT_INTERVAL === DOT_INTERVAL - 1) {
 				const alpha = 0.8 * (1 - dotsDrawn / MAX_DOTS);
 				this.trajectoryGfx.fillStyle(0xffffff, alpha);
@@ -641,7 +641,7 @@ export default class GameScene extends Scene {
 
 		this.input.keyboard!.once('keydown-R', () => {
 			this.returningToLobby = true;
-			this.room?.leave();
+			void this.room?.leave();
 		});
 	}
 }
