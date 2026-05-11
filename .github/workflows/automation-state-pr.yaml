@@ -16,7 +16,7 @@ jobs:
     if: >-
       github.event.action == 'opened' ||
       github.event.action == 'reopened' ||
-      github.event.action == 'ready_for_review' 
+      github.event.action == 'ready_for_review'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

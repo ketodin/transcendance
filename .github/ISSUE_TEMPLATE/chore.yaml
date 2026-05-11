@@ -1,6 +1,6 @@
-name: "chore — Tooling / dependencies"
-description: "Dependency updates, config files, tooling maintenance."
-labels: ["type: chore", "status: todo"]
+name: 'chore — Tooling / dependencies'
+description: 'Dependency updates, config files, tooling maintenance.'
+labels: ['type: chore', 'status: todo']
 body:
   - type: dropdown
     id: scope
@@ -27,6 +27,6 @@ body:
     id: tasks
     attributes:
       label: Tasks
-      value: "- [ ] "
+      value: '- [ ] '
     validations:
       required: true
