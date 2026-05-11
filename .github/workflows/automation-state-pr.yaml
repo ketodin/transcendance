@@ -2,13 +2,61 @@ name: automation-state-pr
 
 on:
   pull_request:
-    types: [opened, ready_for_review, closed]
+    types: [opened, reopened, ready_for_review, closed]
+
+concurrency:
+  group: automation-state-pr-${{ github.event.pull_request.number }}-${{ github.event.action }}
+  cancel-in-progress: true
 
 permissions:
   issues: write
 
 jobs:
-  state:
+  on-open:
+    if: >-
+      github.event.action == 'opened' ||
+      github.event.action == 'reopened' ||
+      github.event.action == 'ready_for_review' 
     runs-on: ubuntu-latest
     steps:
-      - run: echo "stub — not yet implemented"
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install automation dependencies
+        run: pnpm install --frozen-lockfile --ignore-workspace
+        working-directory: .github/scripts
+
+      - name: Transition linked issues to in review
+        run: node .github/scripts/automation/automation-state-pr-open.js
+        env:
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  on-merge:
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install automation dependencies
+        run: pnpm install --frozen-lockfile --ignore-workspace
+        working-directory: .github/scripts
+
+      - name: Transition linked issues to done
+        run: node .github/scripts/automation/automation-state-pr-merge.js
+        env:
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
