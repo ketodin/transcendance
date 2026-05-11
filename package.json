@@ -14,7 +14,7 @@
 		"lint:prisma": "prisma format --check",
 		"lint": "pnpm run generate && pnpm run lint:prettier && pnpm run lint:eslint && pnpm run lint:prisma",
 		"format": "prettier --write . && prisma format",
-		"typecheck": "pnpm run generate && svelte-check --tsconfig ./tsconfig.json",
+		"typecheck": "pnpm run generate && svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
 		"typecheck:watch": "pnpm run generate && svelte-check --tsconfig ./tsconfig.json --watch",
 		"db:push": "prisma db push",
 		"db:generate": "prisma generate",
