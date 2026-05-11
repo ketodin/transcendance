@@ -1,13 +1,13 @@
 <script lang="ts">
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { Crosshair, MessageSquare, BarChart2, Settings } from '@lucide/svelte';
-	import { m } from "$lib/paraglide/messages";
-
-	const navItems = [
-		{ icon: Crosshair, label: m.play(), href: '/game' },
-		{ icon: MessageSquare, label: m.chat(), href: '/chat' },
-		{ icon: BarChart2, label: m.rank(), href: '/rankings' }
-	];
+	  import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	  import { Crosshair, MessageSquare, BarChart2, Settings, User } from '@lucide/svelte';
+  	import { m } from "$lib/paraglide/messages";
+  	const navItems = [
+	  	{ icon: Crosshair, label: m.play(), href: '/game' },
+	  	{ icon: MessageSquare, label: m.chat(), href: '/chat' },
+		  { icon: BarChart2, label: m.rank(), href: '/rankings' },
+		  { icon: User, label: m.profile(), href: '/profile' },
+	  ];
 </script>
 
 <Sidebar.Root
