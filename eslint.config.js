@@ -50,15 +50,15 @@ export default defineConfig(
 				extraFileExtensions: ['.svelte'],
 				parser: ts.parser,
 				svelteConfig
-			},
-		},
+			}
+		}
 	},
 	{
 		// Override or add rule settings here, such as:
 		// 'svelte/button-has-type': 'error'
 		rules: {
 			'svelte/no-top-level-browser-globals': 'error',
-			'svelte/block-lang': [ 'error', { 'script': ['ts'] } ]
+			'svelte/block-lang': ['error', { script: ['ts'] }]
 		}
 	}
 );
