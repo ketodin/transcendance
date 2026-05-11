@@ -11,9 +11,10 @@ import { Client, Room } from 'colyseus.js';
 import type { GameRoomState } from '../../colyseus/schema/GameRoomState';
 
 const PLAYER_NAMES = ['Player 1', 'Player 2'];
-const COLYSEUS_URL = (typeof window !== 'undefined' && window.location.hostname !== 'localhost')
-	? `wss://${window.location.host}`
-	: 'ws://localhost:2567';
+const COLYSEUS_URL =
+	typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+		? `wss://${window.location.host}`
+		: 'ws://localhost:2567';
 
 type InputSnapshot = {
 	moveLeft: boolean;
@@ -23,7 +24,11 @@ type InputSnapshot = {
 };
 
 type ProjectileSnapshot = {
-	active: boolean; x: number; y: number; typeIndex: number; bouncesLeft: number;
+	active: boolean;
+	x: number;
+	y: number;
+	typeIndex: number;
+	bouncesLeft: number;
 };
 
 type GameUpdateData = {
@@ -56,7 +61,12 @@ export default class GameScene extends Scene {
 	private lastProjActive = false;
 	private lastProjX = -Infinity;
 
-	private lastInput: InputSnapshot = { moveLeft: false, moveRight: false, aimUp: false, aimDown: false };
+	private lastInput: InputSnapshot = {
+		moveLeft: false,
+		moveRight: false,
+		aimUp: false,
+		aimDown: false
+	};
 
 	private turnText!: GameObjects.Text;
 	private timerText!: GameObjects.Text;
@@ -148,13 +158,23 @@ export default class GameScene extends Scene {
 			.setDepth(20);
 
 		this.turnText = this.add
-			.text(640, 18, '', { fontSize: '22px', color: '#88e8a0', stroke: '#0e0e24', strokeThickness: 4 })
+			.text(640, 18, '', {
+				fontSize: '22px',
+				color: '#88e8a0',
+				stroke: '#0e0e24',
+				strokeThickness: 4
+			})
 			.setOrigin(0.5, 0)
 			.setDepth(10)
 			.setVisible(false);
 
 		this.timerText = this.add
-			.text(640, 46, '', { fontSize: '18px', color: '#88e8a0', stroke: '#0e0e24', strokeThickness: 3 })
+			.text(640, 46, '', {
+				fontSize: '18px',
+				color: '#88e8a0',
+				stroke: '#0e0e24',
+				strokeThickness: 3
+			})
 			.setOrigin(0.5, 0)
 			.setDepth(10)
 			.setVisible(false);
@@ -169,27 +189,43 @@ export default class GameScene extends Scene {
 
 		this.powerLabel = this.add
 			.text(640, this.barY - 22, 'POWER — release to fire', {
-				fontSize: '13px', color: '#88e8a0', stroke: '#0e0e24', strokeThickness: 3
+				fontSize: '13px',
+				color: '#88e8a0',
+				stroke: '#0e0e24',
+				strokeThickness: 3
 			})
 			.setOrigin(0.5, 0)
 			.setDepth(10)
 			.setVisible(false);
 
 		this.hintText = this.add
-			.text(640, 700, '', { fontSize: '11px', color: 'rgba(255,255,255,0.5)', stroke: '#0e0e24', strokeThickness: 2 })
+			.text(640, 700, '', {
+				fontSize: '11px',
+				color: 'rgba(255,255,255,0.5)',
+				stroke: '#0e0e24',
+				strokeThickness: 2
+			})
 			.setOrigin(0.5, 0)
 			.setDepth(10);
 
 		this.fuelBg = this.add.graphics().setDepth(10);
 		this.fuelBg.fillStyle(0x0e0e24, 0.92);
-		this.fuelBg.fillRect(this.fuelBarX - 1, this.fuelBarY - 1, this.fuelBarW + 2, this.fuelBarH + 2);
+		this.fuelBg.fillRect(
+			this.fuelBarX - 1,
+			this.fuelBarY - 1,
+			this.fuelBarW + 2,
+			this.fuelBarH + 2
+		);
 		this.fuelBg.setVisible(false);
 
 		this.fuelFill = this.add.graphics().setDepth(10);
 
 		this.add
 			.text(this.fuelBarX + this.fuelBarW / 2, this.fuelBarY - 18, 'FUEL', {
-				fontSize: '13px', color: '#00ccff', stroke: '#0e0e24', strokeThickness: 3
+				fontSize: '13px',
+				color: '#00ccff',
+				stroke: '#0e0e24',
+				strokeThickness: 3
 			})
 			.setOrigin(0.5, 0)
 			.setDepth(10)
@@ -201,7 +237,10 @@ export default class GameScene extends Scene {
 		this.weaponTexts = PROJECTILE_TYPES.map((type, i) =>
 			this.add
 				.text(weaponXPositions[i], 50, type.name, {
-					fontSize: '14px', color: '#ffffff', stroke: '#0e0e24', strokeThickness: 3
+					fontSize: '14px',
+					color: '#ffffff',
+					stroke: '#0e0e24',
+					strokeThickness: 3
 				})
 				.setOrigin(0.5)
 				.setDepth(10)
@@ -227,58 +266,77 @@ export default class GameScene extends Scene {
 
 		try {
 			const client = new Client(COLYSEUS_URL);
-			const room = await client.joinOrCreate('tank_room') as unknown as Room<GameRoomState>;
+			const room = (await client.joinOrCreate('tank_room')) as unknown as Room<GameRoomState>;
 			this.room = room;
 
-			room.onMessage('game_start', (data: {
-				player0Id: string; player1Id: string; currentPlayer: number;
-				terrain: TerrainState; tanks: [TankState, TankState];
-				fuel: number; weaponIndex: number; turnTimeLeft: number; power: number;
-			}) => {
-				this.myPlayerIndexSet = true;
-				this.myPlayerIndex = data.player0Id === room.sessionId ? 0 : 1;
-				this.localCurrentPlayer = data.currentPlayer;
-				this.localPhase = 'AIMING';
-				this.localTerrain = data.terrain;
-				this.localGameData = {
-					tanks: data.tanks,
-					projectile: { active: false, x: 0, y: 0, typeIndex: 0, bouncesLeft: 0 },
-					turnTimeLeft: data.turnTimeLeft,
-					power: data.power,
-					powerIncreasing: true,
-					fuel: data.fuel,
-					weaponIndex: data.weaponIndex
-				};
-				this.roomReady = true;
-				this.statusText.setVisible(false);
-				this.initViews();
-				this.showGameUI();
-			});
+			room.onMessage(
+				'game_start',
+				(data: {
+					player0Id: string;
+					player1Id: string;
+					currentPlayer: number;
+					terrain: TerrainState;
+					tanks: [TankState, TankState];
+					fuel: number;
+					weaponIndex: number;
+					turnTimeLeft: number;
+					power: number;
+				}) => {
+					this.myPlayerIndexSet = true;
+					this.myPlayerIndex = data.player0Id === room.sessionId ? 0 : 1;
+					this.localCurrentPlayer = data.currentPlayer;
+					this.localPhase = 'AIMING';
+					this.localTerrain = data.terrain;
+					this.localGameData = {
+						tanks: data.tanks,
+						projectile: { active: false, x: 0, y: 0, typeIndex: 0, bouncesLeft: 0 },
+						turnTimeLeft: data.turnTimeLeft,
+						power: data.power,
+						powerIncreasing: true,
+						fuel: data.fuel,
+						weaponIndex: data.weaponIndex
+					};
+					this.roomReady = true;
+					this.statusText.setVisible(false);
+					this.initViews();
+					this.showGameUI();
+				}
+			);
 
 			room.onMessage('game_update', (data: GameUpdateData) => {
 				this.localGameData = data;
 			});
 
-			room.onMessage('phase_change', (data: { phase: string; currentPlayer: number; winner?: number }) => {
-				this.localPhase = data.phase;
-				this.localCurrentPlayer = data.currentPlayer;
-				if (data.winner !== undefined) this.localWinner = data.winner;
-				if (data.phase === 'OVER') this.showGameOver(this.localWinner as 0 | 1);
-			});
+			room.onMessage(
+				'phase_change',
+				(data: { phase: string; currentPlayer: number; winner?: number }) => {
+					this.localPhase = data.phase;
+					this.localCurrentPlayer = data.currentPlayer;
+					if (data.winner !== undefined) this.localWinner = data.winner;
+					if (data.phase === 'OVER') this.showGameOver(this.localWinner as 0 | 1);
+				}
+			);
 
-			room.onMessage('explosion', (data: {
-				x: number; y: number; craterRadius: number; blastRadius: number;
-				terrainHeights: number[]; tanks: [TankState, TankState];
-			}) => {
-				this.handleExplosionFx(data.x, data.y, data.craterRadius, data.blastRadius);
-				if (this.localTerrain) {
-					this.localTerrain.heights = data.terrainHeights;
-					this.terrainView?.sync(this.localTerrain);
+			room.onMessage(
+				'explosion',
+				(data: {
+					x: number;
+					y: number;
+					craterRadius: number;
+					blastRadius: number;
+					terrainHeights: number[];
+					tanks: [TankState, TankState];
+				}) => {
+					this.handleExplosionFx(data.x, data.y, data.craterRadius, data.blastRadius);
+					if (this.localTerrain) {
+						this.localTerrain.heights = data.terrainHeights;
+						this.terrainView?.sync(this.localTerrain);
+					}
+					if (this.localGameData) {
+						this.localGameData.tanks = data.tanks;
+					}
 				}
-				if (this.localGameData) {
-					this.localGameData.tanks = data.tanks;
-				}
-			});
+			);
 
 			room.onLeave.once(() => {
 				if (this.returningToLobby) {
@@ -344,8 +402,12 @@ export default class GameScene extends Scene {
 				if (this.clientTrail.length > 35) this.clientTrail.shift();
 			}
 			this.projView!.sync({
-				x: proj.x, y: proj.y,
-				prevX: 0, prevY: 0, vx: 0, vy: 0,
+				x: proj.x,
+				y: proj.y,
+				prevX: 0,
+				prevY: 0,
+				vx: 0,
+				vy: 0,
 				trail: this.clientTrail,
 				typeIndex: proj.typeIndex,
 				bouncesLeft: proj.bouncesLeft
@@ -397,7 +459,9 @@ export default class GameScene extends Scene {
 				p === 0
 					? 'A/D: move   W/S: aim   Q: weapon   SPACE: charge'
 					: '←/→: move   ↑/↓: aim   Q: weapon   ENTER: charge';
-			this.hintText.setText(currentPlayer === this.myPlayerIndex ? hint : 'Waiting for opponent...');
+			this.hintText.setText(
+				currentPlayer === this.myPlayerIndex ? hint : 'Waiting for opponent...'
+			);
 		}
 	}
 
@@ -557,14 +621,20 @@ export default class GameScene extends Scene {
 
 		this.add
 			.text(640, 280, `${PLAYER_NAMES[winner]} Wins!`, {
-				fontSize: '52px', color: '#d4b832', stroke: '#0e0e24', strokeThickness: 6
+				fontSize: '52px',
+				color: '#d4b832',
+				stroke: '#0e0e24',
+				strokeThickness: 6
 			})
 			.setOrigin(0.5)
 			.setDepth(21);
 
 		this.add
 			.text(640, 370, 'Press R to play again', {
-				fontSize: '22px', color: '#88e8a0', stroke: '#0e0e24', strokeThickness: 4
+				fontSize: '22px',
+				color: '#88e8a0',
+				stroke: '#0e0e24',
+				strokeThickness: 4
 			})
 			.setOrigin(0.5)
 			.setDepth(21);

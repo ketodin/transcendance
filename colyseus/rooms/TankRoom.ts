@@ -1,7 +1,15 @@
 import { Room, Client } from 'colyseus';
 import { GameRoomState } from '../../src/lib/game/colyseus/schema/GameRoomState.js';
-import { generateTerrain, getHeightAt, applyCrater } from '../../src/lib/game/shared/logic/terrain.js';
-import { createProjectile, stepProjectile, getTurretTip } from '../../src/lib/game/shared/logic/physics.js';
+import {
+	generateTerrain,
+	getHeightAt,
+	applyCrater
+} from '../../src/lib/game/shared/logic/terrain.js';
+import {
+	createProjectile,
+	stepProjectile,
+	getTurretTip
+} from '../../src/lib/game/shared/logic/physics.js';
 import { PROJECTILE_TYPES } from '../../src/lib/game/shared/projectileTypes.js';
 import type { GameState } from '../../src/lib/game/shared/state/GameState.js';
 import type { TankState } from '../../src/lib/game/shared/state/TankState.js';
@@ -47,7 +55,10 @@ export class TankRoom extends Room<GameRoomState> {
 			this.state.phase = 'CHARGING';
 			this.state.power = 0;
 			this.state.powerIncreasing = true;
-			this.broadcast('phase_change', { phase: 'CHARGING', currentPlayer: this.physicsState.currentPlayer });
+			this.broadcast('phase_change', {
+				phase: 'CHARGING',
+				currentPlayer: this.physicsState.currentPlayer
+			});
 		});
 
 		this.onMessage('fire', (client) => {
@@ -90,7 +101,11 @@ export class TankRoom extends Room<GameRoomState> {
 			this.physicsState.phase = 'OVER';
 			this.state.phase = 'OVER';
 			this.state.winner = winner;
-			this.broadcast('phase_change', { phase: 'OVER', currentPlayer: this.physicsState.currentPlayer, winner });
+			this.broadcast('phase_change', {
+				phase: 'OVER',
+				currentPlayer: this.physicsState.currentPlayer,
+				winner
+			});
 			this.lock();
 		}
 	}
@@ -141,7 +156,7 @@ export class TankRoom extends Room<GameRoomState> {
 				sceneWidth: this.physicsState.terrain.sceneWidth,
 				sceneHeight: this.physicsState.terrain.sceneHeight
 			},
-			tanks: this.physicsState.tanks.map(t => ({ ...t })),
+			tanks: this.physicsState.tanks.map((t) => ({ ...t })),
 			fuel: 100,
 			weaponIndex: 0,
 			turnTimeLeft: 30,
@@ -241,7 +256,10 @@ export class TankRoom extends Room<GameRoomState> {
 		this.physicsState.phase = 'FLYING';
 		this.state.phase = 'FLYING';
 		this.syncProjectile();
-		this.broadcast('phase_change', { phase: 'FLYING', currentPlayer: this.physicsState.currentPlayer });
+		this.broadcast('phase_change', {
+			phase: 'FLYING',
+			currentPlayer: this.physicsState.currentPlayer
+		});
 	}
 
 	private handleExplosion(x: number, y: number) {
@@ -268,9 +286,12 @@ export class TankRoom extends Room<GameRoomState> {
 		this.snapTanksToTerrain();
 
 		this.broadcast('explosion', {
-			x, y, craterRadius, blastRadius,
+			x,
+			y,
+			craterRadius,
+			blastRadius,
 			terrainHeights: Array.from(this.physicsState.terrain.heights),
-			tanks: this.physicsState.tanks.map(t => ({ ...t }))
+			tanks: this.physicsState.tanks.map((t) => ({ ...t }))
 		});
 
 		if (deadTankIdx !== -1) {
@@ -279,7 +300,11 @@ export class TankRoom extends Room<GameRoomState> {
 			this.physicsState.winner = winner as 0 | 1;
 			this.state.phase = 'OVER';
 			this.state.winner = winner;
-			this.broadcast('phase_change', { phase: 'OVER', currentPlayer: this.physicsState.currentPlayer, winner });
+			this.broadcast('phase_change', {
+				phase: 'OVER',
+				currentPlayer: this.physicsState.currentPlayer,
+				winner
+			});
 			this.lock();
 		} else {
 			this.clock.setTimeout(() => this.nextTurn(), 600);
@@ -295,16 +320,25 @@ export class TankRoom extends Room<GameRoomState> {
 		this.state.phase = 'AIMING';
 		this.state.fuel = 100;
 		this.state.turnTimeLeft = 30;
-		this.broadcast('phase_change', { phase: 'AIMING', currentPlayer: this.physicsState.currentPlayer });
+		this.broadcast('phase_change', {
+			phase: 'AIMING',
+			currentPlayer: this.physicsState.currentPlayer
+		});
 	}
 
 	private broadcastGameUpdate() {
 		const ps = this.physicsState;
 		const proj = ps.projectile;
 		this.broadcast('game_update', {
-			tanks: ps.tanks.map(t => ({ ...t })),
+			tanks: ps.tanks.map((t) => ({ ...t })),
 			projectile: proj
-				? { active: true, x: proj.x, y: proj.y, typeIndex: proj.typeIndex, bouncesLeft: proj.bouncesLeft }
+				? {
+						active: true,
+						x: proj.x,
+						y: proj.y,
+						typeIndex: proj.typeIndex,
+						bouncesLeft: proj.bouncesLeft
+					}
 				: { active: false, x: 0, y: 0, typeIndex: 0, bouncesLeft: 0 },
 			turnTimeLeft: ps.turnTimeLeft,
 			power: ps.power,
