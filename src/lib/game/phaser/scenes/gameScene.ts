@@ -38,6 +38,7 @@ type GameUpdateData = {
 
 export default class GameScene extends Scene {
 	private room: Room<GameRoomState> | null = null;
+	private returningToLobby = false;
 	private myPlayerIndex: 0 | 1 = 0;
 	private myPlayerIndexSet = false;
 	private roomReady = false;
@@ -209,6 +210,21 @@ export default class GameScene extends Scene {
 	}
 
 	private async connectToServer() {
+		this.roomReady = false;
+		this.myPlayerIndexSet = false;
+		this.returningToLobby = false;
+		this.room = null;
+		this.tankSprites = null;
+		this.terrainView = null;
+		this.projView = null;
+		this.localGameData = null;
+		this.localTerrain = null;
+		this.clientTrail = [];
+		this.lastProjActive = false;
+		this.localPhase = '';
+		this.localCurrentPlayer = 0;
+		this.localWinner = -1;
+
 		try {
 			const client = new Client(COLYSEUS_URL);
 			const room = await client.joinOrCreate('tank_room') as unknown as Room<GameRoomState>;
@@ -219,10 +235,8 @@ export default class GameScene extends Scene {
 				terrain: TerrainState; tanks: [TankState, TankState];
 				fuel: number; weaponIndex: number; turnTimeLeft: number; power: number;
 			}) => {
-				if (!this.myPlayerIndexSet) {
-					this.myPlayerIndexSet = true;
-					this.myPlayerIndex = data.player0Id === room.sessionId ? 0 : 1;
-				}
+				this.myPlayerIndexSet = true;
+				this.myPlayerIndex = data.player0Id === room.sessionId ? 0 : 1;
 				this.localCurrentPlayer = data.currentPlayer;
 				this.localPhase = 'AIMING';
 				this.localTerrain = data.terrain;
@@ -235,12 +249,10 @@ export default class GameScene extends Scene {
 					fuel: data.fuel,
 					weaponIndex: data.weaponIndex
 				};
-				if (!this.roomReady) {
-					this.roomReady = true;
-					this.statusText.setVisible(false);
-					this.initViews();
-					this.showGameUI();
-				}
+				this.roomReady = true;
+				this.statusText.setVisible(false);
+				this.initViews();
+				this.showGameUI();
 			});
 
 			room.onMessage('game_update', (data: GameUpdateData) => {
@@ -269,7 +281,12 @@ export default class GameScene extends Scene {
 			});
 
 			room.onLeave.once(() => {
-				this.statusText.setText('Disconnected').setVisible(true);
+				if (this.returningToLobby) {
+					this.returningToLobby = false;
+					this.scene.restart();
+				} else {
+					this.statusText.setText('Disconnected').setVisible(true);
+				}
 			});
 
 			this.statusText.setText('Waiting for Player 2...');
@@ -280,6 +297,11 @@ export default class GameScene extends Scene {
 	}
 
 	private initViews() {
+		this.terrainView?.destroy();
+		this.tankSprites?.[0].destroy();
+		this.tankSprites?.[1].destroy();
+		this.projView?.destroy();
+
 		this.terrainView = new TerrainView(this);
 		this.terrainView.sync(this.localTerrain!);
 
@@ -548,8 +570,8 @@ export default class GameScene extends Scene {
 			.setDepth(21);
 
 		this.input.keyboard!.once('keydown-R', () => {
-			this.room?.send('restart');
-			this.scene.restart();
+			this.returningToLobby = true;
+			this.room?.leave();
 		});
 	}
 }

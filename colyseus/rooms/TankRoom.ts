@@ -63,10 +63,6 @@ export class TankRoom extends Room<GameRoomState> {
 			this.state.weaponIndex = this.physicsState.weaponIndex;
 		});
 
-		this.onMessage('restart', () => {
-			if (this.physicsState?.phase === 'OVER') this.initGame();
-		});
-
 		this.setSimulationInterval((dt) => this.tick(dt), 1000 / 60);
 	}
 
@@ -95,6 +91,7 @@ export class TankRoom extends Room<GameRoomState> {
 			this.state.phase = 'OVER';
 			this.state.winner = winner;
 			this.broadcast('phase_change', { phase: 'OVER', currentPlayer: this.physicsState.currentPlayer, winner });
+			this.lock();
 		}
 	}
 
@@ -283,6 +280,7 @@ export class TankRoom extends Room<GameRoomState> {
 			this.state.phase = 'OVER';
 			this.state.winner = winner;
 			this.broadcast('phase_change', { phase: 'OVER', currentPlayer: this.physicsState.currentPlayer, winner });
+			this.lock();
 		} else {
 			this.clock.setTimeout(() => this.nextTurn(), 600);
 		}
