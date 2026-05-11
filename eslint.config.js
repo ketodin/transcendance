@@ -31,7 +31,7 @@ export default defineConfig(
 			globals: { ...globals.browser, ...globals.node },
 			parserOptions: {
 				projectService: {
-					allowDefaultProject: ['*.config.js', '*.config.ts'],
+					allowDefaultProject: ['*.config.js', '*.config.ts', 'server.ts'],
 					defaultProject: 'tsconfig.json'
 				},
 				tsconfigRootDir: import.meta.dirname
@@ -43,14 +43,14 @@ export default defineConfig(
 		rules: { 'no-undef': 'off' }
 	},
 	{
-		files: ['colyseus/**/*.ts', 'server.ts'],
-		languageOptions: {
-			parserOptions: {
-				projectService: false,
-				project: './tsconfig.server.json',
-				tsconfigRootDir: import.meta.dirname
-			}
-		}
+    	files: ['colyseus/**/*.ts'],
+    	languageOptions: {
+        	parserOptions: {
+            	projectService: false,
+            	project: './tsconfig.server.json',
+            	tsconfigRootDir: import.meta.dirname
+        	}
+    	}
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],

@@ -32,6 +32,4 @@ jobs:
 
       - run: pnpm generate
 
-      - run: pnpm build:server
-
       - run: .github/scripts/ci/ci-lint-eslint.sh
