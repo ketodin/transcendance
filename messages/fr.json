@@ -1,4 +1,19 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hello, {name} from fr!"
+	"hello_world": "Hello, {name} from fr!",
+	"language_name": "Francais",
+	"language_selector_tag": "Langue:",
+	"login": "Connexion",
+	"register": "Inscription",
+	"play": "Jouer",
+	"chat": "Messages",
+	"rank": "Classement",
+	"privacy": "Politique de confidentialité",
+	"terms": "Conditions de service",
+	"online": "En ligne",
+
+	"name_place_holder": "Stephane",
+	"mail_place_holder": "stephane.travail@gmail.com",
+	"password": "Mot de passe",
+	"name": "Pseudo"
 }
