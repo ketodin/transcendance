@@ -1,6 +1,6 @@
-name: "feat — New feature"
+name: 'feat — New feature'
 description: New functionality visible in the product.
-labels: ["type: feat", "status: todo"]
+labels: ['type: feat', 'status: todo']
 body:
   - type: dropdown
     id: scope
@@ -30,6 +30,6 @@ body:
     attributes:
       label: Tasks
       description: Break the work into checkable steps.
-      value: "- [ ] "
+      value: '- [ ] '
     validations:
       required: true

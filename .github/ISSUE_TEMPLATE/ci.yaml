@@ -1,6 +1,6 @@
-name: "ci — CI / workflows"
-description: "CI pipelines, GitHub Actions, workflow changes."
-labels: ["type: ci", "status: todo"]
+name: 'ci — CI / workflows'
+description: 'CI pipelines, GitHub Actions, workflow changes.'
+labels: ['type: ci', 'status: todo']
 body:
   - type: dropdown
     id: scope
@@ -28,6 +28,6 @@ body:
     id: tasks
     attributes:
       label: Tasks
-      value: "- [ ] "
+      value: '- [ ] '
     validations:
       required: true

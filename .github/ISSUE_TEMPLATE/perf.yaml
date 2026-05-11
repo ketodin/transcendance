@@ -1,6 +1,6 @@
-name: "perf — Performance"
-description: "Performance improvement, particularly game loop and rendering."
-labels: ["type: perf", "status: todo"]
+name: 'perf — Performance'
+description: 'Performance improvement, particularly game loop and rendering.'
+labels: ['type: perf', 'status: todo']
 body:
   - type: dropdown
     id: scope
@@ -28,6 +28,6 @@ body:
     id: tasks
     attributes:
       label: Tasks
-      value: "- [ ] "
+      value: '- [ ] '
     validations:
       required: true
