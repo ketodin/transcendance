@@ -2,13 +2,13 @@
 	import { resolve } from '$app/paths';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { Crosshair, MessageSquare, BarChart2, Settings, User } from '@lucide/svelte';
-	import { m } from "$lib/paraglide/messages";
+	import { m } from '$lib/paraglide/messages';
 
 	const navItems = [
 		{ icon: Crosshair, label: m.play(), href: resolve('/game') },
 		{ icon: MessageSquare, label: m.chat(), href: resolve('/chat') },
 		{ icon: BarChart2, label: m.rank(), href: resolve('/rankings') },
-		{ icon: User, label: m.profile(), href: resolve('/profile') },
+		{ icon: User, label: m.profile(), href: resolve('/profile') }
 	];
 </script>
 
@@ -22,14 +22,17 @@
 				<Sidebar.Menu>
 					{#each navItems as item (item.href)}
 						<Sidebar.MenuItem>
-							<Sidebar.MenuButton asChild>
-								<a
-									href={item.href}
-									class="text-muted-foreground hover:text-foreground hover:bg-sidebar-accent mx-1 flex items-center gap-3 rounded-md px-4 py-2 text-sm transition-colors"
-								>
-									<item.icon class="h-4 w-4 shrink-0" />
-									<span>{item.label}</span>
-								</a>
+							<Sidebar.MenuButton>
+								{#snippet child({ props })}
+									<a
+										href={item.href}
+										{...props}
+										class="text-muted-foreground hover:text-foreground hover:bg-sidebar-accent mx-1 flex items-center gap-3 rounded-md px-4 py-2 text-sm transition-colors"
+									>
+										<item.icon class="h-4 w-4 shrink-0" />
+										<span>{item.label}</span>
+									</a>
+								{/snippet}
 							</Sidebar.MenuButton>
 						</Sidebar.MenuItem>
 					{/each}
@@ -48,7 +51,8 @@
 				</div>
 			</div>
 			<div class="min-w-0 flex-1">
-				<p class="truncate text-sm leading-none font-medium">Player</p> <!-- TODO: add real player name -->
+				<p class="truncate text-sm leading-none font-medium">Player</p>
+				<!-- TODO: add real player name -->
 				<div class="mt-1">
 					<span
 						class="inline-flex items-center gap-1 rounded-full bg-green-500/15 px-2 py-0.5 text-xs font-medium text-green-500"

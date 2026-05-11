@@ -18,13 +18,13 @@
 
 	type Locale = (typeof languages)[number]['code'];
 
-	let current = $state(getLocale() as Locale);
+	let current = $state(getLocale() satisfies Locale);
 
 	function cycleLanguage() {
 		const idx = languages.findIndex((l) => l.code === current);
 		const next = languages[(idx + 1) % languages.length];
 		current = next.code;
-		setLocale(current);
+		void setLocale(current);
 	}
 
 	const currentLang = $derived(languages.find((l) => l.code === current) ?? languages[0]);
@@ -111,7 +111,6 @@
 			</div>
 
 			<div class="bg-border hidden h-6 w-px md:block"></div>
-
 			<Button onclick={cycleLanguage} variant="outline" size="icon" class="relative shrink-0">
 				{#each languages as lang (lang.code)}
 					<span

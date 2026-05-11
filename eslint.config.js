@@ -16,9 +16,10 @@ export default defineConfig(
 		ignores: [
 			'.github/',
 			'src/lib/components/ui/',
+			'src/lib/paraglide/',
 			'*.config.js',
-			'*.config.ts',
-		],
+			'*.config.ts'
+		]
 	},
 	js.configs.recommended,
 	ts.configs.recommendedTypeChecked,
@@ -31,15 +32,15 @@ export default defineConfig(
 			parserOptions: {
 				projectService: {
 					allowDefaultProject: ['*.config.js', '*.config.ts'],
-					defaultProject: 'tsconfig.json',
+					defaultProject: 'tsconfig.json'
 				},
-				tsconfigRootDir: import.meta.dirname,
-			},
+				tsconfigRootDir: import.meta.dirname
+			}
 		},
 		linterOptions: { reportUnusedDisableDirectives: true },
 		// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
 		// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
-		rules: { 'no-undef': 'off' },
+		rules: { 'no-undef': 'off' }
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
@@ -49,15 +50,15 @@ export default defineConfig(
 				extraFileExtensions: ['.svelte'],
 				parser: ts.parser,
 				svelteConfig
-			},
-		},
+			}
+		}
 	},
 	{
 		// Override or add rule settings here, such as:
 		// 'svelte/button-has-type': 'error'
 		rules: {
 			'svelte/no-top-level-browser-globals': 'error',
-			'svelte/block-lang': [ 'error', { 'script': ['ts'] } ]
+			'svelte/block-lang': ['error', { script: ['ts'] }]
 		}
 	}
 );
