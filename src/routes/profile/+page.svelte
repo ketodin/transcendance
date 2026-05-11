@@ -9,8 +9,8 @@
 
 	const { data }: PageProps = $props();
 
-	const form = superForm(data.form, { validators: zod4Client(formSchema) });
-	const { form: formData, enhance } = form;
+	const form = $derived(superForm(data.form, { validators: zod4Client(formSchema) }));
+	const { form: formData, enhance } = $derived(form);
 
 	const profiles = $derived(data.profiles.sort((a, b) => b.xp - a.xp));
 </script>
