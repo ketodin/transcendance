@@ -31,7 +31,7 @@ export default defineConfig(
 			globals: { ...globals.browser, ...globals.node },
 			parserOptions: {
 				projectService: {
-					allowDefaultProject: ['*.config.js', '*.config.ts', 'server.ts'],
+					allowDefaultProject: ['*.config.js', '*.config.ts'],
 					defaultProject: 'tsconfig.json'
 				},
 				tsconfigRootDir: import.meta.dirname
@@ -43,7 +43,7 @@ export default defineConfig(
 		rules: { 'no-undef': 'off' }
 	},
 	{
-		files: ['colyseus/**/*.ts'],
+		files: ['colyseus/**/*.ts', 'server.ts'],
 		languageOptions: {
 			parserOptions: {
 				projectService: false,
