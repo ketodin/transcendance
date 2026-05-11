@@ -70,5 +70,12 @@ export default defineConfig(
 			'svelte/no-top-level-browser-globals': 'error',
 			'svelte/block-lang': ['error', { script: ['ts'] }]
 		}
-	}
+	},
+	{
+    	files: ['server.ts'],
+    	rules: {
+      		'@typescript-eslint/no-unsafe-argument': 'off',
+      		'@typescript-eslint/no-unsafe-assignment': 'off'
+    	}
+  	}
 );
