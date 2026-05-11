@@ -8,6 +8,7 @@
 	"play": "Play",
 	"chat": "Messages",
 	"rank": "Ranking",
+	"profile": "Profile",
 	"privacy": "Privacy Policy",
 	"terms": "Terms of Service",
 	"online": "Online",
@@ -15,5 +16,8 @@
 	"name_place_holder": "Steve",
 	"mail_place_holder": "steve.jobs@gmail.com",
 	"password": "Password",
-	"name": "Username"
+	"name": "Username",
+
+	"terms_of_service": "Terms of Service\nTranscendence Online Service\n\nLast updated: May 11, 2026\n\n1. Overview\nYou agree to use this service responsibly and in accordance with these terms.\n\n2. Eligibility\nYou must be at least 13 years old and comply with all applicable laws in your jurisdiction.\n\n3. User Rules\nYou agree not to cheat, exploit bugs, harass other users, or misuse the platform in any way.\n\n4. Accounts\nYou are responsible for maintaining the security of your account and all activity under it.\n\n5. Termination\nWe reserve the right to suspend or terminate access at any time in case of violation of these terms.\n\n6. Disclaimer\nThe service is provided \"as-is\" without warranties of any kind. We are not liable for any data loss or damages resulting from use of the service.\n\n7. Acceptance\nBy continuing to use the service, you agree to these terms.\n"
 }
+

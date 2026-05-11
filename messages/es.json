@@ -8,6 +8,7 @@
 	"play": "Jugar",
 	"chat": "Mensajes",
 	"rank": "Clasificación",
+	"profile": "Profilo",
 	"privacy": "Política de privacidad",
 	"terms": "Términos de servicio",
 	"online": "En línea",
@@ -15,5 +16,7 @@
 	"name_place_holder": "Esteban",
 	"mail_place_holder": "esteban.trabajos@gmail.com",
 	"password": "Contraseña",
-	"name": "Nombre de usuario"
+	"name": "Nombre de usuario",
+
+	"terms_of_service": "Términos de servicio\nServicio en línea Transcendence\n\nÚltima actualización: 11 de mayo de 2026\n\n1. Descripción\nAceptas usar este servicio de forma responsable y de acuerdo con estos términos.\n\n2. Elegibilidad\nDebes tener al menos 13 años y cumplir las leyes aplicables.\n\n3. Reglas de uso\nNo se permite hacer trampas, explotar errores, acosar o abusar del servicio.\n\n4. Cuentas\nEres responsable de tu cuenta y de toda actividad realizada en ella.\n\n5. Terminación\nEl acceso puede ser suspendido o eliminado en cualquier momento por incumplimiento.\n\n6. Descargo de responsabilidad\nEl servicio se proporciona tal cual, sin garantías. No somos responsables de pérdidas o daños.\n\n7. Aceptación\nEl uso del servicio implica la aceptación de estos términos.\n"
 }

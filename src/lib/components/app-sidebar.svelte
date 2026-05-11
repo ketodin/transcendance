@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { Crosshair, MessageSquare, BarChart2, Settings } from '@lucide/svelte';
+	import { Crosshair, MessageSquare, BarChart2, Settings, User } from '@lucide/svelte';
 	import { m } from "$lib/paraglide/messages";
 
 	const navItems = [
 		{ icon: Crosshair, label: m.play(), href: resolve('/game') },
 		{ icon: MessageSquare, label: m.chat(), href: resolve('/chat') },
-		{ icon: BarChart2, label: m.rank(), href: resolve('/rankings') }
+		{ icon: BarChart2, label: m.rank(), href: resolve('/rankings') },
+		{ icon: User, label: m.profile(), href: resolve('/profile') },
 	];
 </script>
 
