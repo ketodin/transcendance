@@ -72,10 +72,10 @@ export default defineConfig(
 		}
 	},
 	{
-    	files: ['server.ts'],
-    	rules: {
-      		'@typescript-eslint/no-unsafe-argument': 'off',
-      		'@typescript-eslint/no-unsafe-assignment': 'off'
-    	}
-  	}
+		files: ['server.ts'],
+		rules: {
+			'@typescript-eslint/no-unsafe-argument': 'off',
+			'@typescript-eslint/no-unsafe-assignment': 'off'
+		}
+	}
 );
