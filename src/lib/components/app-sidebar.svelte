@@ -1,13 +1,15 @@
 <script lang="ts">
-	  import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	  import { Crosshair, MessageSquare, BarChart2, Settings, User } from '@lucide/svelte';
-  	import { m } from "$lib/paraglide/messages";
-  	const navItems = [
-	  	{ icon: Crosshair, label: m.play(), href: '/game' },
-	  	{ icon: MessageSquare, label: m.chat(), href: '/chat' },
-		  { icon: BarChart2, label: m.rank(), href: '/rankings' },
-		  { icon: User, label: m.profile(), href: '/profile' },
-	  ];
+	import { resolve } from '$app/paths';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { Crosshair, MessageSquare, BarChart2, Settings, User } from '@lucide/svelte';
+	import { m } from "$lib/paraglide/messages";
+
+	const navItems = [
+		{ icon: Crosshair, label: m.play(), href: resolve('/game') },
+		{ icon: MessageSquare, label: m.chat(), href: resolve('/chat') },
+		{ icon: BarChart2, label: m.rank(), href: resolve('/rankings') },
+		{ icon: User, label: m.profile(), href: resolve('/profile') },
+	];
 </script>
 
 <Sidebar.Root
@@ -18,7 +20,7 @@
 		<Sidebar.Group>
 			<Sidebar.GroupContent>
 				<Sidebar.Menu>
-					{#each navItems as item}
+					{#each navItems as item (item.href)}
 						<Sidebar.MenuItem>
 							<Sidebar.MenuButton asChild>
 								<a

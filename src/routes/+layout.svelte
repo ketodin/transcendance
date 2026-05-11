@@ -18,6 +18,7 @@
 			<div class="flex min-h-[calc(100vh-64px)] w-full">
 				<AppSidebar />
 				<main class="w-full flex-1 px-4 py-8">
+					<!-- eslint-disable-next-line @typescript-eslint/no-unsafe-call -->
 					{@render children?.()}
 				</main>
 			</div>
