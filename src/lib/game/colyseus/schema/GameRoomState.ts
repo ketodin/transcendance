@@ -1,7 +1,7 @@
 import { Schema, defineTypes } from '@colyseus/schema';
-import { TankSchema } from './TankSchema';
-import { TerrainSchema } from './TerrainSchema';
-import { ProjectileSchema } from './ProjectileSchema';
+import { TankSchema } from './TankSchema.js';
+import { TerrainSchema } from './TerrainSchema.js';
+import { ProjectileSchema } from './ProjectileSchema.js';
 
 export class GameRoomState extends Schema {
 	phase: string = 'WAITING';
