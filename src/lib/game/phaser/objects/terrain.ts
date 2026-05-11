@@ -13,7 +13,7 @@ export class Terrain {
 	constructor(scene: Scene) {
 		this.scene = scene;
 		this.cols = Math.ceil(scene.scale.width / RESOLUTION);
-		this.heights = new Array(this.cols);
+		this.heights = new Array<number>(this.cols);
 		this.floorY = scene.scale.height - FLOOR_MARGIN;
 		this.generate();
 		this.graphics = scene.add.graphics();
