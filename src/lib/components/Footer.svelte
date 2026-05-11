@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { m } from "$lib/paraglide/messages";
 </script>
 
 <footer class="bg-background border-t">
