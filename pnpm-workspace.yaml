@@ -1,6 +1,0 @@
-onlyBuiltDependencies:
-  - '@prisma/engines'
-  - better-sqlite3
-  - esbuild
-  - msgpackr-extract
-  - prisma
