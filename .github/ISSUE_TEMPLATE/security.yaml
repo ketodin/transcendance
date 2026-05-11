@@ -1,6 +1,6 @@
-name: "security — Security"
-description: "Auth, JWT, OAuth, 2FA, session, input validation."
-labels: ["type: security", "status: todo"]
+name: 'security — Security'
+description: 'Auth, JWT, OAuth, 2FA, session, input validation.'
+labels: ['type: security', 'status: todo']
 body:
   - type: dropdown
     id: scope
@@ -28,6 +28,6 @@ body:
     id: tasks
     attributes:
       label: Tasks
-      value: "- [ ] "
+      value: '- [ ] '
     validations:
       required: true
