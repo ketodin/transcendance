@@ -43,14 +43,14 @@ export default defineConfig(
 		rules: { 'no-undef': 'off' }
 	},
 	{
-    	files: ['colyseus/**/*.ts'],
-    	languageOptions: {
-        	parserOptions: {
-            	projectService: false,
-            	project: './tsconfig.server.json',
-            	tsconfigRootDir: import.meta.dirname
-        	}
-    	}
+		files: ['colyseus/**/*.ts'],
+		languageOptions: {
+			parserOptions: {
+				projectService: false,
+				project: './tsconfig.server.json',
+				tsconfigRootDir: import.meta.dirname
+			}
+		}
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
