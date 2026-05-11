@@ -7,24 +7,24 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import { m } from "$lib/paraglide/messages.js";
+	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime';
 
 	const languages = [
 		{ code: 'fr', flag: '🇫🇷', label: 'FR' },
 		{ code: 'en', flag: '🇬🇧', label: 'EN' },
-		{ code: 'es', flag: '🇪🇸', label: 'ES' },
+		{ code: 'es', flag: '🇪🇸', label: 'ES' }
 	] as const;
 
 	type Locale = (typeof languages)[number]['code'];
 
-	let current = $state(getLocale() as Locale);
+	let current = $state(getLocale() satisfies Locale);
 
 	function cycleLanguage() {
 		const idx = languages.findIndex((l) => l.code === current);
 		const next = languages[(idx + 1) % languages.length];
 		current = next.code;
-		setLocale(current);
+		void setLocale(current);
 	}
 
 	const currentLang = $derived(languages.find((l) => l.code === current) ?? languages[0]);
@@ -39,7 +39,7 @@
 					<Dialog.Trigger
 						class="bg-card text-card-foreground hover:bg-accent cursor-pointer rounded-lg border px-4 py-2 text-sm font-medium shadow-sm transition-colors"
 					>
-							{m.login()}
+						{m.login()}
 					</Dialog.Trigger>
 					<Dialog.Content class="sm:max-w-[425px]">
 						<Dialog.Header>
@@ -62,7 +62,7 @@
 					<Dialog.Trigger
 						class="bg-primary text-primary-foreground cursor-pointer rounded-lg border px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:opacity-90"
 					>
-  						{m.register()}
+						{m.register()}
 					</Dialog.Trigger>
 					<Dialog.Content class="sm:max-w-[425px]">
 						<Dialog.Header>
@@ -87,13 +87,11 @@
 				</Dialog.Root>
 			</div>
 			<div class="bg-border hidden h-6 w-px md:block"></div>
-			<Button onclick={cycleLanguage} variant="outline" size="icon" class="shrink-0 relative">
+			<Button onclick={cycleLanguage} variant="outline" size="icon" class="relative shrink-0">
 				{#each languages as lang (lang.code)}
 					<span
 						class="absolute transition-all duration-300
-							{lang.code === currentLang.code
-							? 'scale-100 rotate-0 opacity-100'
-							: 'scale-0 rotate-90 opacity-0'}"
+							{lang.code === currentLang.code ? 'scale-100 rotate-0 opacity-100' : 'scale-0 rotate-90 opacity-0'}"
 					>
 						{lang.flag}
 					</span>

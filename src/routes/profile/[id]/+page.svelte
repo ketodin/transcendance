@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { Button } from "$lib/components/ui/button";
-	import { ArrowLeftIcon } from "@lucide/svelte";
-	import { resolve } from "$app/paths";
-	import { enhance } from "$app/forms";
-	import type { PageProps } from "./$types";
+	import { Button } from '$lib/components/ui/button';
+	import { ArrowLeftIcon } from '@lucide/svelte';
+	import { resolve } from '$app/paths';
+	import { enhance } from '$app/forms';
+	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 	const profile = $derived(data.profile);
 </script>
 
 <div class="flex flex-col gap-16">
-		<a href={resolve('/profile')}>
-			<Button variant="outline" size="icon">
-				<ArrowLeftIcon />
-			</Button>
-		</a>
+	<a href={resolve('/profile')}>
+		<Button variant="outline" size="icon">
+			<ArrowLeftIcon />
+		</Button>
+	</a>
 
 	<div class="flex flex-col">
 		<p class="text-xl font-bold">id: {profile.id}</p>
