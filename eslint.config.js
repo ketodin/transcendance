@@ -50,32 +50,15 @@ export default defineConfig(
 				extraFileExtensions: ['.svelte'],
 				parser: ts.parser,
 				svelteConfig
-			}
-		}
-	},
-	{
-		// no-unsafe-call disabled for layout.svelte: ModeWatcher is imported from an external
-		// .svelte file and typescript-eslint cannot resolve types across that boundary.
-		// Tracked upstream: https://github.com/sveltejs/svelte/issues/16264
-		files: ['src/routes/+layout.svelte'],
-		rules: {
-			'@typescript-eslint/no-unsafe-call': 'off'
-		}
-	},
-	{
-		// no-unsafe-* disabled for hooks.server.ts: paraglideMiddleware types from
-		// @inlang/paraglide-js are not fully resolved by typescript-eslint's projectService.
-		files: ['src/hooks.server.ts'],
-		rules: {
-			'@typescript-eslint/no-unsafe-return': 'off',
-			'@typescript-eslint/no-unsafe-call': 'off',
-			'@typescript-eslint/no-unsafe-assignment': 'off',
-			'@typescript-eslint/no-unsafe-argument': 'off'
-		}
+			},
+		},
 	},
 	{
 		// Override or add rule settings here, such as:
 		// 'svelte/button-has-type': 'error'
-		rules: {}
+		rules: {
+			'svelte/no-top-level-browser-globals': 'error',
+			'svelte/block-lang': [ 'error', { 'script': ['ts'] } ]
+		}
 	}
 );
