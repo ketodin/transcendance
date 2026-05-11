@@ -53,15 +53,6 @@ export default defineConfig(
 		},
 	},
 	{
-		// no-unsafe-call disabled for layout.svelte: ModeWatcher is imported from an external
-		// .svelte file and typescript-eslint cannot resolve types across that boundary.
-		// Tracked upstream: https://github.com/sveltejs/svelte/issues/16264
-		files: ['src/routes/+layout.svelte'],
-		rules: {
-			'@typescript-eslint/no-unsafe-call': 'off',
-		},
-	},
-	{
 		// Override or add rule settings here, such as:
 		// 'svelte/button-has-type': 'error'
 		rules: {
