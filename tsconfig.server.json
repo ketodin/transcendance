@@ -5,6 +5,8 @@
 		"moduleResolution": "NodeNext",
 		"outDir": "build-server",
 		"rootDir": ".",
+		"declaration": true,
+		"emitDeclarationOnly": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"skipLibCheck": true,
