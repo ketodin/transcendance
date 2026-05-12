@@ -101,7 +101,7 @@
 			<div class="bg-border hidden h-6 w-px md:block"></div>
 
 			<Popover.Root>
-				<Popover.Trigger asChild>
+				<Popover.Trigger>
 					<Button variant="outline" size="icon" class="shrink-0">
 						{currentLang.flag}
 					</Button>
