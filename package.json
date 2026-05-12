@@ -9,7 +9,7 @@
 		"dev:all": "concurrently \"pnpm run dev\" \"pnpm run dev:server\"",
 		"build": "vite build",
 		"build:server": "tsc --project tsconfig.server.json",
-		"start": "node build-server/server.js",
+		"start": "node build-server/server/index.cjs",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"generate": "pnpm run db:generate && pnpm exec paraglide-js compile --project ./.inlang --outdir ./src/lib/paraglide && svelte-kit sync",
@@ -65,9 +65,7 @@
 		"typescript": "^6.0.2",
 		"typescript-eslint": "^8.58.1",
 		"vite": "^8.0.7",
-		"zod": "^4.4.3"
-	},
-	"dependencies": {
+		"zod": "^4.4.3",
 		"@colyseus/schema": "^2.0.37",
 		"colyseus": "^0.15.57",
 		"colyseus.js": "^0.15.28",
