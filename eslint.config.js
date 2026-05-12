@@ -43,7 +43,7 @@ export default defineConfig(
 		rules: { 'no-undef': 'off' }
 	},
 	{
-		files: ['server/**/*.ts'],
+		files: ['server/**/*.cts'],
 		languageOptions: {
 			parserOptions: {
 				projectService: false,
