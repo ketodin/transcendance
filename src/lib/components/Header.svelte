@@ -7,6 +7,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime';
 
@@ -62,7 +63,11 @@
 							</div>
 
 							<div class="flex items-center gap-2 text-sm">
-								<input id="show-login-password" type="checkbox" bind:checked={showPassword} />
+								<Checkbox
+									id="show-login-password"
+									checked={showPassword}
+									onCheckedChange={(v) => (showPassword = !!v)}
+								/>
 								<Label for="show-login-password">{m.show_password()}</Label>
 							</div>
 
@@ -100,7 +105,11 @@
 							</div>
 
 							<div class="flex items-center gap-2 text-sm">
-								<input id="show-register-password" type="checkbox" bind:checked={showPassword} />
+								<Checkbox
+									id="show-register-password"
+									checked={showPassword}
+									onCheckedChange={(v) => (showPassword = !!v)}
+								/>
 								<Label for="show-register-password">{m.show_password()}</Label>
 							</div>
 
@@ -115,7 +124,7 @@
 				{#each languages as lang (lang.code)}
 					<span
 						class="absolute transition-all duration-300
-						{lang.code === currentLang.code ? 'scale-100 rotate-0 opacity-100' : 'scale-0 rotate-90 opacity-0'}"
+					{lang.code === currentLang.code ? 'scale-100 rotate-0 opacity-100' : 'scale-0 rotate-90 opacity-0'}"
 					>
 						{lang.flag}
 					</span>
