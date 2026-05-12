@@ -5,25 +5,24 @@
 	import { toggleMode } from 'mode-watcher';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime';
 
 	const languages = [
-		{ code: 'fr', flag: '🇫🇷', label: 'FR' },
-		{ code: 'en', flag: '🇬🇧', label: 'EN' },
-		{ code: 'es', flag: '🇪🇸', label: 'ES' }
+		{ code: 'fr', flag: '🇫🇷', label: 'Français' },
+		{ code: 'en', flag: '🇬🇧', label: 'English' },
+		{ code: 'es', flag: '🇪🇸', label: 'Español' }
 	] as const;
 
 	type Locale = (typeof languages)[number]['code'];
 
 	let current = $state(getLocale() satisfies Locale);
 
-	function cycleLanguage() {
-		const idx = languages.findIndex((l) => l.code === current);
-		const next = languages[(idx + 1) % languages.length];
-		current = next.code;
+	function selectLanguage(code: Locale) {
+		current = code;
 		void setLocale(current);
 	}
 
@@ -44,28 +43,23 @@
 					>
 						{m.login()}
 					</Dialog.Trigger>
-
 					<Dialog.Content class="sm:max-w-[425px]">
 						<Dialog.Header>
 							<Dialog.Title class="text-2xl">{m.login()}</Dialog.Title>
 						</Dialog.Header>
-
 						<form onsubmit={(e) => e.preventDefault()} class="grid gap-4 py-4">
 							<div class="grid gap-2">
 								<Label for="login-email">Email</Label>
 								<Input id="login-email" type="email" placeholder={m.mail_place_holder()} />
 							</div>
-
 							<div class="grid gap-2">
 								<Label for="login-password">{m.password()}</Label>
 								<Input id="login-password" type={showPassword ? 'text' : 'password'} />
 							</div>
-
 							<div class="flex items-center gap-2 text-sm">
 								<input id="show-login-password" type="checkbox" bind:checked={showPassword} />
 								<Label for="show-login-password">{m.show_password()}</Label>
 							</div>
-
 							<Button type="submit" class="mt-2 w-full">{m.login()}</Button>
 						</form>
 					</Dialog.Content>
@@ -77,33 +71,27 @@
 					>
 						{m.register()}
 					</Dialog.Trigger>
-
 					<Dialog.Content class="sm:max-w-[425px]">
 						<Dialog.Header>
 							<Dialog.Title class="text-2xl">{m.register()}</Dialog.Title>
 						</Dialog.Header>
-
 						<form onsubmit={(e) => e.preventDefault()} class="grid gap-4 py-4">
 							<div class="grid gap-2">
 								<Label for="reg-name">{m.name()}</Label>
 								<Input id="reg-name" placeholder={m.name_place_holder()} />
 							</div>
-
 							<div class="grid gap-2">
 								<Label for="reg-email">Email</Label>
 								<Input id="reg-email" type="email" placeholder={m.mail_place_holder()} />
 							</div>
-
 							<div class="grid gap-2">
 								<Label for="reg-password">{m.password()}</Label>
 								<Input id="reg-password" type={showPassword ? 'text' : 'password'} />
 							</div>
-
 							<div class="flex items-center gap-2 text-sm">
 								<input id="show-register-password" type="checkbox" bind:checked={showPassword} />
 								<Label for="show-register-password">{m.show_password()}</Label>
 							</div>
-
 							<Button type="submit" class="mt-2 w-full">{m.register()}</Button>
 						</form>
 					</Dialog.Content>
@@ -111,16 +99,29 @@
 			</div>
 
 			<div class="bg-border hidden h-6 w-px md:block"></div>
-			<Button onclick={cycleLanguage} variant="outline" size="icon" class="relative shrink-0">
-				{#each languages as lang (lang.code)}
-					<span
-						class="absolute transition-all duration-300
-						{lang.code === currentLang.code ? 'scale-100 rotate-0 opacity-100' : 'scale-0 rotate-90 opacity-0'}"
-					>
-						{lang.flag}
-					</span>
-				{/each}
-			</Button>
+
+			<Popover.Root>
+				<Popover.Trigger asChild>
+					<Button variant="outline" size="icon" class="shrink-0">
+						{currentLang.flag}
+					</Button>
+				</Popover.Trigger>
+				<Popover.Content class="w-36 p-1" align="end">
+					{#each languages as lang (lang.code)}
+						<button
+							onclick={() => selectLanguage(lang.code)}
+							class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors
+								{lang.code === current ? 'bg-accent font-medium' : 'hover:bg-accent'}"
+						>
+							<span>{lang.flag}</span>
+							<span>{lang.label}</span>
+							{#if lang.code === current}
+								<span class="ml-auto text-xs">✓</span>
+							{/if}
+						</button>
+					{/each}
+				</Popover.Content>
+			</Popover.Root>
 
 			<div class="bg-border hidden h-6 w-px md:block"></div>
 
