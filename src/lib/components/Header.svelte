@@ -63,10 +63,7 @@
 							</div>
 
 							<div class="flex items-center gap-2 text-sm">
-								<Checkbox
-									id="show-login-password"
-									bind:checked={showPassword}
-								/>
+								<Checkbox id="show-login-password" bind:checked={showPassword} />
 								<Label for="show-login-password">{m.show_password()}</Label>
 							</div>
 
@@ -104,10 +101,7 @@
 							</div>
 
 							<div class="flex items-center gap-2 text-sm">
-								<Checkbox
-									id="show-register-password"
-									bind:checked={showPassword}
-								/>
+								<Checkbox id="show-register-password" bind:checked={showPassword} />
 								<Label for="show-register-password">{m.show_password()}</Label>
 							</div>
 
