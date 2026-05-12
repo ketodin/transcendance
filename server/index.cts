@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import { Server } from 'colyseus';
-import { TankRoom } from './rooms/TankRoom.js';
+import { TankRoom } from './rooms/TankRoom.cjs';
 
 const port = Number(process.env.COLYSEUS_PORT) || 2567;
 
