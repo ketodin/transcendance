@@ -70,7 +70,7 @@
 		"colyseus": "^0.15.57",
 		"colyseus.js": "^0.15.28",
 		"concurrently": "^9.2.1",
-		"express": "^5.2.1",
+		"express": "^4.21.2",
 		"@prisma/adapter-better-sqlite3": "^7.8.0"
 	},
 	"packageManager": "pnpm@10.33.0"
