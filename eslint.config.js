@@ -43,7 +43,7 @@ export default defineConfig(
 		rules: { 'no-undef': 'off' }
 	},
 	{
-		files: ['colyseus/**/*.ts'],
+		files: ['server/**/*.ts'],
 		languageOptions: {
 			parserOptions: {
 				projectService: false,

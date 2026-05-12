@@ -11,5 +11,5 @@
 		"strict": true,
 		"sourceMap": true
 	},
-	"include": ["colyseus/**/*", "src/lib/game/shared/**/*", "src/lib/game/colyseus/**/*"]
+	"include": ["server/**/*", "src/lib/game/shared/**/*", "src/lib/game/colyseus/**/*"]
 }
