@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"dev:server": "tsx watch server/index.ts",
+		"dev:server": "tsx watch server/index.cts",
 		"dev:all": "concurrently \"pnpm run dev\" \"pnpm run dev:server\"",
 		"build": "vite build",
 		"build:server": "tsc --project tsconfig.server.json",
