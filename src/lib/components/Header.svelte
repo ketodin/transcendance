@@ -65,8 +65,7 @@
 							<div class="flex items-center gap-2 text-sm">
 								<Checkbox
 									id="show-login-password"
-									checked={showPassword}
-									onCheckedChange={(v) => (showPassword = !!v)}
+									bind:checked={showPassword}
 								/>
 								<Label for="show-login-password">{m.show_password()}</Label>
 							</div>
@@ -107,8 +106,7 @@
 							<div class="flex items-center gap-2 text-sm">
 								<Checkbox
 									id="show-register-password"
-									checked={showPassword}
-									onCheckedChange={(v) => (showPassword = !!v)}
+									bind:checked={showPassword}
 								/>
 								<Label for="show-register-password">{m.show_password()}</Label>
 							</div>
