@@ -22,6 +22,7 @@
 		"db:studio": "prisma studio"
 	},
 	"devDependencies": {
+		"@better-auth/prisma-adapter": "^1.6.11",
 		"@eslint/compat": "^2.0.4",
 		"@eslint/js": "^10.0.1",
 		"@fontsource-variable/inter": "^5.2.8",
@@ -35,6 +36,7 @@
 		"@tailwindcss/vite": "^4.2.4",
 		"@types/better-sqlite3": "^7.6.13",
 		"@types/node": "^24",
+		"better-auth": "^1.6.11",
 		"bits-ui": "^2.18.0",
 		"clsx": "^2.1.1",
 		"eslint": "^10.2.0",
