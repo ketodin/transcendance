@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { superValidate, fail } from 'sveltekit-superforms';
+import { superValidate, setError, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth } from '$lib/server/auth';
 import { formSchema } from './schema';
@@ -23,6 +23,7 @@ export const actions: Actions = {
 			});
 		} catch (error) {
 			console.error(error);
+			return setError(form, 'email', 'Email already in use');
 		}
 
 		return redirect(303, '/');
