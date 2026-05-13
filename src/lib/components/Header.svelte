@@ -3,6 +3,7 @@
 	import SunIcon from '@lucide/svelte/icons/sun';
 	import MoonIcon from '@lucide/svelte/icons/moon';
 	import { toggleMode } from 'mode-watcher';
+	import { buttonVariants } from "$lib/components/ui/button/index.js";
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
@@ -101,10 +102,9 @@
 			<div class="bg-border hidden h-6 w-px md:block"></div>
 
 			<Popover.Root>
-				<Popover.Trigger>
-					<Button variant="outline" size="icon" class="shrink-0">
+				<!-- eslint-disable-next-line @typescript-eslint/no-unsafe-call -->
+				<Popover.Trigger class={buttonVariants({ variant: "outline" })}>
 						{currentLang.flag}
-					</Button>
 				</Popover.Trigger>
 				<Popover.Content class="w-36 p-1" align="end">
 					{#each languages as lang (lang.code)}
