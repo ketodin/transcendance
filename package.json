@@ -12,7 +12,7 @@
 		"start": "node build-server/server/index.cjs",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
-		"generate": "pnpm run db:generate && pnpm exec paraglide-js compile --project ./.inlang --outdir ./src/lib/paraglide && svelte-kit sync",
+		"generate": "svelte-kit sync && pnpm run db:generate && pnpm exec paraglide-js compile --project ./.inlang --outdir ./src/lib/paraglide",
 		"lint:prettier": "prettier --check .",
 		"lint:eslint": "eslint .",
 		"lint:prisma": "prisma format --check",
