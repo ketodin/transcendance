@@ -10,6 +10,10 @@ export class TerrainView {
 		this.graphics = scene.add.graphics();
 	}
 
+	destroy(): void {
+		this.graphics.destroy();
+	}
+
 	sync(terrain: TerrainState): void {
 		const { heights, cols, floorY, sceneWidth, sceneHeight } = terrain;
 		this.graphics.clear();

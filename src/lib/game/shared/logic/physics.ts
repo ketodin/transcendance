@@ -1,8 +1,8 @@
-import { type ProjectileState } from '../state/ProjectileState';
-import { type TerrainState } from '../state/TerrainState';
-import { type TankState } from '../state/TankState';
-import { PROJECTILE_TYPES } from '../projectileTypes';
-import { getHeightAt } from './terrain';
+import { type ProjectileState } from '../state/ProjectileState.js';
+import { type TerrainState } from '../state/TerrainState.js';
+import { type TankState } from '../state/TankState.js';
+import { PROJECTILE_TYPES } from '../projectileTypes.js';
+import { getHeightAt } from './terrain.js';
 
 const TRAIL_LENGTH = 35;
 const TANK_HIT_RADIUS = 30;
