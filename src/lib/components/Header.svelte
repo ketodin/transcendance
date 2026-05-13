@@ -3,12 +3,13 @@
 	import SunIcon from '@lucide/svelte/icons/sun';
 	import MoonIcon from '@lucide/svelte/icons/moon';
 	import { toggleMode } from 'mode-watcher';
-	import { buttonVariants } from "$lib/components/ui/button/index.js";
+	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime';
 
@@ -58,7 +59,7 @@
 								<Input id="login-password" type={showPassword ? 'text' : 'password'} />
 							</div>
 							<div class="flex items-center gap-2 text-sm">
-								<input id="show-login-password" type="checkbox" bind:checked={showPassword} />
+								<Checkbox id="show-login-password" bind:checked={showPassword} />
 								<Label for="show-login-password">{m.show_password()}</Label>
 							</div>
 							<Button type="submit" class="mt-2 w-full">{m.login()}</Button>
@@ -90,7 +91,7 @@
 								<Input id="reg-password" type={showPassword ? 'text' : 'password'} />
 							</div>
 							<div class="flex items-center gap-2 text-sm">
-								<input id="show-register-password" type="checkbox" bind:checked={showPassword} />
+								<Checkbox id="show-register-password" bind:checked={showPassword} />
 								<Label for="show-register-password">{m.show_password()}</Label>
 							</div>
 							<Button type="submit" class="mt-2 w-full">{m.register()}</Button>
@@ -103,8 +104,8 @@
 
 			<Popover.Root>
 				<!-- eslint-disable-next-line @typescript-eslint/no-unsafe-call -->
-				<Popover.Trigger class={buttonVariants({ variant: "outline" })}>
-						{currentLang.flag}
+				<Popover.Trigger class={buttonVariants({ variant: 'outline' })}>
+					{currentLang.flag}
 				</Popover.Trigger>
 				<Popover.Content class="w-36 p-1" align="end">
 					{#each languages as lang (lang.code)}
