@@ -1,4 +1,4 @@
-import { type TerrainState } from '../state/TerrainState';
+import { type TerrainState } from '../state/TerrainState.js';
 
 const RESOLUTION = 3;
 const FLOOR_MARGIN = 40;

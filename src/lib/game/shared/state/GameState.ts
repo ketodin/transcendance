@@ -1,6 +1,6 @@
-import { type TankState } from './TankState';
-import { type TerrainState } from './TerrainState';
-import { type ProjectileState } from './ProjectileState';
+import { type TankState } from './TankState.js';
+import { type TerrainState } from './TerrainState.js';
+import { type ProjectileState } from './ProjectileState.js';
 
 export type TurnPhase = 'AIMING' | 'CHARGING' | 'FLYING' | 'OVER';
 
