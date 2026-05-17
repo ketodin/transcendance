@@ -30,7 +30,7 @@ type InputState = {
 	aimDown: boolean;
 };
 
-export class TankRoom extends Room<GameRoomState> {
+export class TankRoom extends Room<{ state: GameRoomState }> {
 	private physicsState!: GameState;
 	private inputs = new Map<string, InputState>();
 	private tickCount = 0;
