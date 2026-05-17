@@ -60,16 +60,16 @@ TypeScript strict mode is enabled. Key `tsconfig.json` flags:
 
 ```json
 {
-  "compilerOptions": {
-    "strict": true,
-    "allowJs": true,
-    "checkJs": true,
-    "moduleResolution": "bundler",
-    "rewriteRelativeImportExtensions": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true
-  }
+	"compilerOptions": {
+		"strict": true,
+		"allowJs": true,
+		"checkJs": true,
+		"moduleResolution": "bundler",
+		"rewriteRelativeImportExtensions": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"esModuleInterop": true
+	}
 }
 ```
 
@@ -84,8 +84,7 @@ TypeScript strict mode is enabled. Key `tsconfig.json` flags:
 ```js
 // svelte.config.js
 compilerOptions: {
-  runes: ({ filename }) =>
-    filename.split('/').includes('node_modules') ? undefined : true
+	runes: ({ filename }) => (filename.split('/').includes('node_modules') ? undefined : true);
 }
 ```
 
@@ -98,22 +97,22 @@ Configuration (`.prettierrc`):
 
 ```json
 {
-  "useTabs": true,
-  "singleQuote": true,
-  "trailingComma": "none",
-  "printWidth": 100,
-  "plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
-  "overrides": [
-    {
-      "files": "*.svelte",
-      "options": {
-        "parser": "svelte",
-        "svelteStrictMode": true,
-        "svelteAllowShorthand": true,
-        "svelteIndentScriptAndStyle": true
-      }
-    }
-  ]
+	"useTabs": true,
+	"singleQuote": true,
+	"trailingComma": "none",
+	"printWidth": 100,
+	"plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
+	"overrides": [
+		{
+			"files": "*.svelte",
+			"options": {
+				"parser": "svelte",
+				"svelteStrictMode": true,
+				"svelteAllowShorthand": true,
+				"svelteIndentScriptAndStyle": true
+			}
+		}
+	]
 }
 ```
 
@@ -150,7 +149,7 @@ pnpm db:studio     # prisma studio
 - Linter warnings in `main`.
 - `TODO` comments not tracked as GitHub issues.
 - Dead code merged into `main`.
-- Comments that restate the code (comments explain *why*, not *what*).
+- Comments that restate the code (comments explain _why_, not _what_).
 
 ---
 
@@ -164,16 +163,16 @@ pnpm db:studio     # prisma studio
 
 ### 3.2 Scope Map
 
-| Scope | What it covers |
-|-------|---------------|
-| `frontend` | SvelteKit routes, Svelte components, shadcn-svelte, Vite config |
-| `backend` | Server-side services, API routes, `hooks.server.ts` |
-| `auth` | OAuth 42, JWT, TOTP, session injection |
-| `game` | Phaser engine, Colyseus rooms, game-server, game logic |
-| `db` | Prisma schema, migrations, database client, queries |
-| `shared` | `packages/game-shared` — code used by both game-server and frontend |
-| `infra` | Docker, `compose.yaml`, deployment, `.github` |
-| `i18n` | Paraglide translations, `messages.json` |
+| Scope      | What it covers                                                      |
+| ---------- | ------------------------------------------------------------------- |
+| `frontend` | SvelteKit routes, Svelte components, shadcn-svelte, Vite config     |
+| `backend`  | Server-side services, API routes, `hooks.server.ts`                 |
+| `auth`     | OAuth 42, JWT, TOTP, session injection                              |
+| `game`     | Phaser engine, Colyseus rooms, game-server, game logic              |
+| `db`       | Prisma schema, migrations, database client, queries                 |
+| `shared`   | `packages/game-shared` — code used by both game-server and frontend |
+| `infra`    | Docker, `compose.yaml`, deployment, `.github`                       |
+| `i18n`     | Paraglide translations, `messages.json`                             |
 
 `auth` is intentionally separate from `backend`: auth issues are security-sensitive, span the frontend/backend boundary, and require a distinct resolution path.
 
@@ -203,12 +202,12 @@ docs/adr/0002-server-authoritative-game-state.md
 <type><issue-number>-<slug>
 ```
 
-| Example branch | Meaning |
-|----------------|---------|
-| `feat/42-jwt-auth` | Feature — issue #42 |
-| `fix/67-login-redirect` | Bug fix — issue #67 |
+| Example branch             | Meaning               |
+| -------------------------- | --------------------- |
+| `feat/42-jwt-auth`         | Feature — issue #42   |
+| `fix/67-login-redirect`    | Bug fix — issue #67   |
 | `ci/15-docker-healthcheck` | CI change — issue #15 |
-| `docs/8-api-reference` | Docs — issue #8 |
+| `docs/8-api-reference`     | Docs — issue #8       |
 
 The issue number is mandatory. A slug is 3–4 lowercase, hyphen-separated words derived from the issue title.
 
@@ -247,18 +246,18 @@ Keep branches short-lived. A branch open for more than 2–3 days without a PR i
 
 **Commit types:**
 
-| Type | When to use |
-|------|-------------|
-| `feat` | New functionality visible in the product |
-| `fix` | Bug correction |
-| `refactor` | Code restructured, no behavior change |
-| `style` | Formatting/linting pass — zero logic change |
-| `test` | Adding or updating tests |
-| `ci` | CI pipelines, GitHub Actions, workflow changes |
-| `chore` | Dependency updates, config files, tooling maintenance |
-| `docs` | Documentation only |
-| `perf` | Performance improvement |
-| `security` | Auth, JWT, OAuth, 2FA, session, input validation |
+| Type       | When to use                                           |
+| ---------- | ----------------------------------------------------- |
+| `feat`     | New functionality visible in the product              |
+| `fix`      | Bug correction                                        |
+| `refactor` | Code restructured, no behavior change                 |
+| `style`    | Formatting/linting pass — zero logic change           |
+| `test`     | Adding or updating tests                              |
+| `ci`       | CI pipelines, GitHub Actions, workflow changes        |
+| `chore`    | Dependency updates, config files, tooling maintenance |
+| `docs`     | Documentation only                                    |
+| `perf`     | Performance improvement                               |
+| `security` | Auth, JWT, OAuth, 2FA, session, input validation      |
 
 **`style` vs `chore`:** `style` is a bulk formatting pass (run Prettier, apply ESLint auto-fixes). `chore` is a tooling or dependency change (bump Prisma, update tsconfig). A reviewer can skim a `style` PR — nothing in it affects logic.
 
@@ -311,16 +310,16 @@ Approving code you do not understand is not a review.
 
 - Criticize the code, never the person.
 - Reviews must be precise and actionable.
-- Every change request must explain *why*.
+- Every change request must explain _why_.
 - If a point is blocking, say so clearly. If it's a suggestion, say that too.
 
 ### 5.3 PR Size
 
-| Lines changed | Assessment |
-|---------------|------------|
-| 50–400 | Ideal — reviewable in under 30 minutes |
-| 400–800 | Acceptable if well scoped |
-| 800+ | Must be split into smaller PRs if possible |
+| Lines changed | Assessment                                 |
+| ------------- | ------------------------------------------ |
+| 50–400        | Ideal — reviewable in under 30 minutes     |
+| 400–800       | Acceptable if well scoped                  |
+| 800+          | Must be split into smaller PRs if possible |
 
 ### 5.4 Review Requirements
 
@@ -347,11 +346,11 @@ Approving code you do not understand is not a review.
 
 ### 6.1 Test Pyramid
 
-| Layer | Scope | Tool |
-|-------|-------|------|
-| Unit | Business logic, isolated functions | Vitest |
-| Integration | API ↔ DB ↔ WebSocket | Docker Compose stack |
-| E2E | Critical user journeys | Playwright |
+| Layer       | Scope                              | Tool                 |
+| ----------- | ---------------------------------- | -------------------- |
+| Unit        | Business logic, isolated functions | Vitest               |
+| Integration | API ↔ DB ↔ WebSocket               | Docker Compose stack |
+| E2E         | Critical user journeys             | Playwright           |
 
 ### 6.2 Coverage Priorities
 
@@ -378,6 +377,7 @@ Approving code you do not understand is not a review.
 Each CI workflow is a single-job, single-concern file. Checks are independently visible and re-runnable in the GitHub Actions UI — the same pattern used by Vite, SvelteKit, and ESLint.
 
 Every workflow:
+
 - Sets up **Node 24.15.0** and **pnpm 10.x** via `pnpm/action-setup`
 - Runs `pnpm install --frozen-lockfile`
 - Has read-only permissions at the job level (`contents: read`)
@@ -385,38 +385,38 @@ Every workflow:
 
 ### 7.2 CI Triggers by Branch Prefix
 
-| Branch prefix | CI on push |
-|---------------|-----------|
+| Branch prefix          | CI on push                  |
+| ---------------------- | --------------------------- |
 | `feat`, `fix`, `chore` | Lint, typecheck, unit tests |
-| `ci`, `infra` | Docker build |
-| All other prefixes | Full CI on PR to `main` |
+| `ci`, `infra`          | Docker build                |
+| All other prefixes     | Full CI on PR to `main`     |
 
 Full CI runs on every PR to `main`.
 
 ### 7.3 Required Status Checks (gate on `main`)
 
-| Check | What it runs |
-|-------|-------------|
-| `ci-lint-eslint` | `pnpm lint:eslint` |
-| `ci-lint-prettier` | `pnpm lint:prettier` |
-| `ci-lint-prisma` | `prisma format --check` |
-| `ci-lint-pr-title` | Conventional Commit regex on PR title |
-| `ci-typecheck-frontend` | `svelte-check` |
-| `ci-typecheck-game-server` | `tsc --noEmit` on game-server |
-| `ci-test-unit` | Vitest |
-| `ci-test-e2e` | Playwright (PR to `main` only) |
-| `ci-test-integration` | Docker Compose stack + assertions (PR to `main` only) |
-| `ci-docker-build` | Build both Dockerfiles via `compose.yaml` (no push) |
+| Check                      | What it runs                                          |
+| -------------------------- | ----------------------------------------------------- |
+| `ci-lint-eslint`           | `pnpm lint:eslint`                                    |
+| `ci-lint-prettier`         | `pnpm lint:prettier`                                  |
+| `ci-lint-prisma`           | `prisma format --check`                               |
+| `ci-lint-pr-title`         | Conventional Commit regex on PR title                 |
+| `ci-typecheck-frontend`    | `svelte-check`                                        |
+| `ci-typecheck-game-server` | `tsc --noEmit` on game-server                         |
+| `ci-test-unit`             | Vitest                                                |
+| `ci-test-e2e`              | Playwright (PR to `main` only)                        |
+| `ci-test-integration`      | Docker Compose stack + assertions (PR to `main` only) |
+| `ci-docker-build`          | Build both Dockerfiles via `compose.yaml` (no push)   |
 
 ### 7.4 Automation Workflows
 
-| Workflow | Trigger | Effect |
-|----------|---------|--------|
-| `automation-label-issue` | Issue opened | Reads scope dropdown → applies `scope` label |
-| `automation-label-pr` | PR opened/edited | Reads PR title → applies `type` + `scope` labels |
-| `automation-state-branch` | Branch created | Parses `type/NN-slug` → sets `status: in progress` on issue #NN |
-| `automation-state-pr` | PR opened / ready for review | Sets `status: in review` on linked issue |
-| `automation-state-pr` | PR merged | Sets `status: done` on linked issue |
+| Workflow                  | Trigger                      | Effect                                                          |
+| ------------------------- | ---------------------------- | --------------------------------------------------------------- |
+| `automation-label-issue`  | Issue opened                 | Reads scope dropdown → applies `scope` label                    |
+| `automation-label-pr`     | PR opened/edited             | Reads PR title → applies `type` + `scope` labels                |
+| `automation-state-branch` | Branch created               | Parses `type/NN-slug` → sets `status: in progress` on issue #NN |
+| `automation-state-pr`     | PR opened / ready for review | Sets `status: in review` on linked issue                        |
+| `automation-state-pr`     | PR merged                    | Sets `status: done` on linked issue                             |
 
 **Important:** Create all 29 labels before pushing the first branches. Applying a label that does not exist is a silent no-op.
 
@@ -469,26 +469,26 @@ Report security issues directly to the repository maintainer via a private chann
 
 ### 9.1 Inline Comments
 
-- Comments explain *why*, never *what*.
+- Comments explain _why_, never _what_.
 - No comment that simply restates the code.
 - Use comments to explain non-obvious reasoning, constraints, or trade-offs.
 
 ```ts
 // Tokens were issued without an upper bound on expiry duration.
 // A client-supplied value could produce indefinitely valid tokens.
-clampExpiry(duration, MAX_TOKEN_EXPIRY_MS)
+clampExpiry(duration, MAX_TOKEN_EXPIRY_MS);
 ```
 
 ### 9.2 Required Documents
 
-| File | Purpose |
-|------|---------|
-| `README.md` | Project description, setup instructions, stack, team |
-| `docs/engineering-guidelines.md` | This file |
-| `docs/architecture.md` | High-level architecture, diagrams |
-| `docs/runbook.md` | Operational procedures |
-| `docs/adr/` | Architecture Decision Records |
-| `CHANGELOG.md` | Notable changes per release |
+| File                             | Purpose                                              |
+| -------------------------------- | ---------------------------------------------------- |
+| `README.md`                      | Project description, setup instructions, stack, team |
+| `docs/engineering-guidelines.md` | This file                                            |
+| `docs/architecture.md`           | High-level architecture, diagrams                    |
+| `docs/runbook.md`                | Operational procedures                               |
+| `docs/adr/`                      | Architecture Decision Records                        |
+| `CHANGELOG.md`                   | Notable changes per release                          |
 
 ### 9.3 What to Document
 
@@ -514,19 +514,19 @@ This file is a living document. When a convention changes, open a `docs(infra): 
 
 ### 10.1 Required Tools
 
-| Tool | Version | Install |
-|------|---------|---------|
-| Node.js | 24.x | [nodejs.org](https://nodejs.org) or `nvm` |
-| pnpm | 10.33.0 | `npm install -g pnpm@10.33.0` |
-| Docker + Compose | Latest stable | [docker.com](https://www.docker.com) |
-| Git | 2.x+ | System package manager |
+| Tool             | Version       | Install                                   |
+| ---------------- | ------------- | ----------------------------------------- |
+| Node.js          | 24.x          | [nodejs.org](https://nodejs.org) or `nvm` |
+| pnpm             | 10.33.0       | `npm install -g pnpm@10.33.0`             |
+| Docker + Compose | Latest stable | [docker.com](https://www.docker.com)      |
+| Git              | 2.x+          | System package manager                    |
 
 ### 10.2 IDE Recommendations
 
-| Editor | Extensions |
-|--------|-----------|
+| Editor  | Extensions                                                              |
+| ------- | ----------------------------------------------------------------------- |
 | VS Code | Svelte for VS Code, ESLint, Prettier, Tailwind CSS IntelliSense, Prisma |
-| Any | EditorConfig support (respect `.editorconfig`) |
+| Any     | EditorConfig support (respect `.editorconfig`)                          |
 
 Shared settings should be committed to `.vscode/settings.json` for consistent behavior across the team.
 
@@ -546,4 +546,4 @@ Every issue and PR must have at least one label from `type`, `scope`, and `statu
 
 ---
 
-*Last updated: May 2026 — open a PR to keep this accurate.*
+_Last updated: May 2026 — open a PR to keep this accurate._

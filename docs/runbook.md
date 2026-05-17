@@ -140,6 +140,7 @@ pnpm test:integration   # docker compose up --build + healthcheck poll + asserti
 ```
 
 Common causes:
+
 - Healthcheck not passing → `docker compose logs <service>`
 - Missing CI secret → verify the value exists in Settings → Secrets → Actions
 - Schema out of sync → `pnpm db:migrate` locally, commit the migration file
@@ -211,11 +212,11 @@ Ask the repo Admin to revert the merge commit directly in the GitHub UI (`main` 
 
 ### Issue status not updating
 
-| Symptom | Likely cause | Fix |
-|---------|-------------|-----|
-| Stuck on `todo` after branch created | Branch name missing issue number | Rename: `feat/42-slug`, not `feat/slug` |
-| Stuck on `in progress` after PR opened | PR body missing closing keyword | Add `Closes #42` to PR body |
-| Stuck on `in review` after merge | Automation run failed | Check Actions → `automation-state-pr` logs |
+| Symptom                                | Likely cause                     | Fix                                        |
+| -------------------------------------- | -------------------------------- | ------------------------------------------ |
+| Stuck on `todo` after branch created   | Branch name missing issue number | Rename: `feat/42-slug`, not `feat/slug`    |
+| Stuck on `in progress` after PR opened | PR body missing closing keyword  | Add `Closes #42` to PR body                |
+| Stuck on `in review` after merge       | Automation run failed            | Check Actions → `automation-state-pr` logs |
 
 If all else fails, set the status label manually.
 
@@ -269,4 +270,4 @@ docker compose up --build
 
 ---
 
-*Last updated: May 2026*
+_Last updated: May 2026_
