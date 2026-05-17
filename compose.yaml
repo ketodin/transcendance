@@ -1,0 +1,11 @@
+services:
+  transcendence:
+    build: .
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    env_file: .env.prod
+    environment:
+      DATABASE_URL: file:/data/database.db
+    volumes:
+      - ./data/:/data

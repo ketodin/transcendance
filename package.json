@@ -54,7 +54,6 @@
 		"prettier": "^3.8.1",
 		"prettier-plugin-svelte": "^3.5.1",
 		"prettier-plugin-tailwindcss": "^0.8.0",
-		"prisma": "^7.8.0",
 		"shadcn-svelte": "^1.2.7",
 		"svelte": "^5.55.2",
 		"svelte-check": "^4.4.6",
@@ -72,7 +71,10 @@
 		"colyseus": "^0.15.57",
 		"colyseus.js": "^0.15.28",
 		"concurrently": "^9.2.1",
-		"express": "^4.21.2",
+		"express": "^4.21.2"
+	},
+	"dependencies": {
+		"prisma": "^7.8.0",
 		"@prisma/adapter-better-sqlite3": "^7.8.0"
 	},
 	"packageManager": "pnpm@10.33.0"
