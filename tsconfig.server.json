@@ -9,7 +9,9 @@
 		"forceConsistentCasingInFileNames": true,
 		"skipLibCheck": true,
 		"strict": true,
-		"sourceMap": true
+		"sourceMap": true,
+		"experimentalDecorators": true,
+		"useDefineForClassFields": false
 	},
 	"include": ["server/**/*", "src/lib/game/shared/**/*", "src/lib/game/colyseus/**/*"]
 }
