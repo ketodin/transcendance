@@ -1,17 +1,9 @@
-import { Schema, ArraySchema, defineTypes } from '@colyseus/schema';
+import { Schema, ArraySchema, type } from '@colyseus/schema';
 
 export class TerrainSchema extends Schema {
-	heights: ArraySchema<number> = new ArraySchema<number>();
-	cols: number = 0;
-	floorY: number = 0;
-	sceneWidth: number = 0;
-	sceneHeight: number = 0;
+    @type(["float32"]) heights: ArraySchema<number> = new ArraySchema<number>();
+    @type("uint32") cols: number = 0;
+    @type("float32") floorY: number = 0;
+    @type("float32") sceneWidth: number = 0;
+    @type("float32") sceneHeight: number = 0;
 }
-
-defineTypes(TerrainSchema, {
-	heights: ['float32'],
-	cols: 'uint32',
-	floorY: 'float32',
-	sceneWidth: 'float32',
-	sceneHeight: 'float32'
-});
