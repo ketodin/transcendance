@@ -9,6 +9,8 @@ import { ProjectileView } from '../../client/view/ProjectileView';
 import { Scene, GameObjects, Input } from 'phaser';
 import { Client, Room } from 'colyseus.js';
 import type { GameRoomState } from '../../colyseus/schema/GameRoomState';
+import { COLORS, COLOR_STRINGS } from '../colors';
+import { EventBus } from '../EventBus';
 
 const PLAYER_NAMES = ['Player 1', 'Player 2'];
 const COLYSEUS_URL =
@@ -56,6 +58,7 @@ export default class GameScene extends Scene {
 	private tankSprites: [TankSprite, TankSprite] | null = null;
 	private terrainView: TerrainView | null = null;
 	private projView: ProjectileView | null = null;
+	private skyGfx: GameObjects.Graphics | null = null;
 
 	private clientTrail: Array<{ x: number; y: number }> = [];
 	private lastProjActive = false;
@@ -107,24 +110,42 @@ export default class GameScene extends Scene {
 		super({ key: 'GameScene' });
 	}
 
+	private readonly onThemeChanged = () => {
+		this.cameras.main.setBackgroundColor(COLORS.bg);
+		this.drawSky();
+		if (this.terrainView && this.localTerrain) this.terrainView.sync(this.localTerrain);
+	};
+
 	create() {
+		this.cameras.main.setBackgroundColor(COLORS.bg);
 		this.createBackground();
 		this.setupUI();
 		this.setupKeys();
 		void this.connectToServer();
+		EventBus.on('theme-changed', this.onThemeChanged);
+	}
+
+	shutdown() {
+		EventBus.off('theme-changed', this.onThemeChanged);
+	}
+
+	private drawSky() {
+		const { width, height } = this.scale;
+		this.skyGfx!.clear();
+		this.skyGfx!.fillGradientStyle(COLORS.bg, COLORS.bg, COLORS.skyTop, COLORS.skyTop, 1);
+		this.skyGfx!.fillRect(0, 0, width, height);
 	}
 
 	private createBackground() {
 		const { width, height } = this.scale;
-		const sky = this.add.graphics().setDepth(-2);
-		sky.fillGradientStyle(0x060612, 0x060612, 0x111130, 0x111130, 1);
-		sky.fillRect(0, 0, width, height);
+		this.skyGfx = this.add.graphics().setDepth(-2);
+		this.drawSky();
 
 		const stars = this.add.graphics().setDepth(-1);
 		for (let i = 0; i < 80; i++) {
 			const sx = Math.random() * width;
 			const sy = Math.random() * height * 0.65;
-			stars.fillStyle(0xffffff, Math.random() * 0.4 + 0.2);
+			stars.fillStyle(COLORS.white, Math.random() * 0.4 + 0.2);
 			stars.fillCircle(sx, sy, Math.random() * 1.2 + 0.3);
 		}
 	}
@@ -150,8 +171,8 @@ export default class GameScene extends Scene {
 		this.statusText = this.add
 			.text(640, 340, 'Connecting...', {
 				fontSize: '28px',
-				color: '#88e8a0',
-				stroke: '#0e0e24',
+				color: COLOR_STRINGS.neonGlow,
+				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 5
 			})
 			.setOrigin(0.5)
@@ -160,8 +181,8 @@ export default class GameScene extends Scene {
 		this.turnText = this.add
 			.text(640, 18, '', {
 				fontSize: '22px',
-				color: '#88e8a0',
-				stroke: '#0e0e24',
+				color: COLOR_STRINGS.neonGlow,
+				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 4
 			})
 			.setOrigin(0.5, 0)
@@ -171,8 +192,8 @@ export default class GameScene extends Scene {
 		this.timerText = this.add
 			.text(640, 46, '', {
 				fontSize: '18px',
-				color: '#88e8a0',
-				stroke: '#0e0e24',
+				color: COLOR_STRINGS.neonGlow,
+				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 3
 			})
 			.setOrigin(0.5, 0)
@@ -180,7 +201,7 @@ export default class GameScene extends Scene {
 			.setVisible(false);
 
 		this.powerBg = this.add.graphics().setDepth(10);
-		this.powerBg.fillStyle(0x0e0e24, 0.92);
+		this.powerBg.fillStyle(COLORS.navy, 0.92);
 		this.powerBg.fillRect(this.barX - 1, this.barY - 1, this.barW + 2, this.barH + 2);
 		this.powerBg.setVisible(false);
 
@@ -190,8 +211,8 @@ export default class GameScene extends Scene {
 		this.powerLabel = this.add
 			.text(640, this.barY - 22, 'POWER — release to fire', {
 				fontSize: '13px',
-				color: '#88e8a0',
-				stroke: '#0e0e24',
+				color: COLOR_STRINGS.neonGlow,
+				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 3
 			})
 			.setOrigin(0.5, 0)
@@ -201,15 +222,15 @@ export default class GameScene extends Scene {
 		this.hintText = this.add
 			.text(640, 700, '', {
 				fontSize: '11px',
-				color: 'rgba(255,255,255,0.5)',
-				stroke: '#0e0e24',
+				color: COLOR_STRINGS.hint,
+				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 2
 			})
 			.setOrigin(0.5, 0)
 			.setDepth(10);
 
 		this.fuelBg = this.add.graphics().setDepth(10);
-		this.fuelBg.fillStyle(0x0e0e24, 0.92);
+		this.fuelBg.fillStyle(COLORS.navy, 0.92);
 		this.fuelBg.fillRect(
 			this.fuelBarX - 1,
 			this.fuelBarY - 1,
@@ -223,8 +244,8 @@ export default class GameScene extends Scene {
 		this.add
 			.text(this.fuelBarX + this.fuelBarW / 2, this.fuelBarY - 18, 'FUEL', {
 				fontSize: '13px',
-				color: '#00ccff',
-				stroke: '#0e0e24',
+				color: COLOR_STRINGS.fuelHigh,
+				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 3
 			})
 			.setOrigin(0.5, 0)
@@ -238,8 +259,8 @@ export default class GameScene extends Scene {
 			this.add
 				.text(weaponXPositions[i], 50, type.name, {
 					fontSize: '14px',
-					color: '#ffffff',
-					stroke: '#0e0e24',
+					color: COLOR_STRINGS.white,
+					stroke: COLOR_STRINGS.navy,
 					strokeThickness: 3
 				})
 				.setOrigin(0.5)
@@ -421,7 +442,8 @@ export default class GameScene extends Scene {
 		// UI updates
 		if (phase === 'AIMING' || phase === 'CHARGING') {
 			const secs = Math.ceil(data.turnTimeLeft);
-			const color = secs > 10 ? '#88e8a0' : secs > 5 ? '#ffdd55' : '#ff4444';
+			const color =
+				secs > 10 ? COLOR_STRINGS.neonGlow : secs > 5 ? COLOR_STRINGS.yellow : COLOR_STRINGS.red;
 			this.timerText.setText(`${secs}s`).setColor(color);
 			this.turnText.setText(`${PLAYER_NAMES[currentPlayer]}'s Turn`);
 		}
@@ -531,7 +553,7 @@ export default class GameScene extends Scene {
 			if (y >= getHeightAt(this.localTerrain, x)) break;
 			if (i % DOT_INTERVAL === DOT_INTERVAL - 1) {
 				const alpha = 0.8 * (1 - dotsDrawn / MAX_DOTS);
-				this.trajectoryGfx.fillStyle(0xffffff, alpha);
+				this.trajectoryGfx.fillStyle(COLORS.white, alpha);
 				this.trajectoryGfx.fillCircle(x, y, 2.5);
 				dotsDrawn++;
 			}
@@ -542,9 +564,9 @@ export default class GameScene extends Scene {
 		this.cameras.main.shake(350, blastRadius * 0.00018);
 
 		const gfx = this.add.graphics().setDepth(5);
-		gfx.fillStyle(0xff6600).fillCircle(x, y, craterRadius * 0.93);
-		gfx.fillStyle(0xffcc00).fillCircle(x, y, craterRadius * 0.57);
-		gfx.fillStyle(0xffffff).fillCircle(x, y, craterRadius * 0.26);
+		gfx.fillStyle(COLORS.craterOuter).fillCircle(x, y, craterRadius * 0.93);
+		gfx.fillStyle(COLORS.craterMid).fillCircle(x, y, craterRadius * 0.57);
+		gfx.fillStyle(COLORS.white).fillCircle(x, y, craterRadius * 0.26);
 		this.time.delayedCall(450, () => gfx.destroy());
 
 		this.spawnCraterDust(x, y, craterRadius);
@@ -552,7 +574,13 @@ export default class GameScene extends Scene {
 
 	private spawnCraterDust(x: number, y: number, radius: number) {
 		const count = Math.floor(radius * 1.2);
-		const colors = [0x3d7a52, 0x2a5c3a, 0x88e8a0, 0x5a4a30, 0x888888];
+		const colors = [
+			COLORS.terrain,
+			COLORS.terrainDark,
+			COLORS.neonGlow,
+			COLORS.craterStone,
+			COLORS.craterGrey
+		];
 		const pieces: { gfx: GameObjects.Graphics; vx: number; vy: number }[] = [];
 
 		for (let i = 0; i < count; i++) {
@@ -595,7 +623,7 @@ export default class GameScene extends Scene {
 			const active = i === activeIndex;
 			this.weaponTexts[i]
 				.setText(active ? `[ ${type.name} ]` : type.name)
-				.setColor(active ? '#ffdd55' : 'rgba(200,200,200,0.4)')
+				.setColor(active ? COLOR_STRINGS.yellow : COLOR_STRINGS.weaponInactive)
 				.setFontSize(active ? 17 : 13);
 		});
 	}
@@ -603,7 +631,7 @@ export default class GameScene extends Scene {
 	private updatePowerBar(power: number) {
 		this.powerFill.clear();
 		const pct = power / 100;
-		const color = pct < 0.4 ? 0x00ff44 : pct < 0.7 ? 0xffdd00 : 0xff3333;
+		const color = pct < 0.4 ? COLORS.barHigh : pct < 0.7 ? COLORS.barMid : COLORS.barLow;
 		this.powerFill.fillStyle(color);
 		this.powerFill.fillRect(this.barX, this.barY, this.barW * pct, this.barH);
 	}
@@ -611,19 +639,19 @@ export default class GameScene extends Scene {
 	private updateFuelBar(fuel: number) {
 		this.fuelFill.clear();
 		const pct = fuel / 100;
-		const color = pct > 0.5 ? 0x00ccff : pct > 0.25 ? 0xffaa00 : 0xff3333;
+		const color = pct > 0.5 ? COLORS.fuelHigh : pct > 0.25 ? COLORS.fuelMid : COLORS.barLow;
 		this.fuelFill.fillStyle(color);
 		this.fuelFill.fillRect(this.fuelBarX, this.fuelBarY, this.fuelBarW * pct, this.fuelBarH);
 	}
 
 	private showGameOver(winner: 0 | 1) {
-		this.add.graphics().setDepth(20).fillStyle(0x0e0e24, 0.88).fillRect(290, 240, 700, 220);
+		this.add.graphics().setDepth(20).fillStyle(COLORS.navy, 0.88).fillRect(290, 240, 700, 220);
 
 		this.add
 			.text(640, 280, `${PLAYER_NAMES[winner]} Wins!`, {
 				fontSize: '52px',
-				color: '#d4b832',
-				stroke: '#0e0e24',
+				color: COLOR_STRINGS.gold,
+				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 6
 			})
 			.setOrigin(0.5)
@@ -632,8 +660,8 @@ export default class GameScene extends Scene {
 		this.add
 			.text(640, 370, 'Press R to play again', {
 				fontSize: '22px',
-				color: '#88e8a0',
-				stroke: '#0e0e24',
+				color: COLOR_STRINGS.neonGlow,
+				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 4
 			})
 			.setOrigin(0.5)

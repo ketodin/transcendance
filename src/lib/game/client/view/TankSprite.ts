@@ -1,5 +1,6 @@
 import { type TankState } from '../../shared/state/TankState';
 import { GameObjects, Scene } from 'phaser';
+import { COLORS, COLOR_STRINGS } from '../../phaser/colors';
 
 export class TankSprite {
 	private scene: Scene;
@@ -16,8 +17,8 @@ export class TankSprite {
 		this.nameLabel = scene.add
 			.text(state.x, state.y - 40, state.name, {
 				fontSize: '14px',
-				color: '#ffffff',
-				stroke: '#000000',
+				color: COLOR_STRINGS.white,
+				stroke: COLOR_STRINGS.black,
 				strokeThickness: 3
 			})
 			.setOrigin(0.5);
@@ -34,10 +35,10 @@ export class TankSprite {
 
 	private drawBody(x: number, y: number, color: number): void {
 		this.bodyGfx.clear();
-		this.bodyGfx.fillStyle(0x222222);
+		this.bodyGfx.fillStyle(COLORS.tankTracks);
 		this.bodyGfx.fillRect(x - 26, y - 3, 51, 10);
 		for (let i = -18; i <= 18; i += 9) {
-			this.bodyGfx.fillStyle(0x555555);
+			this.bodyGfx.fillStyle(COLORS.tankWheels);
 			this.bodyGfx.fillCircle(x + i, y + 4, 5);
 		}
 		this.bodyGfx.fillStyle(color);
@@ -64,10 +65,10 @@ export class TankSprite {
 			h = 5;
 		const bx = x - w / 2,
 			by = y - 29;
-		this.healthGfx.fillStyle(0x000000, 0.6);
+		this.healthGfx.fillStyle(COLORS.black, 0.6);
 		this.healthGfx.fillRect(bx - 1, by - 1, w + 2, h + 2);
 		const pct = health / 100;
-		const color = pct > 0.5 ? 0x00ff44 : pct > 0.25 ? 0xffdd00 : 0xff3333;
+		const color = pct > 0.5 ? COLORS.barHigh : pct > 0.25 ? COLORS.barMid : COLORS.barLow;
 		this.healthGfx.fillStyle(color);
 		this.healthGfx.fillRect(bx, by, w * pct, h);
 	}
@@ -79,7 +80,7 @@ export class TankSprite {
 		this.nameLabel.setVisible(false);
 
 		const flash = this.scene.add.graphics().setDepth(15);
-		flash.fillStyle(0xffffff);
+		flash.fillStyle(COLORS.white);
 		flash.fillCircle(0, 0, 28);
 		flash.setPosition(state.x, state.y - 8);
 		this.scene.tweens.add({
@@ -93,7 +94,13 @@ export class TankSprite {
 		});
 
 		const pieces: { gfx: GameObjects.Graphics; vx: number; vy: number }[] = [];
-		const colors = [state.color, 0x333333, 0x555555, 0xff6600, state.color];
+		const colors = [
+			state.color,
+			COLORS.tankDebris,
+			COLORS.tankWheels,
+			COLORS.craterOuter,
+			state.color
+		];
 		for (let i = 0; i < 12; i++) {
 			const angle = (Math.PI * 2 * i) / 12 + (Math.random() - 0.5) * 0.6;
 			const speed = 60 + Math.random() * 140;

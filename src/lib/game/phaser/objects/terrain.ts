@@ -1,4 +1,5 @@
 import { Scene, GameObjects, Math as PhaserMath } from 'phaser';
+import { COLORS } from '../colors';
 
 const RESOLUTION = 3; // pixels per heightmap column
 const FLOOR_MARGIN = 40; // indestructible base height in pixels
@@ -30,7 +31,6 @@ export class Terrain {
 		const a1 = 55 + Math.random() * 45;
 		const a2 = 25 + Math.random() * 30;
 		const a3 = 10 + Math.random() * 15;
-
 		for (let i = 0; i < this.cols; i++) {
 			const x = (i / this.cols) * width;
 			this.heights[i] =
@@ -46,7 +46,7 @@ export class Terrain {
 		this.graphics.clear();
 
 		// Destructible ground fill
-		this.graphics.fillStyle(0x3d7a52);
+		this.graphics.fillStyle(COLORS.terrain);
 		this.graphics.beginPath();
 		this.graphics.moveTo(0, this.heights[0]);
 		for (let i = 1; i < this.cols; i++) {
@@ -59,10 +59,10 @@ export class Terrain {
 
 		// Surface neon glow (multiple passes)
 		for (const [lw, col, al] of [
-			[8, 0x4cff80, 0.1],
-			[5, 0x88e8a0, 0.25],
-			[3, 0x88e8a0, 0.7],
-			[2, 0x88e8a0, 1.0]
+			[8, COLORS.neonBright, 0.1],
+			[5, COLORS.neonGlow, 0.25],
+			[3, COLORS.neonGlow, 0.7],
+			[2, COLORS.neonGlow, 1.0]
 		] as [number, number, number][]) {
 			this.graphics.lineStyle(lw, col, al);
 			this.graphics.beginPath();
@@ -74,9 +74,9 @@ export class Terrain {
 		}
 
 		// Indestructible rock base
-		this.graphics.fillStyle(0x1e3d2a);
+		this.graphics.fillStyle(COLORS.terrainBase);
 		this.graphics.fillRect(0, this.floorY, width, height - this.floorY);
-		this.graphics.lineStyle(2, 0x88e8a0, 0.6);
+		this.graphics.lineStyle(2, COLORS.neonGlow, 0.6);
 		this.graphics.beginPath();
 		this.graphics.moveTo(0, this.floorY);
 		this.graphics.lineTo(width, this.floorY);

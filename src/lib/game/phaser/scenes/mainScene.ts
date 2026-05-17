@@ -1,6 +1,7 @@
 import PhaserLogo from '../objects/phaserLogo';
 import FpsText from '../objects/fpsText';
 import { Scene, VERSION } from 'phaser';
+import { COLOR_STRINGS } from '../colors';
 
 export default class MainScene extends Scene {
 	fpsText: FpsText | undefined;
@@ -16,7 +17,7 @@ export default class MainScene extends Scene {
 		// display the Phaser.VERSION
 		this.add
 			.text(this.cameras.main.width - 15, 15, `Phaser v${VERSION}`, {
-				color: '#000000',
+				color: COLOR_STRINGS.black,
 				fontSize: '24px'
 			})
 			.setOrigin(1, 0);

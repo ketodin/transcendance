@@ -1,4 +1,5 @@
 import { Scene, GameObjects, Math as PhaserMath } from 'phaser';
+import { COLORS, COLOR_STRINGS } from '../colors';
 
 export class Tank {
 	x: number;
@@ -28,8 +29,8 @@ export class Tank {
 		this.nameLabel = scene.add
 			.text(x, y - 40, name, {
 				fontSize: '14px',
-				color: '#ffffff',
-				stroke: '#000000',
+				color: COLOR_STRINGS.white,
+				stroke: COLOR_STRINGS.black,
 				strokeThickness: 3
 			})
 			.setOrigin(0.5);
@@ -44,10 +45,10 @@ export class Tank {
 		this.bodyGfx.clear();
 
 		// Tracks
-		this.bodyGfx.fillStyle(0x222222);
+		this.bodyGfx.fillStyle(COLORS.tankTracks);
 		this.bodyGfx.fillRect(x - 26, y - 3, 51, 10);
 		for (let i = -18; i <= 18; i += 9) {
-			this.bodyGfx.fillStyle(0x555555);
+			this.bodyGfx.fillStyle(COLORS.tankWheels);
 			this.bodyGfx.fillCircle(x + i, y + 4, 5);
 		}
 
@@ -83,11 +84,11 @@ export class Tank {
 		const bx = x - w / 2;
 		const by = y - 29;
 
-		this.healthGfx.fillStyle(0x000000, 0.6);
+		this.healthGfx.fillStyle(COLORS.black, 0.6);
 		this.healthGfx.fillRect(bx - 1, by - 1, w + 2, h + 2);
 
 		const pct = this.health / 100;
-		const color = pct > 0.5 ? 0x00ff44 : pct > 0.25 ? 0xffdd00 : 0xff3333;
+		const color = pct > 0.5 ? COLORS.barHigh : pct > 0.25 ? COLORS.barMid : COLORS.barLow;
 		this.healthGfx.fillStyle(color);
 		this.healthGfx.fillRect(bx, by, w * pct, h);
 	}
@@ -131,7 +132,7 @@ export class Tank {
 		this.nameLabel.setVisible(false);
 
 		const flash = this.scene.add.graphics().setDepth(15);
-		flash.fillStyle(0xffffff);
+		flash.fillStyle(COLORS.white);
 		flash.fillCircle(0, 0, 28);
 		flash.setPosition(this.x, this.y - 8);
 		this.scene.tweens.add({
@@ -145,7 +146,13 @@ export class Tank {
 		});
 
 		const pieces: { gfx: GameObjects.Graphics; vx: number; vy: number }[] = [];
-		const colors = [this.color, 0x333333, 0x555555, 0xff6600, this.color];
+		const colors = [
+			this.color,
+			COLORS.tankDebris,
+			COLORS.tankWheels,
+			COLORS.craterOuter,
+			this.color
+		];
 		for (let i = 0; i < 12; i++) {
 			const angle = (Math.PI * 2 * i) / 12 + (Math.random() - 0.5) * 0.6;
 			const speed = 60 + Math.random() * 140;
