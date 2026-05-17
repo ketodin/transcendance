@@ -13,11 +13,11 @@
 
 # ADR-XXX — Title
 
-| Field   | Value |
-|---------|-------|
+| Field   | Value      |
+| ------- | ---------- |
 | Date    | YYYY-MM-DD |
-| Status  | Accepted |
-| Authors | @handle |
+| Status  | Accepted   |
+| Authors | @handle    |
 
 ---
 
@@ -44,11 +44,11 @@
   Be honest about the trade-offs of the chosen option.
 -->
 
-| Option | Pros | Cons |
-|--------|------|------|
-| **Option A (chosen)** | | |
-| Option B | | |
-| Option C | | |
+| Option                | Pros | Cons |
+| --------------------- | ---- | ---- |
+| **Option A (chosen)** |      |      |
+| Option B              |      |      |
+| Option C              |      |      |
 
 ## Consequences
 
@@ -60,9 +60,7 @@
 
 **Positive**
 
--
-
-**Accepted compromises**
+- **Accepted compromises**
 
 -
 
@@ -73,8 +71,8 @@
   Delete rows that do not apply.
 -->
 
-| Type | Reference |
-|------|-----------|
-| Commit | `git log --grep="..."` |
-| Docs | [`engineering-guidelines.md §...`](./engineering-guidelines.md) |
-| Obsidian | (optional) |
+| Type     | Reference                                                       |
+| -------- | --------------------------------------------------------------- |
+| Commit   | `git log --grep="..."`                                          |
+| Docs     | [`engineering-guidelines.md §...`](./engineering-guidelines.md) |
+| Obsidian | (optional)                                                      |
