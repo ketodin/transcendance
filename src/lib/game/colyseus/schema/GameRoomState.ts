@@ -1,38 +1,21 @@
-import { Schema, defineTypes } from '@colyseus/schema';
+import { Schema, type } from '@colyseus/schema';
 import { TankSchema } from './TankSchema.js';
 import { TerrainSchema } from './TerrainSchema.js';
 import { ProjectileSchema } from './ProjectileSchema.js';
 
 export class GameRoomState extends Schema {
-	phase: string = 'WAITING';
-	currentPlayer: number = 0;
-	tank0: TankSchema = new TankSchema();
-	tank1: TankSchema = new TankSchema();
-	terrain: TerrainSchema = new TerrainSchema();
-	projectile: ProjectileSchema = new ProjectileSchema();
-	power: number = 0;
-	powerIncreasing: boolean = true;
-	weaponIndex: number = 0;
-	fuel: number = 100;
-	turnTimeLeft: number = 30;
-	winner: number = -1;
-	player0Id: string = '';
-	player1Id: string = '';
+	@type('string') phase: string = 'WAITING';
+	@type('uint8') currentPlayer: number = 0;
+	@type(TankSchema) tank0: TankSchema = new TankSchema();
+	@type(TankSchema) tank1: TankSchema = new TankSchema();
+	@type(TerrainSchema) terrain: TerrainSchema = new TerrainSchema();
+	@type(ProjectileSchema) projectile: ProjectileSchema = new ProjectileSchema();
+	@type('float32') power: number = 0;
+	@type('boolean') powerIncreasing: boolean = true;
+	@type('uint8') weaponIndex: number = 0;
+	@type('float32') fuel: number = 100;
+	@type('float32') turnTimeLeft: number = 30;
+	@type('int8') winner: number = -1;
+	@type('string') player0Id: string = '';
+	@type('string') player1Id: string = '';
 }
-
-defineTypes(GameRoomState, {
-	phase: 'string',
-	currentPlayer: 'uint8',
-	tank0: TankSchema,
-	tank1: TankSchema,
-	terrain: TerrainSchema,
-	projectile: ProjectileSchema,
-	power: 'float32',
-	powerIncreasing: 'boolean',
-	weaponIndex: 'uint8',
-	fuel: 'float32',
-	turnTimeLeft: 'float32',
-	winner: 'int8',
-	player0Id: 'string',
-	player1Id: 'string'
-});

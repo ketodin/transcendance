@@ -27,7 +27,7 @@
 	},
 	"devDependencies": {
 		"@better-auth/prisma-adapter": "^1.6.11",
-		"@colyseus/schema": "^2.0.37",
+		"@colyseus/sdk": "^0.17.42",
 		"@eslint/compat": "^2.0.4",
 		"@eslint/js": "^10.0.1",
 		"@fontsource-variable/inter": "^5.2.8",
@@ -46,8 +46,7 @@
 		"better-auth": "^1.6.11",
 		"bits-ui": "^2.18.0",
 		"clsx": "^2.1.1",
-		"colyseus": "^0.15.57",
-		"colyseus.js": "^0.15.28",
+		"colyseus": "^0.17.10",
 		"concurrently": "^9.2.1",
 		"eslint": "^10.2.0",
 		"eslint-config-prettier": "^10.1.8",
@@ -75,8 +74,8 @@
 		"zod": "^4.4.3"
 	},
 	"dependencies": {
-		"prisma": "^7.8.0",
-		"@prisma/adapter-better-sqlite3": "^7.8.0"
+		"@prisma/adapter-better-sqlite3": "^7.8.0",
+		"prisma": "^7.8.0"
 	},
 	"packageManager": "pnpm@10.33.0"
 }

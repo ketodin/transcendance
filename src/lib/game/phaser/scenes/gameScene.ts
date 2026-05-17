@@ -7,7 +7,7 @@ import { TankSprite } from '../../client/view/TankSprite';
 import { TerrainView } from '../../client/view/TerrainView';
 import { ProjectileView } from '../../client/view/ProjectileView';
 import { Scene, GameObjects, Input } from 'phaser';
-import { Client, Room } from 'colyseus.js';
+import { Client, Room } from '@colyseus/sdk';
 import type { GameRoomState } from '../../colyseus/schema/GameRoomState';
 import { COLORS, COLOR_STRINGS } from '../colors';
 import { EventBus } from '../EventBus';
