@@ -4,11 +4,15 @@ import db from '$lib/server/db';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 
-export const auth = betterAuth({
-	database: prismaAdapter(db, {
-		provider: 'sqlite'
-	}),
-	experimental: { joins: true },
-	emailAndPassword: { enabled: true },
-	plugins: [sveltekitCookies(getRequestEvent)]
-});
+let auth;
+if (!building) {
+	auth = betterAuth({
+		database: prismaAdapter(db, {
+			provider: 'sqlite'
+		}),
+		experimental: { joins: true },
+		emailAndPassword: { enabled: true },
+		plugins: [sveltekitCookies(getRequestEvent)]
+	});
+}
+export { auth };
