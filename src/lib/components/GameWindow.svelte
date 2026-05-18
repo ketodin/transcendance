@@ -41,5 +41,16 @@
 	});
 </script>
 
-<div id="game-container" style="width: 1280px; height: 720px"></div>
+<div id="game-container"></div>
 <!-- <div id="game-container"></div> -->
+<style>
+:global(#game-container) {
+	position: fixed;
+	inset: 0;
+
+	width: 100vw;
+	height: 100dvh;
+
+	overflow: hidden;
+}
+</style>
