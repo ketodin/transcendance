@@ -34,6 +34,7 @@
 		"@inlang/paraglide-js": "^2.15.2",
 		"@internationalized/date": "^3.12.1",
 		"@lucide/svelte": "^1.12.0",
+		"@prisma/adapter-better-sqlite3": "^7.8.0",
 		"@prisma/client": "^7.8.0",
 		"@sveltejs/adapter-node": "^5.5.4",
 		"@sveltejs/kit": "^2.57.0",

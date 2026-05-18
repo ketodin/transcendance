@@ -11,6 +11,7 @@
 	import { onMount } from 'svelte';
 	import StartGame from '$lib/game/phaser/game';
 	import { EventBus } from '$lib/game/phaser/EventBus';
+	import { syncFromCSS } from '$lib/game/phaser/colors';
 
 	let {
 		phaserRef = $bindable()
@@ -20,13 +21,23 @@
 	} = $props();
 
 	onMount(() => {
+		syncFromCSS();
 		phaserRef.game = StartGame('game-container');
-		EventBus.on('current-scene-ready', (scene_instance: Scene) => {
-			phaserRef.scene = scene_instance;
+
+		const observer = new MutationObserver(() => {
+			syncFromCSS();
+			EventBus.emit('theme-changed');
+		});
+		observer.observe(document.documentElement, { attributeFilter: ['class'] });
+
+		EventBus.on('current-scene-ready', (scene_instance: unknown) => {
+			phaserRef.scene = scene_instance as Scene;
 			// if (currentActiveScene) {
 			//     currentActiveScene(scene_instance);
 			// }
 		});
+
+		return () => observer.disconnect();
 	});
 </script>
 
