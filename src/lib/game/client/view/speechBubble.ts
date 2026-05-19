@@ -16,7 +16,7 @@ export class SpeechBubble {
 				fontSize: '13px',
 				color: COLOR_STRINGS.black,
 				wordWrap: { width: 160 },
-				align: 'center',
+				align: 'center'
 			})
 			.setOrigin(0.5, 0.5)
 			.setDepth(51)
@@ -26,23 +26,23 @@ export class SpeechBubble {
 
 	setText(text: string, tank: TankState): void {
 		this.label.setVisible(true);
-	    this.label.setText(text);
-	    this.sync(tank);
+		this.label.setText(text);
+		this.sync(tank);
 
 		// Reset timer if message are display
-    	if (this.timer) this.timer.destroy();
+		if (this.timer) this.timer.destroy();
 
-    	this.timer = this.scene.time.addEvent({
-    	    delay: CHAT_BUBBLE_DURATION,
-    	    callback: () => {
-    	        this.label.setText('');
-    	        this.label.setVisible(false);
-    	        this.bg.clear();
-    	    }
-    	});
+		this.timer = this.scene.time.addEvent({
+			delay: CHAT_BUBBLE_DURATION,
+			callback: () => {
+				this.label.setText('');
+				this.label.setVisible(false);
+				this.bg.clear();
+			}
+		});
 	}
 
-    sync(tank: TankState): void {
+	sync(tank: TankState): void {
 		const bx = tank.x;
 		const by = tank.y - 80;
 
@@ -60,11 +60,7 @@ export class SpeechBubble {
 		this.bg.lineStyle(1.5, COLORS.black, 1); // Stroke chatbox
 		this.bg.strokeRoundedRect(bx - w / 2, by - h / 2, w, h, 8);
 		this.bg.fillStyle(COLORS.white, 0.88); // Arrow background
-		this.bg.fillTriangle(
-			bx - 7, by + h / 2,
-			bx + 7, by + h / 2,
-			bx,     by + h / 2 + tailH
-		);
+		this.bg.fillTriangle(bx - 7, by + h / 2, bx + 7, by + h / 2, bx, by + h / 2 + tailH);
 
 		// Text center
 		this.label.setPosition(bx, by);
