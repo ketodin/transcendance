@@ -18,13 +18,14 @@ export const actions: Actions = {
 		}
 
 		try {
-			await auth.api.signInEmail({
+			await auth.api.signUpEmail({
 				body: form.data
 			});
-		} catch (err) {
-			console.error(err);
-			return setError(form, 'password', 'Invalid email or password');
+		} catch (error) {
+			console.error(error);
+			return setError(form, 'email', 'Email already in use');
 		}
+
 		return redirect(303, '/');
 	}
 };
