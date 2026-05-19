@@ -11,6 +11,10 @@ import { Client, Room } from '@colyseus/sdk';
 import type { GameRoomState } from '../../colyseus/schema/GameRoomState';
 import { COLORS, COLOR_STRINGS } from '../colors';
 import { EventBus } from '../EventBus';
+// Chat input and bubble component
+import { SpeechBubble } from '$lib/game/client/view/SpeechBubble';
+import { ChatInput } from '$lib/game/client/view/ChatInput';
+import { CHAT_BUBBLE_DURATION } from '$lib/game/shared/chatConfig';
 
 const PLAYER_NAMES = ['Player 1', 'Player 2'];
 const COLYSEUS_URL =
