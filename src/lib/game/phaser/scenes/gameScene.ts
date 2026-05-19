@@ -385,8 +385,8 @@ export default class GameScene extends Scene {
 			this.statusText.setText('Waiting for Player 2...');
 			//Chat server handler
 			room.onMessage('chat', (data: { playerIndex: number; text: string }) => {
-		    const tank = this.localGameData!.tanks[data.playerIndex];
-		    this.speechBubbles[data.playerIndex].setText(data.text, tank);
+				const tank = this.localGameData!.tanks[data.playerIndex];
+				this.speechBubbles[data.playerIndex].setText(data.text, tank);
 			});
 		} catch (err) {
 			this.statusText.setText('Connection failed.\nCheck the game server is running.');
@@ -408,14 +408,11 @@ export default class GameScene extends Scene {
 			new TankSprite(this, this.localGameData!.tanks[1])
 		];
 		//Bubble init
-    	this.speechBubbles = [
-    	    new SpeechBubble(this),
-    	    new SpeechBubble(this)
-    	];
-    	// chat init
-    	this.chatInput?.destroy();
+		this.speechBubbles = [new SpeechBubble(this), new SpeechBubble(this)];
+		// chat init
+		this.chatInput?.destroy();
 		this.chatInput = new ChatInput(this, (text) => {
-    		this.room!.send('chat', { text });
+			this.room!.send('chat', { text });
 			this.chatInput.block(CHAT_BUBBLE_DURATION);
 		});
 		this.projView = new ProjectileView(this);
@@ -443,7 +440,7 @@ export default class GameScene extends Scene {
 		this.speechBubbles[1].sync(data.tanks[1]);
 		// chat
 		if (Input.Keyboard.JustDown(this.chatKey)) {
-    	this.chatInput?.open();
+			this.chatInput?.open();
 		}
 		// Sync projectile with client-side trail
 		const proj = data.projectile;

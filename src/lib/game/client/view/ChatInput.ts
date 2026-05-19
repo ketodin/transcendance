@@ -9,7 +9,7 @@ export class ChatInput {
 	private onSend: OnSendCallback;
 	private scene: Phaser.Scene;
 	private canOpen = true;
-	
+
 	constructor(scene: Phaser.Scene, onSend: OnSendCallback) {
 		this.scene = scene;
 		this.onSend = onSend;
@@ -21,7 +21,7 @@ export class ChatInput {
 			left: '50%',
 			transform: 'translateX(-50%)',
 			display: 'none',
-			zIndex: '999',
+			zIndex: '999'
 		});
 
 		this.input = document.createElement('input');
@@ -37,7 +37,7 @@ export class ChatInput {
 			border: '2px solid COLOR_STRINGS.neonGlow',
 			borderRadius: '8px',
 			outline: 'none',
-			caretColor: COLOR_STRINGS.neonGlow,
+			caretColor: COLOR_STRINGS.neonGlow
 		});
 		this.container.appendChild(this.input);
 
@@ -60,18 +60,20 @@ export class ChatInput {
 		});
 	}
 
-open() {
-    if (this.isOpen || !this.canOpen) return; // if already open or recently blocked
-    this.isOpen = true;
-    this.input.value = '';
-    this.container.style.display = 'block';
-    setTimeout(() => this.input.focus(), 30);
-}
+	open() {
+		if (this.isOpen || !this.canOpen) return; // if already open or recently blocked
+		this.isOpen = true;
+		this.input.value = '';
+		this.container.style.display = 'block';
+		setTimeout(() => this.input.focus(), 30);
+	}
 
-block(duration: number) {
-    this.canOpen = false;
-    setTimeout(() => { this.canOpen = true; }, duration);
-}
+	block(duration: number) {
+		this.canOpen = false;
+		setTimeout(() => {
+			this.canOpen = true;
+		}, duration);
+	}
 
 	private close() {
 		this.isOpen = false;
