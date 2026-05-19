@@ -1,0 +1,1 @@
+export const CHAT_BUBBLE_DURATION = 4000;
