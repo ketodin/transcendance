@@ -13,6 +13,8 @@ import {
 import { PROJECTILE_TYPES } from '../../src/lib/game/shared/projectileTypes.js';
 import type { GameState } from '../../src/lib/game/shared/state/GameState.js';
 import type { TankState } from '../../src/lib/game/shared/state/TankState.js';
+// import chat handler
+import { registerChatHandler } from '../../src/lib/game/colyseus/handlers/chatHandler.ts';
 
 const SCENE_WIDTH = 1280;
 const SCENE_HEIGHT = 720;
@@ -75,6 +77,8 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		});
 
 		this.setSimulationInterval((dt) => this.tick(dt), 1000 / 60);
+		// register chat handler
+		registerChatHandler(this, (client) => this.getPlayerIndex(client));
 	}
 
 	onJoin(client: Client) {

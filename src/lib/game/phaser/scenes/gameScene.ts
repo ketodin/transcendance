@@ -383,6 +383,11 @@ export default class GameScene extends Scene {
 			});
 
 			this.statusText.setText('Waiting for Player 2...');
+			//Chat server handler
+			room.onMessage('chat', (data: { playerIndex: number; text: string }) => {
+		    const tank = this.localGameData!.tanks[data.playerIndex];
+		    this.speechBubbles[data.playerIndex].setText(data.text, tank);
+			});
 		} catch (err) {
 			this.statusText.setText('Connection failed.\nCheck the game server is running.');
 			console.error(err);
@@ -410,7 +415,6 @@ export default class GameScene extends Scene {
     	// chat init
     	this.chatInput?.destroy();
 		this.chatInput = new ChatInput(this, (text) => {
-			console.log('[client] envoi chat:', text);
     		this.room!.send('chat', { text });
 			this.chatInput.block(CHAT_BUBBLE_DURATION);
 		});
