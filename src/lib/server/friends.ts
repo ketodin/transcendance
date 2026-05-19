@@ -30,7 +30,6 @@ export async function listFriends(meId: string): Promise<Friends> {
 	return { accepted, received, sent };
 }
 
-/// WARN: race condition if exectued from both side at the same time, end up with 2 pending requests
 export async function sendOrAccept(meId: string, otherId: string) {
 	/// check for reverse request, accepted or not, and set it accepted if found
 	const updates = await db.friendRequest.updateMany({
@@ -55,7 +54,6 @@ export async function sendOrAccept(meId: string, otherId: string) {
 	}
 }
 
-/// TODO: check cascading delete, does deleting a user will remove it's friendships
 export async function dismissOrRemove(meId: string, otherId: string) {
 	/// delete request both way
 	await db.friendRequest.deleteMany({
