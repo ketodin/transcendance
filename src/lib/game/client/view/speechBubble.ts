@@ -24,6 +24,51 @@ export class SpeechBubble {
 		this.bg = scene.add.graphics().setDepth(50);
 	}
 
+	setText(text: string, tank: TankState): void {
+		this.label.setVisible(true);
+	    this.label.setText(text);
+	    this.sync(tank);
+
+		// Reset timer if message are display
+    	if (this.timer) this.timer.destroy();
+
+    	this.timer = this.scene.time.addEvent({
+    	    delay: CHAT_BUBBLE_DURATION,
+    	    callback: () => {
+    	        this.label.setText('');
+    	        this.label.setVisible(false);
+    	        this.bg.clear();
+    	    }
+    	});
+	}
+
+    sync(tank: TankState): void {
+		const bx = tank.x;
+		const by = tank.y - 80;
+
+		this.bg.clear();
+
+		if (!this.label.text) return;
+
+		const pad = 5;
+		const w = Math.max(this.label.width + pad * 2, 70);
+		const h = this.label.height + pad * 2;
+		const tailH = 10;
+
+		this.bg.fillStyle(COLORS.white, 0.88); // Background
+		this.bg.fillRoundedRect(bx - w / 2, by - h / 2, w, h, 8);
+		this.bg.lineStyle(1.5, COLORS.black, 1); // Stroke chatbox
+		this.bg.strokeRoundedRect(bx - w / 2, by - h / 2, w, h, 8);
+		this.bg.fillStyle(COLORS.white, 0.88); // Arrow background
+		this.bg.fillTriangle(
+			bx - 7, by + h / 2,
+			bx + 7, by + h / 2,
+			bx,     by + h / 2 + tailH
+		);
+
+		// Text center
+		this.label.setPosition(bx, by);
+	}
 	destroy(): void {
 		this.bg.destroy();
 		this.label.destroy();
