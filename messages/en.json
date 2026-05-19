@@ -12,10 +12,18 @@
 	"privacy": "Privacy Policy",
 	"terms": "Terms of Service",
 	"online": "Online",
+	"friends": "Friends",
+	"offline": "Offline",
+	"invite_play": "Invite to play",
+	"remove_friend": "Remove from friend list",
+	"email": "email",
+	"no_account": "No account ?",
+	"already_account": "Already have an account ?",
 
 	"name_place_holder": "Steve",
 	"mail_place_holder": "steve.jobs@gmail.com",
 	"password": "Password",
+	"repeat_password": "Repeat password",
 	"show_password": "Show password",
 	"name": "Username",
 
