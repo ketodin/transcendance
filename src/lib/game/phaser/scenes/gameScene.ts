@@ -96,6 +96,12 @@ export default class GameScene extends Scene {
 	private readonly fuelBarW = 200;
 	private readonly fuelBarH = 18;
 
+	// bubble chat
+	private speechBubbles!: [SpeechBubble, SpeechBubble];
+	// chat input
+	private chatInput!: ChatInput;
+	private chatKey!: Input.Keyboard.Key;
+
 	private keys!: {
 		p1Left: Input.Keyboard.Key;
 		p1Right: Input.Keyboard.Key;
