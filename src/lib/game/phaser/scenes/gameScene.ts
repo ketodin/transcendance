@@ -12,8 +12,8 @@ import type { GameRoomState } from '../../colyseus/schema/GameRoomState';
 import { COLORS, COLOR_STRINGS } from '../colors';
 import { EventBus } from '../EventBus';
 // Chat input and bubble component
-import { SpeechBubble } from '$lib/game/client/view/SpeechBubble';
-import { ChatInput } from '$lib/game/client/view/ChatInput';
+import { SpeechBubble } from '../../client/view/speechBubble';
+import { ChatInput } from '../../client/view/ChatInput';
 import { CHAT_BUBBLE_DURATION } from '$lib/game/shared/chatConfig';
 
 const PLAYER_NAMES = ['Player 1', 'Player 2'];
@@ -137,6 +137,8 @@ export default class GameScene extends Scene {
 
 	shutdown() {
 		EventBus.off('theme-changed', this.onThemeChanged);
+		//Chat cleanup
+		this.chatInput?.destroy();
 	}
 
 	private drawSky() {
@@ -175,6 +177,8 @@ export default class GameScene extends Scene {
 			p2Shoot: kb.addKey(Input.Keyboard.KeyCodes.ENTER),
 			weaponKey: kb.addKey(Input.Keyboard.KeyCodes.Q)
 		};
+		//Chat key
+		this.chatKey = kb.addKey(Input.Keyboard.KeyCodes.T);
 	}
 
 	private setupUI() {
@@ -398,7 +402,18 @@ export default class GameScene extends Scene {
 			new TankSprite(this, this.localGameData!.tanks[0]),
 			new TankSprite(this, this.localGameData!.tanks[1])
 		];
-
+		//Bubble init
+    	this.speechBubbles = [
+    	    new SpeechBubble(this),
+    	    new SpeechBubble(this)
+    	];
+    	// chat init
+    	this.chatInput?.destroy();
+		this.chatInput = new ChatInput(this, (text) => {
+			console.log('[client] envoi chat:', text);
+    		this.room!.send('chat', { text });
+			this.chatInput.block(CHAT_BUBBLE_DURATION);
+		});
 		this.projView = new ProjectileView(this);
 	}
 
@@ -419,7 +434,13 @@ export default class GameScene extends Scene {
 		// Sync tank sprites
 		this.tankSprites[0].sync(data.tanks[0]);
 		this.tankSprites[1].sync(data.tanks[1]);
-
+		// Bubble chat
+		this.speechBubbles[0].sync(data.tanks[0]);
+		this.speechBubbles[1].sync(data.tanks[1]);
+		// chat
+		if (Input.Keyboard.JustDown(this.chatKey)) {
+    	this.chatInput?.open();
+		}
 		// Sync projectile with client-side trail
 		const proj = data.projectile;
 		if (proj.active) {
