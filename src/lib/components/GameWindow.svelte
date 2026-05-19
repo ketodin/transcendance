@@ -43,14 +43,4 @@
 
 <div id="game-container"></div>
 <!-- <div id="game-container"></div> -->
-<style>
-:global(#game-container) {
-	position: fixed;
-	inset: 0;
 
-	width: 100vw;
-	height: 100dvh;
-
-	overflow: hidden;
-}
-</style>

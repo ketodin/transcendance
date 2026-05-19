@@ -2,9 +2,9 @@
 	import { getLocale, setLocale } from '$lib/paraglide/runtime';
 
 	const languages = [
-		{ code: 'fr', flag: '🇫🇷', label: 'Français' },
-		{ code: 'en', flag: '🇬🇧', label: 'English' },
-		{ code: 'es', flag: '🇪🇸', label: 'Español' }
+		{ code: 'fr', flag: '🇫🇷' },
+		{ code: 'en', flag: '🇬🇧' },
+		{ code: 'es', flag: '🇪🇸' }
 	] as const;
 
 	type Locale = (typeof languages)[number]['code'];
@@ -18,53 +18,88 @@
 		open = false;
 	}
 
-	const currentLang = $derived(languages.find((l) => l.code === current) ?? languages[0]);
+	const currentLang = $derived(
+		languages.find((l) => l.code === current) ?? languages[0]
+	);
 
 	function handleClickOutside(e: MouseEvent) {
 		const target = e.target as HTMLElement;
-		if (!target.closest('.lang-picker')) {
-			open = false;
-		}
+		if (!target.closest('.lang-picker')) open = false;
 	}
 </script>
 
 <svelte:window onclick={handleClickOutside} />
 
-<div class="lang-picker relative">
+<div class="lang-picker relative flex items-center">
 	<button
 		onclick={() => (open = !open)}
-		class="flex h-9 w-9 items-center justify-center rounded-xl text-lg transition-all duration-200 hover:bg-white/10 active:scale-95"
+		class="flex h-9 w-9 items-center justify-center rounded-xl text-lg transition hover:bg-white/10 active:scale-95"
 	>
 		{currentLang.flag}
 	</button>
 
 	{#if open}
-		<div
-			class="absolute top-full right-0 mt-2 flex flex-col gap-1 p-1.5 min-w-[140px]"
-			style="
-				background: rgba(255, 255, 255, 0.08);
-				backdrop-filter: blur(16px);
-				-webkit-backdrop-filter: blur(16px);
-				border-radius: 1rem;
-				box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-				border: 1px solid rgba(255, 255, 255, 0.18);
-			"
-		>
+		<div class="glass dropdown">
 			{#each languages as lang (lang.code)}
 				<button
 					onclick={() => selectLanguage(lang.code)}
-					class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-all duration-150
-						{lang.code === current
-						? 'bg-white/15 font-medium'
-						: 'hover:bg-white/10'}"
+					class="item {lang.code === current ? 'active' : ''}"
 				>
-					<span class="text-base">{lang.flag}</span>
-					<span>{lang.label}</span>
-					{#if lang.code === current}
-						<span class="ml-auto text-xs opacity-70">✓</span>
-					{/if}
+					{lang.flag}
 				</button>
 			{/each}
 		</div>
 	{/if}
 </div>
+
+<style>
+.dropdown {
+	position: absolute;
+	top: calc(100% + 1rem);
+	right: 50%;
+	transform: translateX(50%);
+
+	display: flex;
+	flex-direction: row;
+	gap: 0.35rem;
+
+	padding: 0.35rem;
+
+	z-index: 50;
+
+	animation: pop 0.15s ease-out;
+}
+
+.item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 2.25rem;
+	height: 2.25rem;
+
+	border-radius: 0.5rem;
+	font-size: 1.1rem;
+
+	transition: 0.15s ease;
+}
+
+.item:hover {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.item.active {
+	background: rgba(255, 255, 255, 0.15);
+}
+
+@keyframes pop {
+	from {
+		opacity: 0;
+		transform: translateX(50%) translateY(-4px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(50%) translateY(0) scale(1);
+	}
+}
+</style>
