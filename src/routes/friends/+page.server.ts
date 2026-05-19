@@ -1,6 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import db from '$lib/server/db';
-import { listFriends, sendOrAccept, dismissOrRemove } from '$lib/friends';
+import { listFriends, sendOrAccept, dismissOrRemove } from '$lib/server/friends';
 import { redirect } from '@sveltejs/kit';
 import { superValidate, setError, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
