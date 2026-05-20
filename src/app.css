@@ -5,16 +5,38 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* indigo */
+/* --0:#ffffff; */
+/* --50:#eef2ff; */
+/* --100:#e0e7ff; */
+/* --200:#c7d2fe; */
+/* --300:#a5b4fc; */
+/* --400:#818cf8; */
+/* --500:#6366f1; */
+/* --600:#4f46e5; */
+/* --700:#4338ca; */
+/* --800:#3730a3; */
+/* --900:#312e81; */
+/* --950:#1e1b4b; */
+/* --1000:#000000; */
+
 :root {
-	--background: #ffffff;
-	--foreground: #09090b;
-	--card: #ffffff;
-	--card-foreground: #09090b;
-	--popover: #ffffff;
-	--popover-foreground: #09090b;
-	--primary: #18181b;
-	--primary-foreground: #fafafa;
-	--secondary: #f4f4f5;
+	--0: #ffffff;
+	--50: #eef2ff;
+	--100: #e0e7ff;
+	--200: #c7d2fe;
+	--300: #a5b4fc;
+	--400: #818cf8;
+	--500: #6366f1;
+	--600: #4f46e5;
+	--700: #4338ca;
+	--800: #3730a3;
+	--900: #312e81;
+	--950: #1e1b4b;
+	--1000: #000000;
+	--background: var(--500);
+	--foreground: var(--950);
+	--secondary: #ffffff;
 	--secondary-foreground: #18181b;
 	--muted: #f4f4f5;
 	--muted-foreground: #71717a;
@@ -22,7 +44,7 @@
 	--accent-foreground: #18181b;
 	--destructive: #dc2626;
 	--border: #e4e4e7;
-	--input: #e4e4e7;
+	--input: #e4e4e76;
 	--ring: #a1a1aa;
 	--chart-1: #d4d4d8;
 	--chart-2: #71717a;
@@ -30,47 +52,34 @@
 	--chart-4: #3f3f46;
 	--chart-5: #27272a;
 	--radius: 0.625rem;
-	--sidebar: #fafafa;
-	--sidebar-foreground: #09090b;
-	--sidebar-primary: #18181b;
-	--sidebar-primary-foreground: #fafafa;
-	--sidebar-accent: #f4f4f5;
-	--sidebar-accent-foreground: #18181b;
-	--sidebar-border: #e4e4e7;
-	--sidebar-ring: #a1a1aa;
 
 	/* Game colors — light mode (daytime) */
-	--game-bg: #ffffff; /* canvas background */
-	--game-sky-top: #7ab8e0;
-	--game-navy: #dde5ed; /* HUD panel bg + text stroke */
-	--game-terrain: #3d7a52;
-	--game-terrain-dark: #2a5c3a;
-	--game-terrain-base: #1e3d2a;
-	--game-neon-glow: #0d5c2e; /* HUD text + terrain glow */
-	--game-neon-bright: #00a030; /* terrain glow bright pass */
-	--game-bar-high: #009933;
-	--game-bar-mid: #cc9900;
-	--game-bar-low: #cc1111;
-	--game-fuel-high: #0077bb;
-	--game-fuel-mid: #cc6600;
-	--game-white: #ffffff; /* tank name + weapon text */
-	--game-black: #000000; /* tank name stroke + FPS */
-	--game-gold: #7a5200; /* "Player X Wins!" text */
-	--game-yellow: #886600; /* timer warning + active weapon */
-	--game-red: #cc0000; /* timer critical (≤5s) */
-	--game-hint: rgba(0, 0, 0, 0.5); /* controls hint text */
-	--game-weapon-inactive: rgba(60, 60, 60, 0.4); /* inactive weapon name */
+	--game-bg: var(--0); /* canvas background */
+	--game-sky-top: var(--700);
+	--game-navy: var(--200); /* HUD panel bg + text stroke */
+	--game-terrain: var(--500);
+	--game-terrain-dark: var(--950);
+	--game-terrain-base: var(--500); /* Bot bar */
+	--game-neon-glow: var(--800); /* HUD text + terrain glow */
+	--game-neon-bright: var(--200); /* terrain glow bright pass */
+	--game-bar-high: var(--800);
+	--game-bar-mid: var(--800);
+	--game-bar-low: var(--destructive);
+	--game-fuel-high: var(--800);
+	--game-fuel-mid: var(--800);
+	--game-fuel-low: var(--destructive);
+	--game-white: var(--100); /* tank name + weapon text */
+	--game-black: var(--950); /* tank name stroke + FPS */
+	--game-gold: var(--500); /* "Player X Wins!" text */
+	--game-yellow: var(--800); /* timer warning + active weapon */
+	--game-red: var(--destructive); /* timer critical (≤5s) */
+	--game-hint: var(--800); /* controls hint text */
+	--game-weapon-inactive: var(--400); /* inactive weapon name */
 }
 
 .dark {
-	--background: #09090b;
-	--foreground: #fafafa;
-	--card: #18181b;
-	--card-foreground: #fafafa;
-	--popover: #18181b;
-	--popover-foreground: #fafafa;
-	--primary: #e4e4e7;
-	--primary-foreground: #18181b;
+	--background: var(--950);
+	--foreground: var(--50);
 	--secondary: #27272a;
 	--secondary-foreground: #fafafa;
 	--muted: #27272a;
@@ -86,48 +95,33 @@
 	--chart-3: #52525b;
 	--chart-4: #3f3f46;
 	--chart-5: #27272a;
-	--sidebar: #18181b;
-	--sidebar-foreground: #fafafa;
-	--sidebar-primary: #1647e6;
-	--sidebar-primary-foreground: #fafafa;
-	--sidebar-accent: #27272a;
-	--sidebar-accent-foreground: #fafafa;
-	--sidebar-border: #ffffff1a;
-	--sidebar-ring: #71717a;
 
 	/* Game colors — dark mode (night time) */
-	--game-bg: #09090b; /* canvas background */
-	--game-sky-top: #111130;
-	--game-navy: #0e0e24; /* HUD panel bg + text stroke */
-	--game-terrain: #3d7a52;
-	--game-terrain-dark: #2a5c3a;
-	--game-terrain-base: #1e3d2a;
-	--game-neon-glow: #88e8a0; /* HUD text + terrain glow */
-	--game-neon-bright: #4cff80; /* terrain glow bright pass */
-	--game-bar-high: #00ff44;
-	--game-bar-mid: #ffdd00;
-	--game-bar-low: #ff3333;
-	--game-fuel-high: #00ccff;
-	--game-fuel-mid: #ffaa00;
-	--game-white: #ffffff; /* tank name + weapon text */
-	--game-black: #000000; /* tank name stroke + FPS */
-	--game-gold: #d4b832; /* "Player X Wins!" text */
-	--game-yellow: #ffdd55; /* timer warning + active weapon */
-	--game-red: #ff4444; /* timer critical (≤5s) */
-	--game-hint: rgba(255, 255, 255, 0.5); /* controls hint text */
-	--game-weapon-inactive: rgba(200, 200, 200, 0.4); /* inactive weapon name */
+	--game-bg: var(--700); /* canvas background */
+	--game-sky-top: var(--950);
+	--game-navy: var(--800); /* HUD panel bg + text stroke */
+	--game-terrain: var(--950);
+	--game-terrain-dark: var(--100);
+	--game-terrain-base: var(--950);
+	--game-neon-glow: var(--100); /* HUD text + terrain glow */
+	--game-neon-bright: var(--800); /* terrain glow bright pass */
+	--game-bar-high: var(--200);
+	--game-bar-mid: var(--200);
+	--game-bar-low: var(--destructive);
+	--game-fuel-high: var(--200);
+	--game-fuel-mid: var(--200);
+	--game-fuel-low: var(--destructive);
+	--game-white: var(--50); /* tank name + weapon text */
+	--game-black: var(--950); /* tank name stroke + FPS */
+	--game-gold: var(--500); /* "Player X Wins!" text */
+	--game-yellow: var(--500); /* timer warning + active weapon */
+	--game-red: var(--destructive); /* timer critical (≤5s) */
+	--game-hint: var(--200); /* controls hint text */
+	--game-weapon-inactive: var(--600); /* inactive weapon name */
 }
 
 @theme inline {
 	--font-sans: 'Inter Variable', sans-serif;
-	--color-sidebar-ring: var(--sidebar-ring);
-	--color-sidebar-border: var(--sidebar-border);
-	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-	--color-sidebar-accent: var(--sidebar-accent);
-	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-	--color-sidebar-primary: var(--sidebar-primary);
-	--color-sidebar-foreground: var(--sidebar-foreground);
-	--color-sidebar: var(--sidebar);
 	--color-chart-5: var(--chart-5);
 	--color-chart-4: var(--chart-4);
 	--color-chart-3: var(--chart-3);
@@ -143,12 +137,6 @@
 	--color-muted: var(--muted);
 	--color-secondary-foreground: var(--secondary-foreground);
 	--color-secondary: var(--secondary);
-	--color-primary-foreground: var(--primary-foreground);
-	--color-primary: var(--primary);
-	--color-popover-foreground: var(--popover-foreground);
-	--color-popover: var(--popover);
-	--color-card-foreground: var(--card-foreground);
-	--color-card: var(--card);
 	--color-foreground: var(--foreground);
 	--color-background: var(--background);
 	--radius-sm: calc(var(--radius) * 0.6);
@@ -170,4 +158,38 @@
 	html {
 		@apply font-sans;
 	}
+}
+
+.app {
+	min-height: 100vh;
+	background: linear-gradient(180deg, var(--game-bg), var(--game-sky-top));
+	position: relative;
+}
+
+.game-container {
+	position: absolute;
+
+	top: calc(var(--header-height) + var(--layout-gap) + 1%);
+	left: calc(20% + 2%);
+	right: 1%;
+	bottom: 1%;
+
+	display: flex;
+}
+
+.content {
+	width: 100%;
+	height: 100%;
+
+	padding: 2rem;
+
+	overflow-y: auto;
+}
+
+.glass {
+	background: rgba(var(--color-background), 0.4);
+	backdrop-filter: blur(16px);
+	border-radius: var(--radius-xl);
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+	border: 1px solid rgba(255, 255, 255, 0.4);
 }

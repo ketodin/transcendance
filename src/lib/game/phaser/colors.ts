@@ -22,6 +22,7 @@ export const COLORS = {
 	barLow: 0xff3333,
 	fuelHigh: 0x00ccff,
 	fuelMid: 0xffaa00,
+	fuelLow: 0xff0000,
 	white: 0xffffff,
 	black: 0x000000,
 
@@ -72,6 +73,7 @@ export function syncFromCSS(): void {
 	COLORS.barLow = cssHex('--game-bar-low');
 	COLORS.fuelHigh = cssHex('--game-fuel-high');
 	COLORS.fuelMid = cssHex('--game-fuel-mid');
+	COLORS.fuelLow = cssHex('--game-fuel-low');
 	COLORS.white = cssHex('--game-white');
 	COLORS.black = cssHex('--game-black');
 
