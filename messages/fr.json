@@ -19,6 +19,10 @@
 	"email": "e-mail",
 	"no_account": "Pas de compte ?",
 	"already_account": "Vous avez déjà un compte ?",
+	"invalid_mail": "Email ou mot de passe invalide",
+	"invalid_name": "Les espaces ne sont pas autorisés",
+	"invalid_repeat": "Les mots de passe ne correspondent pas",
+	"already_email": "E-mail déjà utilisé",
 
 	"name_place_holder": "Stephane",
 	"mail_place_holder": "stephane.travail@gmail.com",
