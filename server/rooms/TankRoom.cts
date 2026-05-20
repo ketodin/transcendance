@@ -14,8 +14,8 @@ import { PROJECTILE_TYPES } from '../../src/lib/game/shared/projectileTypes.js';
 import type { GameState } from '../../src/lib/game/shared/state/GameState.js';
 import type { TankState } from '../../src/lib/game/shared/state/TankState.js';
 
-const SCENE_WIDTH = 1280;
-const SCENE_HEIGHT = 720;
+const SCENE_WIDTH = 1920;
+const SCENE_HEIGHT = 1080;
 const MOVE_SPEED = 100;
 const AIM_SPEED = 55;
 const POWER_RATE = 55;
