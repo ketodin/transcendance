@@ -41,5 +41,5 @@
 	});
 </script>
 
-<div id="game-container" style="width: 100%; height: 100%"></div>
+<div id="game-container"></div>
 <!-- <div id="game-container"></div> -->

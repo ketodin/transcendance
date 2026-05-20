@@ -5,6 +5,8 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { formSchema } from './schema';
+	import LanguagePicker from '$lib/components/LanguagePicker.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { resolve } from '$app/paths';
 
 	let { data }: PageProps = $props();
@@ -13,39 +15,85 @@
 	const { form: formData, enhance } = $derived(form);
 </script>
 
-<form method="POST" use:enhance>
-	<Form.Field {form} name="name">
-		<Form.Control>
-			{#snippet children({ props })}
-				<Form.Label>Name</Form.Label>
-				<Input {...props} type="text" bind:value={$formData.name} required />
-			{/snippet}
-		</Form.Control>
-		<Form.Description />
-		<Form.FieldErrors />
-	</Form.Field>
-	<Form.Field {form} name="email">
-		<Form.Control>
-			{#snippet children({ props })}
-				<Form.Label>Email</Form.Label>
-				<Input {...props} type="text" bind:value={$formData.email} required />
-			{/snippet}
-		</Form.Control>
-		<Form.Description />
-		<Form.FieldErrors />
-	</Form.Field>
-	<Form.Field {form} name="password">
-		<Form.Control>
-			{#snippet children({ props })}
-				<Form.Label>Password</Form.Label>
-				<Input {...props} type="text" bind:value={$formData.password} required />
-			{/snippet}
-		</Form.Control>
-		<Form.Description />
-		<Form.FieldErrors />
-	</Form.Field>
-	<Form.Button>Register</Form.Button>
-	<p class="text-muted-foreground text-center text-sm">
-		Already have an account? <a href={resolve('/login')} class="underline">Login</a>
-	</p>
-</form>
+<div class="bg-muted/30 flex min-h-screen items-center justify-center px-4">
+	<div class="w-full max-w-md space-y-6">
+		<div class="flex items-center justify-between">
+			<h1 class="text-2xl font-semibold tracking-tight">
+				{m.register()}
+			</h1>
+			<LanguagePicker />
+		</div>
+		<div class="bg-background rounded-2xl border p-6 shadow-sm">
+			<form method="POST" use:enhance class="space-y-5">
+				<Form.Field {form} name="name">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label class="text-sm font-medium">{m.name()}</Form.Label>
+							<Input
+								{...props}
+								type="text"
+								bind:value={$formData.name}
+								placeholder={m.name_place_holder()}
+								class="h-11"
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="email">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label class="text-sm font-medium">{m.email()}</Form.Label>
+							<Input
+								{...props}
+								type="text"
+								bind:value={$formData.email}
+								placeholder={m.mail_place_holder()}
+								class="h-11"
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="password">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label class="text-sm font-medium">{m.password()}</Form.Label>
+							<Input
+								{...props}
+								type="password"
+								bind:value={$formData.password}
+								placeholder="••••••••"
+								class="h-11"
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="repeatPassword">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label class="text-sm font-medium">
+								{m.repeat_password?.() ?? 'Repeat password'}
+							</Form.Label>
+							<Input
+								{...props}
+								type="password"
+								bind:value={$formData.repeatPassword}
+								placeholder="••••••••"
+								class="h-11"
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Button class="h-11 w-full text-base font-medium">
+					{m.register()}
+				</Form.Button>
+				<p class="text-muted-foreground text-center text-sm">
+					{m.already_account()} <a href={resolve('/login')} class="underline">{m.login()}</a>
+				</p>
+			</form>
+		</div>
+	</div>
+</div>

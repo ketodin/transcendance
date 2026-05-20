@@ -647,7 +647,7 @@ export default class GameScene extends Scene {
 	private updateFuelBar(fuel: number) {
 		this.fuelFill.clear();
 		const pct = fuel / 100;
-		const color = pct > 0.5 ? COLORS.fuelHigh : pct > 0.25 ? COLORS.fuelMid : COLORS.barLow;
+		const color = pct > 0.5 ? COLORS.fuelHigh : pct > 0.25 ? COLORS.fuelMid : COLORS.fuelLow;
 		this.fuelFill.fillStyle(color);
 		this.fuelFill.fillRect(this.fuelBarX, this.fuelBarY, this.fuelBarW * pct, this.fuelBarH);
 	}

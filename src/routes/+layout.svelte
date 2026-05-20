@@ -2,28 +2,33 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import Friends from '$lib/components/Friends.svelte';
 	import '../app.css';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import AppSidebar from '$lib/components/app-sidebar.svelte';
-	let { children } = $props();
+
+	import { page } from '$app/stores';
+	import type { Snippet } from 'svelte';
+
+	let { children }: { children: Snippet } = $props();
+
+	const isAuthRoute = $derived(
+		$page.url.pathname.startsWith('/login') || $page.url.pathname.startsWith('/register')
+	);
 </script>
 
 <ModeWatcher />
 
-<div class="relative flex min-h-screen flex-col">
-	<Header />
+{#if !isAuthRoute}
+	<div class="app">
+		<Header />
+		<Friends />
+		<Footer />
 
-	<div class="flex-1">
-		<Sidebar.Provider>
-			<div class="flex min-h-[calc(100vh-64px)] w-full">
-				<AppSidebar />
-				<main class="w-full flex-1 px-4 py-8">
-					<!-- eslint-disable-next-line @typescript-eslint/no-unsafe-call -->
-					{@render children?.()}
-				</main>
+		<main class="game-container">
+			<div class="glass content">
+				{@render children?.()}
 			</div>
-		</Sidebar.Provider>
+		</main>
 	</div>
-
-	<Footer />
-</div>
+{:else}
+	{@render children?.()}
+{/if}

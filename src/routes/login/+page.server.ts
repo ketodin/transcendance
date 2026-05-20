@@ -21,10 +21,11 @@ export const actions: Actions = {
 			await auth.api.signInEmail({
 				body: form.data
 			});
-		} catch (err) {
-			console.error(err);
+		} catch (error) {
+			console.error(error);
 			return setError(form, 'password', 'Invalid email or password');
 		}
+
 		return redirect(303, '/');
 	}
 };
