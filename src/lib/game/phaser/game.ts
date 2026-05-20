@@ -9,7 +9,6 @@ import { COLOR_STRINGS } from './colors';
 const DEFAULT_WIDTH = 1920;
 const DEFAULT_HEIGHT = 1080;
 
-
 const config: Types.Core.GameConfig = {
 	type: AUTO,
 	scale: {

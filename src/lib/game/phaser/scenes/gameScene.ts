@@ -83,18 +83,38 @@ export default class GameScene extends Scene {
 	private weaponTexts: GameObjects.Text[] = [];
 	private statusText!: GameObjects.Text;
 
-	private sh(n: number) { return n * this.scale.height / 720; }
-	private sw(n: number) { return n * this.scale.width / 1280; }
+	private sh(n: number) {
+		return (n * this.scale.height) / 720;
+	}
+	private sw(n: number) {
+		return (n * this.scale.width) / 1280;
+	}
 
-	private get barW()     { return this.sw(400); }
-	private get barH()     { return this.sh(18); }
-	private get fuelBarX() { return this.sw(20); }
-	private get fuelBarW() { return this.sw(200); }
-	private get fuelBarH() { return this.sh(18); }
+	private get barW() {
+		return this.sw(400);
+	}
+	private get barH() {
+		return this.sh(18);
+	}
+	private get fuelBarX() {
+		return this.sw(20);
+	}
+	private get fuelBarW() {
+		return this.sw(200);
+	}
+	private get fuelBarH() {
+		return this.sh(18);
+	}
 
-	private get barX()    { return this.scale.width / 2 - this.barW / 2; }
-	private get barY()    { return this.scale.height - this.sh(32); }
-	private get fuelBarY(){ return this.scale.height - this.sh(32); }
+	private get barX() {
+		return this.scale.width / 2 - this.barW / 2;
+	}
+	private get barY() {
+		return this.scale.height - this.sh(32);
+	}
+	private get fuelBarY() {
+		return this.scale.height - this.sh(32);
+	}
 
 	private keys!: {
 		p1Left: Input.Keyboard.Key;
@@ -657,15 +677,25 @@ export default class GameScene extends Scene {
 			.graphics()
 			.setDepth(20)
 			.fillStyle(COLORS.navy, 0.88)
-			.fillRect(this.scale.width / 2 - this.sw(350), this.scale.height / 2 - this.sh(110), this.sw(700), this.sh(220));
+			.fillRect(
+				this.scale.width / 2 - this.sw(350),
+				this.scale.height / 2 - this.sh(110),
+				this.sw(700),
+				this.sh(220)
+			);
 
 		this.add
-			.text(this.scale.width / 2, this.scale.height / 2 - this.sh(70), `${PLAYER_NAMES[winner]} Wins!`, {
-				fontSize: `${Math.round(this.sh(52))}px`,
-				color: COLOR_STRINGS.gold,
-				stroke: COLOR_STRINGS.navy,
-				strokeThickness: 6
-			})
+			.text(
+				this.scale.width / 2,
+				this.scale.height / 2 - this.sh(70),
+				`${PLAYER_NAMES[winner]} Wins!`,
+				{
+					fontSize: `${Math.round(this.sh(52))}px`,
+					color: COLOR_STRINGS.gold,
+					stroke: COLOR_STRINGS.navy,
+					strokeThickness: 6
+				}
+			)
 			.setOrigin(0.5)
 			.setDepth(21);
 
