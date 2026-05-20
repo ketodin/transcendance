@@ -8,6 +8,17 @@
 	import LanguagePicker from '$lib/components/LanguagePicker.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { resolve } from '$app/paths';
+	import { getLocale } from '$lib/paraglide/runtime';
+	import * as z from 'zod';
+	import { en, fr, es } from 'zod/locales';
+
+	const localeMap = {
+		en,
+		fr,
+		es
+	};
+
+	z.config(localeMap[getLocale()]());
 
 	let { data }: PageProps = $props();
 

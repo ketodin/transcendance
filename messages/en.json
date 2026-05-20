@@ -19,6 +19,10 @@
 	"email": "email",
 	"no_account": "No account ?",
 	"already_account": "Already have an account ?",
+	"invalid_mail": "Invalid email or password",
+	"invalid_name": "Spaces are not allowed",
+	"invalid_repeat": "Passwords does not match",
+	"already_email": "Email already in use",
 
 	"name_place_holder": "Steve",
 	"mail_place_holder": "steve.jobs@gmail.com",

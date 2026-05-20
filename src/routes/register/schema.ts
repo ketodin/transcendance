@@ -1,8 +1,9 @@
 import z from 'zod';
+import { m } from '$lib/paraglide/messages';
 
 export const formSchema = z
 	.strictObject({
-		name: z.string().min(3).max(32).regex(/^\S+$/, { message: 'Spaces are not allowed' }),
+		name: z.string().min(3).max(32).regex(/^\S+$/, { message: m.invalid_name() }),
 
 		email: z.email(),
 
@@ -12,7 +13,7 @@ export const formSchema = z
 	})
 	.refine((data) => data.password === data.repeatPassword, {
 		path: ['repeatPassword'],
-		message: 'Passwords do not match'
+		message: m.invalid_repeat()
 	});
 
 export type FormSchema = typeof formSchema;
