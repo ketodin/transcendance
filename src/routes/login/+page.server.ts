@@ -3,6 +3,7 @@ import { superValidate, setError, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth } from '$lib/server/auth';
 import { formSchema } from './schema';
+import { m } from '$lib/paraglide/messages';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -23,7 +24,7 @@ export const actions: Actions = {
 			});
 		} catch (error) {
 			console.error(error);
-			return setError(form, 'password', 'Invalid email or password');
+			return setError(form, 'password', m.invalid_mail());
 		}
 
 		return redirect(303, '/');
