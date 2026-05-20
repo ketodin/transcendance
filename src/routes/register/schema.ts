@@ -15,4 +15,4 @@ export const formSchema = z
 		message: 'Passwords do not match'
 	});
 
-export type FormSchema = z.infer<typeof formSchema>;
+export type FormSchema = typeof formSchema;
