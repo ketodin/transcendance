@@ -6,8 +6,9 @@
 	import '../app.css';
 
 	import { page } from '$app/stores';
+	import type { Snippet } from 'svelte';
 
-	let { children } = $props();
+	let { children }: { children: Snippet } = $props();
 
 	const isAuthRoute = $derived(
 		$page.url.pathname.startsWith('/login') || $page.url.pathname.startsWith('/register')
