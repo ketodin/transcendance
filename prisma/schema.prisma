@@ -21,6 +21,9 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  sentRequests     FriendRequest[] @relation("SentRequests")
+  receivedRequests FriendRequest[] @relation("ReceivedRequests")
+
   @@unique([email])
   @@unique([name])
   @@map("user")
@@ -72,4 +75,21 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model FriendRequest {
+  id         String              @id @default(cuid(2))
+  sender     User                @relation("SentRequests", fields: [senderId], references: [id])
+  senderId   String
+  receiver   User                @relation("ReceivedRequests", fields: [receiverId], references: [id])
+  receiverId String
+  status     FriendRequestStatus @default(PENDING)
+  createdAt  DateTime            @default(now())
+
+  @@unique([senderId, receiverId])
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
 }
