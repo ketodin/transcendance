@@ -87,14 +87,38 @@ export default class GameScene extends Scene {
 	private weaponTexts: GameObjects.Text[] = [];
 	private statusText!: GameObjects.Text;
 
-	private readonly barX = 440;
-	private readonly barY = 688;
-	private readonly barW = 400;
-	private readonly barH = 18;
-	private readonly fuelBarX = 20;
-	private readonly fuelBarY = 688;
-	private readonly fuelBarW = 200;
-	private readonly fuelBarH = 18;
+	private sh(n: number) {
+		return (n * this.scale.height) / 720;
+	}
+	private sw(n: number) {
+		return (n * this.scale.width) / 1280;
+	}
+
+	private get barW() {
+		return this.sw(400);
+	}
+	private get barH() {
+		return this.sh(18);
+	}
+	private get fuelBarX() {
+		return this.sw(20);
+	}
+	private get fuelBarW() {
+		return this.sw(200);
+	}
+	private get fuelBarH() {
+		return this.sh(18);
+	}
+
+	private get barX() {
+		return this.scale.width / 2 - this.barW / 2;
+	}
+	private get barY() {
+		return this.scale.height - this.sh(32);
+	}
+	private get fuelBarY() {
+		return this.scale.height - this.sh(32);
+	}
 
 	// bubble chat
 	private speechBubbles!: [SpeechBubble, SpeechBubble];
@@ -183,8 +207,8 @@ export default class GameScene extends Scene {
 
 	private setupUI() {
 		this.statusText = this.add
-			.text(640, 340, 'Connecting...', {
-				fontSize: '28px',
+			.text(this.scale.width / 2, this.scale.height / 2, 'Connecting...', {
+				fontSize: `${Math.round(this.sh(28))}px`,
 				color: COLOR_STRINGS.neonGlow,
 				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 5
@@ -193,8 +217,8 @@ export default class GameScene extends Scene {
 			.setDepth(20);
 
 		this.turnText = this.add
-			.text(640, 18, '', {
-				fontSize: '22px',
+			.text(this.scale.width / 2, this.sh(18), '', {
+				fontSize: `${Math.round(this.sh(22))}px`,
 				color: COLOR_STRINGS.neonGlow,
 				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 4
@@ -204,8 +228,8 @@ export default class GameScene extends Scene {
 			.setVisible(false);
 
 		this.timerText = this.add
-			.text(640, 46, '', {
-				fontSize: '18px',
+			.text(this.scale.width / 2, this.sh(46), '', {
+				fontSize: `${Math.round(this.sh(18))}px`,
 				color: COLOR_STRINGS.neonGlow,
 				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 3
@@ -223,8 +247,8 @@ export default class GameScene extends Scene {
 		this.powerFill.setVisible(false);
 
 		this.powerLabel = this.add
-			.text(640, this.barY - 22, 'POWER — release to fire', {
-				fontSize: '13px',
+			.text(this.scale.width / 2, this.barY - this.sh(22), 'POWER — release to fire', {
+				fontSize: `${Math.round(this.sh(13))}px`,
 				color: COLOR_STRINGS.neonGlow,
 				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 3
@@ -234,8 +258,8 @@ export default class GameScene extends Scene {
 			.setVisible(false);
 
 		this.hintText = this.add
-			.text(640, 700, '', {
-				fontSize: '11px',
+			.text(this.scale.width / 2, this.scale.height - this.sh(20), '', {
+				fontSize: `${Math.round(this.sh(11))}px`,
 				color: COLOR_STRINGS.hint,
 				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 2
@@ -256,8 +280,8 @@ export default class GameScene extends Scene {
 		this.fuelFill = this.add.graphics().setDepth(10);
 
 		this.add
-			.text(this.fuelBarX + this.fuelBarW / 2, this.fuelBarY - 18, 'FUEL', {
-				fontSize: '13px',
+			.text(this.fuelBarX + this.fuelBarW / 2, this.fuelBarY - this.sh(18), 'FUEL', {
+				fontSize: `${Math.round(this.sh(13))}px`,
 				color: COLOR_STRINGS.fuelHigh,
 				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 3
@@ -268,11 +292,15 @@ export default class GameScene extends Scene {
 
 		this.trajectoryGfx = this.add.graphics().setDepth(8);
 
-		const weaponXPositions = [490, 640, 790];
+		const weaponXPositions = [
+			this.scale.width / 2 - this.sw(150),
+			this.scale.width / 2,
+			this.scale.width / 2 + this.sw(150)
+		];
 		this.weaponTexts = PROJECTILE_TYPES.map((type, i) =>
 			this.add
-				.text(weaponXPositions[i], 50, type.name, {
-					fontSize: '14px',
+				.text(weaponXPositions[i], this.sh(50), type.name, {
+					fontSize: `${Math.round(this.sh(14))}px`,
 					color: COLOR_STRINGS.white,
 					stroke: COLOR_STRINGS.navy,
 					strokeThickness: 3
@@ -656,7 +684,7 @@ export default class GameScene extends Scene {
 			this.weaponTexts[i]
 				.setText(active ? `[ ${type.name} ]` : type.name)
 				.setColor(active ? COLOR_STRINGS.yellow : COLOR_STRINGS.weaponInactive)
-				.setFontSize(active ? 17 : 13);
+				.setFontSize(active ? Math.round(this.sh(17)) : Math.round(this.sh(13)));
 		});
 	}
 
@@ -677,21 +705,35 @@ export default class GameScene extends Scene {
 	}
 
 	private showGameOver(winner: 0 | 1) {
-		this.add.graphics().setDepth(20).fillStyle(COLORS.navy, 0.88).fillRect(290, 240, 700, 220);
+		this.add
+			.graphics()
+			.setDepth(20)
+			.fillStyle(COLORS.navy, 0.88)
+			.fillRect(
+				this.scale.width / 2 - this.sw(350),
+				this.scale.height / 2 - this.sh(110),
+				this.sw(700),
+				this.sh(220)
+			);
 
 		this.add
-			.text(640, 280, `${PLAYER_NAMES[winner]} Wins!`, {
-				fontSize: '52px',
-				color: COLOR_STRINGS.gold,
-				stroke: COLOR_STRINGS.navy,
-				strokeThickness: 6
-			})
+			.text(
+				this.scale.width / 2,
+				this.scale.height / 2 - this.sh(70),
+				`${PLAYER_NAMES[winner]} Wins!`,
+				{
+					fontSize: `${Math.round(this.sh(52))}px`,
+					color: COLOR_STRINGS.gold,
+					stroke: COLOR_STRINGS.navy,
+					strokeThickness: 6
+				}
+			)
 			.setOrigin(0.5)
 			.setDepth(21);
 
 		this.add
-			.text(640, 370, 'Press R to play again', {
-				fontSize: '22px',
+			.text(this.scale.width / 2, this.scale.height / 2 + this.sh(20), 'Press R to play again', {
+				fontSize: `${Math.round(this.sh(22))}px`,
 				color: COLOR_STRINGS.neonGlow,
 				stroke: COLOR_STRINGS.navy,
 				strokeThickness: 4

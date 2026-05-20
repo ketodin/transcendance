@@ -3,11 +3,11 @@ import GameScene from './scenes/gameScene';
 import { AUTO, Scale, Game, type Types } from 'phaser';
 import { COLOR_STRINGS } from './colors';
 
-const DEFAULT_WIDTH = 1280;
-const DEFAULT_HEIGHT = 720;
+// const DEFAULT_WIDTH = 1280;
+// const DEFAULT_HEIGHT = 720;
 
-// const DEFAULT_WIDTH = 3640
-// const DEFAULT_HEIGHT = 2160
+const DEFAULT_WIDTH = 1920;
+const DEFAULT_HEIGHT = 1080;
 
 const config: Types.Core.GameConfig = {
 	type: AUTO,

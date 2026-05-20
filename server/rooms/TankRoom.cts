@@ -16,8 +16,8 @@ import type { TankState } from '../../src/lib/game/shared/state/TankState.js';
 // import chat handler
 import { registerChatHandler } from '../../src/lib/game/colyseus/handlers/chatHandler.ts';
 
-const SCENE_WIDTH = 1280;
-const SCENE_HEIGHT = 720;
+const SCENE_WIDTH = 1920;
+const SCENE_HEIGHT = 1080;
 const MOVE_SPEED = 100;
 const AIM_SPEED = 55;
 const POWER_RATE = 55;
