@@ -9,7 +9,7 @@
 
 	let { name = 'Player', online = false }: Props = $props();
 
-	const initial = name?.charAt(0).toUpperCase();
+	const initial = $derived(name?.charAt(0).toUpperCase());
 </script>
 
 <div class="glass user">
