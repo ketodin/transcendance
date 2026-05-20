@@ -15,7 +15,7 @@
 	const { form: formData, enhance } = $derived(form);
 </script>
 
-<div class="min-h-screen flex items-center justify-center bg-muted/30 px-4">
+<div class="bg-muted/30 flex min-h-screen items-center justify-center px-4">
 	<div class="w-full max-w-md space-y-6">
 		<div class="flex items-center justify-between">
 			<h1 class="text-2xl font-semibold tracking-tight">
@@ -23,7 +23,7 @@
 			</h1>
 			<LanguagePicker />
 		</div>
-		<div class="rounded-2xl border bg-background shadow-sm p-6">
+		<div class="bg-background rounded-2xl border p-6 shadow-sm">
 			<form method="POST" use:enhance class="space-y-5">
 				<Form.Field {form} name="name">
 					<Form.Control>
@@ -74,7 +74,7 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label class="text-sm font-medium">
-								{m.repeat_password?.() ?? "Repeat password"}
+								{m.repeat_password?.() ?? 'Repeat password'}
 							</Form.Label>
 							<Input
 								{...props}
@@ -87,7 +87,7 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-				<Form.Button class="w-full h-11 text-base font-medium">
+				<Form.Button class="h-11 w-full text-base font-medium">
 					{m.register()}
 				</Form.Button>
 				<p class="text-muted-foreground text-center text-sm">

@@ -10,8 +10,7 @@
 	let { children } = $props();
 
 	const isAuthRoute = $derived(
-		$page.url.pathname.startsWith('/login') ||
-		$page.url.pathname.startsWith('/register')
+		$page.url.pathname.startsWith('/login') || $page.url.pathname.startsWith('/register')
 	);
 </script>
 

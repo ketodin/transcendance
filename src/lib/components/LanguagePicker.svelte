@@ -18,9 +18,7 @@
 		open = false;
 	}
 
-	const currentLang = $derived(
-		languages.find((l) => l.code === current) ?? languages[0]
-	);
+	const currentLang = $derived(languages.find((l) => l.code === current) ?? languages[0]);
 
 	function handleClickOutside(e: MouseEvent) {
 		const target = e.target as HTMLElement;
@@ -53,53 +51,53 @@
 </div>
 
 <style>
-.dropdown {
-	position: absolute;
-	top: calc(100% + 1rem);
-	right: 50%;
-	transform: translateX(50%);
+	.dropdown {
+		position: absolute;
+		top: calc(100% + 1rem);
+		right: 50%;
+		transform: translateX(50%);
 
-	display: flex;
-	flex-direction: row;
-	gap: 0.35rem;
+		display: flex;
+		flex-direction: row;
+		gap: 0.35rem;
 
-	padding: 0.35rem;
+		padding: 0.35rem;
 
-	z-index: 50;
+		z-index: 50;
 
-	animation: pop 0.15s ease-out;
-}
-
-.item {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	width: 2.25rem;
-	height: 2.25rem;
-
-	border-radius: 0.5rem;
-	font-size: 1.1rem;
-
-	transition: 0.15s ease;
-}
-
-.item:hover {
-	background: rgba(255, 255, 255, 0.1);
-}
-
-.item.active {
-	background: rgba(255, 255, 255, 0.15);
-}
-
-@keyframes pop {
-	from {
-		opacity: 0;
-		transform: translateX(50%) translateY(-4px) scale(0.98);
+		animation: pop 0.15s ease-out;
 	}
-	to {
-		opacity: 1;
-		transform: translateX(50%) translateY(0) scale(1);
+
+	.item {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		width: 2.25rem;
+		height: 2.25rem;
+
+		border-radius: 0.5rem;
+		font-size: 1.1rem;
+
+		transition: 0.15s ease;
 	}
-}
+
+	.item:hover {
+		background: rgba(255, 255, 255, 0.1);
+	}
+
+	.item.active {
+		background: rgba(255, 255, 255, 0.15);
+	}
+
+	@keyframes pop {
+		from {
+			opacity: 0;
+			transform: translateX(50%) translateY(-4px) scale(0.98);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(50%) translateY(0) scale(1);
+		}
+	}
 </style>

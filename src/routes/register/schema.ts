@@ -2,11 +2,7 @@ import z from 'zod';
 
 export const formSchema = z
 	.strictObject({
-		name: z
-			.string()
-			.min(3)
-			.max(32)
-			.regex(/^\S+$/, { message: 'Spaces are not allowed' }),
+		name: z.string().min(3).max(32).regex(/^\S+$/, { message: 'Spaces are not allowed' }),
 
 		email: z.email(),
 

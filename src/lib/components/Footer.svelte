@@ -14,30 +14,30 @@
 </div>
 
 <style>
-.footer {
-	position: fixed;
-	left: 1%;
-	bottom: 1%;
+	.footer {
+		position: fixed;
+		left: 1%;
+		bottom: 1%;
 
-	width: 20%;
+		width: 20%;
 
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
 
-	padding: 0.75rem;
-	border-radius: 0.9rem;
-}
+		padding: 0.75rem;
+		border-radius: 0.9rem;
+	}
 
-.link {
-	font-size: 0.85rem;
-	color: rgba(255, 255, 255, 0.7);
-	text-decoration: none;
-	transition: 0.2s ease;
-	white-space: nowrap;
-}
+	.link {
+		font-size: 0.85rem;
+		color: rgba(255, 255, 255, 0.7);
+		text-decoration: none;
+		transition: 0.2s ease;
+		white-space: nowrap;
+	}
 
-.link:hover {
-	color: rgba(255, 255, 255, 1);
-}
+	.link:hover {
+		color: rgba(255, 255, 255, 1);
+	}
 </style>

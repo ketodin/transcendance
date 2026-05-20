@@ -15,7 +15,7 @@
 	const { form: formData, enhance } = $derived(form);
 </script>
 
-<div class="min-h-screen flex items-center justify-center bg-muted/30 px-4">
+<div class="bg-muted/30 flex min-h-screen items-center justify-center px-4">
 	<div class="w-full max-w-md space-y-6">
 		<div class="flex items-center justify-between">
 			<h1 class="text-2xl font-semibold tracking-tight">
@@ -23,7 +23,7 @@
 			</h1>
 			<LanguagePicker />
 		</div>
-		<div class="rounded-2xl border bg-background shadow-sm p-6">
+		<div class="bg-background rounded-2xl border p-6 shadow-sm">
 			<form method="POST" use:enhance class="space-y-5">
 				<Form.Field {form} name="email">
 					<Form.Control>
@@ -55,14 +55,11 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-				<Form.Button class="w-full h-11 text-base font-medium">
-					Sign in
-				</Form.Button>
+				<Form.Button class="h-11 w-full text-base font-medium">Sign in</Form.Button>
 				<p class="text-muted-foreground text-center text-sm">
 					{m.no_account()} <a href={resolve('/register')} class="underline">{m.register()}</a>
 				</p>
-				<div class="flex items-center justify-between text-sm text-muted-foreground">
-				</div>
+				<div class="text-muted-foreground flex items-center justify-between text-sm"></div>
 			</form>
 		</div>
 	</div>

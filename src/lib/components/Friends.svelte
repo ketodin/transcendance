@@ -1,17 +1,17 @@
 <script>
-	import User from "./User.svelte";
+	import User from './User.svelte';
 	import { m } from '$lib/paraglide/messages';
 
 	let users = [
-		{ name: "Emporio", online: true },
-		{ name: "timeo daclino", online: true },
-		{ name: "Jaubry", online: false },
-		{ name: "revoli", online: true },
-		{ name: "Crabs", online: false },
-		{ name: "le don", online: true },
-		{ name: "charly", online: false },
-		{ name: "lespenel", online: true },
-		{ name: "androux", online: false }
+		{ name: 'Emporio', online: true },
+		{ name: 'timeo daclino', online: true },
+		{ name: 'Jaubry', online: false },
+		{ name: 'revoli', online: true },
+		{ name: 'Crabs', online: false },
+		{ name: 'le don', online: true },
+		{ name: 'charly', online: false },
+		{ name: 'lespenel', online: true },
+		{ name: 'androux', online: false }
 	];
 
 	let sortedUsers = $derived([...users].sort((a, b) => Number(b.online) - Number(a.online)));
