@@ -19,3 +19,4 @@
 		<p>Not logged in</p>
 	{/if}
 </div>
+
