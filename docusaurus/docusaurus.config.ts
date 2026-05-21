@@ -43,11 +43,11 @@ const config: Config = {
 			'classic',
 			{
 				docs: {
-					path: '../docs',
+					path: '../',
 					routeBasePath: '/',
 					sidebarPath: './sidebars.ts',
-					include: ['**/*md'],
-					exclude: ['**/adr-template.md']
+					include: ['docs/**/*md'],
+					exclude: ['docs/**/adr-template.md']
 					// Please change this to your repo.
 					// Remove this to remove the "edit this page" links.
 					//editUrl:
@@ -79,7 +79,7 @@ const config: Config = {
 					sidebarId: 'docs',
 					position: 'left',
 					label: 'Documentation',
-					to: '/docs/Runbook'
+					to: '/docs/runbook'
 				}
 			]
 		},
@@ -91,7 +91,7 @@ const config: Config = {
 					items: [
 						{
 							label: 'Documentation',
-							to: '/docs/Runbook'
+							to: '/docs/runbook'
 						}
 					]
 				},

@@ -1,5 +1,5 @@
 import { Redirect } from '@docusaurus/router';
 
 export default function Home() {
-	return <Redirect to="/runbook" />;
+	return <Redirect to="docs/runbook" />;
 }
