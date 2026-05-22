@@ -1,20 +1,19 @@
 <script lang="ts">
-  import { ModeWatcher, mode } from 'mode-watcher';
-  import Shader from '$lib/components/Shader.svelte';
-  import Header from '$lib/components/Header.svelte';
-  import Footer from '$lib/components/Footer.svelte';
-  import Friends from '$lib/components/FriendList.svelte';
-  import '../app.css';
+	import { ModeWatcher, mode } from 'mode-watcher';
+	import Shader from '$lib/components/Shader.svelte';
+	import Header from '$lib/components/Header.svelte';
+	import Footer from '$lib/components/Footer.svelte';
+	import Friends from '$lib/components/FriendList.svelte';
+	import '../app.css';
 
-  import { page } from '$app/stores';
-  import type { Snippet } from 'svelte';
+	import { page } from '$app/stores';
+	import type { Snippet } from 'svelte';
 
-  let { children }: { children: Snippet } = $props();
+	let { children }: { children: Snippet } = $props();
 
-  const isAuthRoute = $derived(
-    $page.url.pathname.startsWith('/login') ||
-    $page.url.pathname.startsWith('/register')
-  );
+	const isAuthRoute = $derived(
+		$page.url.pathname.startsWith('/login') || $page.url.pathname.startsWith('/register')
+	);
 </script>
 
 <ModeWatcher />
@@ -22,17 +21,17 @@
 <Shader theme={mode.current ?? 'dark'} />
 
 {#if !isAuthRoute}
-  <div class="app">
-    <Header />
-    <Friends />
-    <Footer />
+	<div class="app">
+		<Header />
+		<Friends />
+		<Footer />
 
-    <main class="game-container">
-      <div class="glass content">
-        {@render children?.()}
-      </div>
-    </main>
-  </div>
+		<main class="game-container">
+			<div class="glass content">
+				{@render children?.()}
+			</div>
+		</main>
+	</div>
 {:else}
-  {@render children?.()}
+	{@render children?.()}
 {/if}
