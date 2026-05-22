@@ -10,7 +10,7 @@
 	const VERT = `
 attribute vec2 a_pos;
 void main() {
-gl_Position = vec4(a_pos, 0., 1.);
+	gl_Position = vec4(a_pos, 0., 1.);
 }
 `;
 
@@ -23,79 +23,78 @@ uniform vec2 u_res;
 uniform float u_mix;
 
 float hash(vec2 p) {
-p = fract(p * vec2(123.34, 456.21));
-p += dot(p, p + 45.32);
-return fract(p.x * p.y);
+	p = fract(p * vec2(123.34, 456.21));
+	p += dot(p, p + 45.32);
+	return fract(p.x * p.y);
 }
 
 float noise(vec2 p) {
-vec2 i = floor(p);
-vec2 f = fract(p);
+	vec2 i = floor(p);
+	vec2 f = fract(p);
 
-float a = hash(i);
-float b = hash(i + vec2(1.0, 0.0));
-float c = hash(i + vec2(0.0, 1.0));
-float d = hash(i + vec2(1.0, 1.0));
+	float a = hash(i);
+	float b = hash(i + vec2(1.0, 0.0));
+	float c = hash(i + vec2(0.0, 1.0));
+	float d = hash(i + vec2(1.0, 1.0));
 
-vec2 u = f * f * (3.0 - 2.0 * f);
+	vec2 u = f * f * (3.0 - 2.0 * f);
 
-return mix(a, b, u.x) +
-(c - a) * u.y * (1.0 - u.x) +
-(d - b) * u.x * u.y;
+	return mix(a, b, u.x) +
+	       (c - a) * u.y * (1.0 - u.x) +
+	       (d - b) * u.x * u.y;
 }
 
 float fbm(vec2 p) {
-float v = 0.0;
-float a = 0.5;
+	float v = 0.0;
+	float a = 0.5;
 
-for (int i = 0; i < 5; i++) {
-v += a * noise(p);
-p *= 2.0;
-a *= 0.5;
-}
-return v;
+	for (int i = 0; i < 5; i++) {
+		v += a * noise(p);
+		p *= 2.0;
+		a *= 0.5;
+	}
+	return v;
 }
 
 void main() {
-vec2 uv = gl_FragCoord.xy / u_res.xy;
-vec2 p = uv * 3.0 - 1.5;
+	vec2 uv = gl_FragCoord.xy / u_res.xy;
+	vec2 p = uv * 3.0 - 1.5;
 
-float t = u_time * 0.1;
+	float t = u_time * 0.1;
 
-p += vec2(
-fbm(p + t + u_seed),
-fbm(p - t - u_seed)
-) * 0.8;
+	p += vec2(
+		fbm(p + t + u_seed),
+		fbm(p - t - u_seed)
+	) * 0.8;
 
-float n = fbm(p * 2.0 + t);
+	float n = fbm(p * 2.0 + t);
 
-vec3 d1 = vec3(0.03, 0.10, 0.22);
-vec3 d2 = vec3(0.18, 0.06, 0.35);
-vec3 d3 = vec3(0.05, 0.30, 0.25);
+	vec3 d1 = vec3(0.03, 0.10, 0.22);
+	vec3 d2 = vec3(0.18, 0.06, 0.35);
+	vec3 d3 = vec3(0.05, 0.30, 0.25);
 
-vec3 darkCol = mix(d1, d2, n);
-darkCol = mix(darkCol, d3, smoothstep(0.25, 0.85, n));
-darkCol += n * 0.22;
-darkCol *= 0.85;
+	vec3 darkCol = mix(d1, d2, n);
+	darkCol = mix(darkCol, d3, smoothstep(0.25, 0.85, n));
+	darkCol += n * 0.22;
+	darkCol *= 0.85;
 
-vec3 l1 = vec3(0.35, 0.75, 1.0);
-vec3 l2 = vec3(0.75, 0.55, 1.0);
-vec3 l3 = vec3(0.35, 1.0, 0.85);
+	vec3 l1 = vec3(0.35, 0.75, 1.0);
+	vec3 l2 = vec3(0.75, 0.55, 1.0);
+	vec3 l3 = vec3(0.35, 1.0, 0.85);
 
-vec3 lightCol = mix(l1, l2, n);
-lightCol = mix(lightCol, l3, smoothstep(0.2, 0.9, n));
-lightCol *= 1.05;
+	vec3 lightCol = mix(l1, l2, n);
+	lightCol = mix(lightCol, l3, smoothstep(0.2, 0.9, n));
+	lightCol *= 1.05;
 
-vec3 color = mix(lightCol, darkCol, u_mix);
+	vec3 color = mix(lightCol, darkCol, u_mix);
 
-float vignette = smoothstep(1.3, 0.2, length(uv - 0.5));
-color *= vignette;
+	float vignette = smoothstep(1.3, 0.2, length(uv - 0.5));
+	color *= vignette;
 
-gl_FragColor = vec4(color, 1.0);
+	gl_FragColor = vec4(color, 1.0);
 }
 `;
 
-	let gl: WebGLRenderingContext;
 	let running = true;
 
 	let currentMix = 0;
@@ -114,43 +113,54 @@ gl_FragColor = vec4(color, 1.0);
 	}
 
 	onMount(() => {
-		gl = canvas.getContext('webgl');
+		const gl = canvas.getContext('webgl');
 		if (!gl) return;
 
+		const ctx = gl;
+
 		function compile(type: number, src: string) {
-			const s = gl.createShader(type)!;
-			gl.shaderSource(s, src);
-			gl.compileShader(s);
-			return s;
+			const shader = ctx.createShader(type);
+			if (!shader) throw new Error('Failed to create shader');
+
+			ctx.shaderSource(shader, src);
+			ctx.compileShader(shader);
+
+			return shader;
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-		const prog = gl.createProgram()!;
+		const prog = ctx.createProgram();
 		if (!prog) return;
-		gl.attachShader(prog, compile(gl.VERTEX_SHADER, VERT));
-		gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FRAG));
-		gl.linkProgram(prog);
-		gl.useProgram(prog);
 
-		const buf = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+		ctx.attachShader(prog, compile(ctx.VERTEX_SHADER, VERT));
+		ctx.attachShader(prog, compile(ctx.FRAGMENT_SHADER, FRAG));
+		ctx.linkProgram(prog);
+		ctx.useProgram(prog);
 
-		const loc = gl.getAttribLocation(prog, 'a_pos');
-		gl.enableVertexAttribArray(loc);
-		gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+		const buf = ctx.createBuffer();
+		if (!buf) return;
 
-		const uTime = gl.getUniformLocation(prog, 'u_time');
-		const uSeed = gl.getUniformLocation(prog, 'u_seed');
-		const uRes = gl.getUniformLocation(prog, 'u_res');
-		const uMix = gl.getUniformLocation(prog, 'u_mix');
+		ctx.bindBuffer(ctx.ARRAY_BUFFER, buf);
+		ctx.bufferData(
+			ctx.ARRAY_BUFFER,
+			new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
+			ctx.STATIC_DRAW
+		);
+
+		const loc = ctx.getAttribLocation(prog, 'a_pos');
+		ctx.enableVertexAttribArray(loc);
+		ctx.vertexAttribPointer(loc, 2, ctx.FLOAT, false, 0, 0);
+
+		const uTime = ctx.getUniformLocation(prog, 'u_time');
+		const uSeed = ctx.getUniformLocation(prog, 'u_seed');
+		const uRes = ctx.getUniformLocation(prog, 'u_res');
+		const uMix = ctx.getUniformLocation(prog, 'u_mix');
 
 		const seed = Math.random() * 100;
 
 		const resize = () => {
 			canvas.width = canvas.offsetWidth * devicePixelRatio;
 			canvas.height = canvas.offsetHeight * devicePixelRatio;
-			gl.viewport(0, 0, canvas.width, canvas.height);
+			ctx.viewport(0, 0, canvas.width, canvas.height);
 		};
 
 		resize();
@@ -161,12 +171,12 @@ gl_FragColor = vec4(color, 1.0);
 
 			animateMix();
 
-			gl.uniform1f(uTime, t / 1000);
-			gl.uniform1f(uSeed, seed);
-			gl.uniform2f(uRes, canvas.width, canvas.height);
-			gl.uniform1f(uMix, currentMix);
+			if (uTime) ctx.uniform1f(uTime, t / 1000);
+			if (uSeed) ctx.uniform1f(uSeed, seed);
+			if (uRes) ctx.uniform2f(uRes, canvas.width, canvas.height);
+			if (uMix) ctx.uniform1f(uMix, currentMix);
 
-			gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+			ctx.drawArrays(ctx.TRIANGLE_STRIP, 0, 4);
 
 			animId = requestAnimationFrame(draw);
 		};
@@ -177,12 +187,8 @@ gl_FragColor = vec4(color, 1.0);
 			running = false;
 			window.removeEventListener('resize', resize);
 			cancelAnimationFrame(animId);
-			gl?.getExtension('WEBGL_lose_context')?.loseContext();
+			ctx.getExtension('WEBGL_lose_context')?.loseContext();
 		};
-	});
-
-	$effect(() => {
-		targetMix = theme === 'dark' ? 1 : 0;
 	});
 </script>
 
