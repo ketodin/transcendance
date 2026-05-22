@@ -181,7 +181,6 @@ gl_FragColor = vec4(color, 1.0);
 		};
 	});
 
-	// 🎯 theme change detection
 	$effect(() => {
 		targetMix = theme === 'dark' ? 1 : 0;
 	});
