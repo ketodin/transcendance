@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
-	import { Badge } from '$lib/components/ui/badge/index.js';
+	import { Check, X } from "@lucide/svelte";
+	import { Badge } from '$lib/components/ui/badge';
+	import { Button } from '$lib/components/ui/button';
 	import * as friends from "$lib/friends.remote";
 
 	type Props = { friend: friends.Friend; online: boolean };
@@ -10,14 +12,11 @@
 </script>
 
 <div class="glass user">
-	<div class="avatar">
-		{initial}
-	</div>
+	<div class="avatar">{initial}</div>
 
 	<div class="info">
 		<div class="name">{friend.name}</div>
 		<div>{friend.friendStatus}</div>
-
 		{#if online}
 			<Badge variant="secondary">{m.online()}</Badge>
 		{:else}
@@ -25,33 +24,35 @@
 				{m.offline()}
 			</Badge>
 		{/if}
-
 	</div>
 
 	<div class="actions">
-		<button class="icon-btn invite" title={m.invite_play()}>
-			<svg viewBox="0 0 24 24" fill="none">
-				<path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-				></path>
-			</svg>
-		</button>
-
-		<div class="separator"></div>
-
-		<button class="icon-btn remove" title={m.remove_friend()}>
-			<svg viewBox="0 0 24 24" fill="none">
-				<path d="M15 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-				></path>
-				<path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-				<path
-					d="M16 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-				></path>
-			</svg>
-		</button>
+		{#if friend.friendStatus == "ACCEPTED"}
+			<Button
+				variant="outline"
+				size="icon-sm"
+				class="text-red-400"
+				onclick={() => friends.remove(friend.id)}
+			><X/></Button>
+		{:else if friend.friendStatus == "RECEIVED"}
+			<Button
+				variant="outline"
+				size="icon-sm"
+				onclick={() => friends.accept(friend.id)}
+			><Check/></Button>
+			<div class="separator"></div>
+			<Button
+				variant="outline"
+				size="icon-sm"
+				class="text-red-400"
+				onclick={() => friends.remove(friend.id)}
+			><X/></Button>
+		{:else if friend.friendStatus == "SENT"}
+			<div>Waiting...</div>
+		{/if}
 	</div>
+
+
 </div>
 
 <style>
