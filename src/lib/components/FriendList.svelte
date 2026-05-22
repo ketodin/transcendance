@@ -1,21 +1,21 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
 	import FriendCard from './FriendCard.svelte';
-	import * as friends from "$lib/friends.remote";
+	import * as friends from '$lib/friends.remote';
 
 	const friendList = $derived(await friends.list());
 
-	const statusOrder: Record<friends.FriendStatus, number> = { 'RECEIVED': 3, 'ACCEPTED': 2, 'SENT': 1 };
-	let sortedFriends = $derived([...friendList].sort((a, b) => statusOrder[b.friendStatus] - statusOrder[a.friendStatus]));
-
+	const statusOrder: Record<friends.FriendStatus, number> = { RECEIVED: 3, ACCEPTED: 2, SENT: 1 };
+	let sortedFriends = $derived(
+		[...friendList].sort((a, b) => statusOrder[b.friendStatus] - statusOrder[a.friendStatus])
+	);
 </script>
-
 
 <div class="glass sidebar">
 	<h2>{m.friends()}</h2>
 
 	{#each sortedFriends as friend (friend.id)}
-		<FriendCard friend={friend} online={true} />
+		<FriendCard {friend} online={true} />
 	{/each}
 </div>
 

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
-	import { Check, X } from "@lucide/svelte";
+	import { Check, X } from '@lucide/svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
-	import * as friends from "$lib/friends.remote";
+	import * as friends from '$lib/friends.remote';
 
 	type Props = { friend: friends.Friend; online: boolean };
 	let { friend, online }: Props = $props();
@@ -27,32 +27,28 @@
 	</div>
 
 	<div class="actions">
-		{#if friend.friendStatus == "ACCEPTED"}
+		{#if friend.friendStatus == 'ACCEPTED'}
 			<Button
 				variant="outline"
 				size="icon-sm"
 				class="text-red-400"
-				onclick={() => friends.remove(friend.id)}
-			><X/></Button>
-		{:else if friend.friendStatus == "RECEIVED"}
-			<Button
-				variant="outline"
-				size="icon-sm"
-				onclick={() => friends.accept(friend.id)}
-			><Check/></Button>
+				onclick={() => friends.remove(friend.id)}><X /></Button
+			>
+		{:else if friend.friendStatus == 'RECEIVED'}
+			<Button variant="outline" size="icon-sm" onclick={() => friends.accept(friend.id)}
+				><Check /></Button
+			>
 			<div class="separator"></div>
 			<Button
 				variant="outline"
 				size="icon-sm"
 				class="text-red-400"
-				onclick={() => friends.remove(friend.id)}
-			><X/></Button>
-		{:else if friend.friendStatus == "SENT"}
+				onclick={() => friends.remove(friend.id)}><X /></Button
+			>
+		{:else if friend.friendStatus == 'SENT'}
 			<div>Waiting...</div>
 		{/if}
 	</div>
-
-
 </div>
 
 <style>

@@ -1,13 +1,11 @@
 import { type User, Prisma } from '$lib/server/prisma/client';
-import { redirect, error, invalid } from "@sveltejs/kit";
-import { query, command, form, getRequestEvent } from "$app/server";
-import { z } from "zod";
-import db from "$lib/server/db"
+import { redirect, error, invalid } from '@sveltejs/kit';
+import { query, command, form, getRequestEvent } from '$app/server';
+import { z } from 'zod';
+import db from '$lib/server/db';
 
-
-export type FriendStatus = "ACCEPTED" | "RECEIVED" | "SENT";
+export type FriendStatus = 'ACCEPTED' | 'RECEIVED' | 'SENT';
 export type Friend = User & { friendStatus: FriendStatus };
-
 
 async function getFriendList(meId: string): Promise<Friend[]> {
 	const rawFriends = await db.friendRequest.findMany({
@@ -17,9 +15,9 @@ async function getFriendList(meId: string): Promise<Friend[]> {
 
 	const friends: Friend[] = [];
 	for (const raw of rawFriends) {
-		const status: FriendStatus = raw.status == 'ACCEPTED' ? 'ACCEPTED' :
-			(raw.senderId == meId) ? 'SENT' : 'RECEIVED';
-		const user = (raw.senderId == meId) ? raw.receiver : raw.sender;
+		const status: FriendStatus =
+			raw.status == 'ACCEPTED' ? 'ACCEPTED' : raw.senderId == meId ? 'SENT' : 'RECEIVED';
+		const user = raw.senderId == meId ? raw.receiver : raw.sender;
 		friends.push({ ...user, friendStatus: status });
 	}
 	return friends;
@@ -60,40 +58,34 @@ async function dismissOrRemove(meId: string, otherId: string) {
 	});
 }
 
-
 export const list = query(async () => {
-	const { locals } = getRequestEvent()
+	const { locals } = getRequestEvent();
 	if (!locals.user) return redirect(303, '/login');
 	return await getFriendList(locals.user.id);
 });
 
 export const accept = command(z.string(), async (otherId) => {
-	const { locals } = getRequestEvent()
+	const { locals } = getRequestEvent();
 	if (!locals.user) return error(401, 'Unautorized');
-	if (locals.user.id === otherId)
-		return; // skip if accepting to itself
+	if (locals.user.id === otherId) return; // skip if accepting to itself
 	await sendOrAccept(locals.user.id, otherId);
 	void list().refresh();
 });
 
 export const remove = command(z.string(), async (otherId) => {
-	const { locals } = getRequestEvent()
+	const { locals } = getRequestEvent();
 	if (!locals.user) return error(401, 'Unautorized');
 	await dismissOrRemove(locals.user.id, otherId);
 	void list().refresh();
 });
 
-export const send = form(
-	z.strictObject({ email: z.email() }),
-	async ({ email }, issue) => {
-		const { locals } = getRequestEvent()
-		if (!locals.user) return redirect(303, '/login');
-		const other = await db.user.findUnique({ where: { email } });
-		if (!other)
-			return invalid(issue.email("No such user"));
-		if (locals.user.id == other.id)
-			return invalid(issue.email("Can't send a friend request to yourself"));
-		await sendOrAccept(locals.user.id, other.id);
-		void list().refresh();
-	}
-);
+export const send = form(z.strictObject({ email: z.email() }), async ({ email }, issue) => {
+	const { locals } = getRequestEvent();
+	if (!locals.user) return redirect(303, '/login');
+	const other = await db.user.findUnique({ where: { email } });
+	if (!other) return invalid(issue.email('No such user'));
+	if (locals.user.id == other.id)
+		return invalid(issue.email("Can't send a friend request to yourself"));
+	await sendOrAccept(locals.user.id, other.id);
+	void list().refresh();
+});
