@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import type { PageProps } from './$types';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
@@ -27,14 +28,19 @@
 </script>
 
 <div class="bg-muted/30 flex min-h-screen items-center justify-center px-4">
-	<div class="w-full max-w-md space-y-6">
+	<div class="glass w-full max-w-md space-y-6 p-6">
 		<div class="flex items-center justify-between">
 			<h1 class="text-2xl font-semibold tracking-tight">
 				{m.register()}
 			</h1>
-			<LanguagePicker />
+			<div class="flex gap-3">
+				<ThemeToggle />
+				<div class="glass">
+					<LanguagePicker />
+				</div>
+			</div>
 		</div>
-		<div class="bg-background rounded-2xl border p-6 shadow-sm">
+		<div>
 			<form method="POST" use:enhance class="space-y-5">
 				<Form.Field {form} name="name">
 					<Form.Control>
@@ -98,7 +104,7 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-				<Form.Button class="h-11 w-full text-base font-medium">
+				<Form.Button class="glass h-11 w-full text-base font-medium">
 					{m.register()}
 				</Form.Button>
 				<p class="text-muted-foreground text-center text-sm">
