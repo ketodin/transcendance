@@ -2,7 +2,7 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
-	import Friends from '$lib/components/Friends.svelte';
+	import FriendList from '$lib/components/FriendList.svelte';
 	import '../app.css';
 
 	import { page } from '$app/stores';
@@ -20,7 +20,7 @@
 {#if !isAuthRoute}
 	<div class="app">
 		<Header />
-		<Friends />
+		<FriendList />
 		<Footer />
 
 		<main class="game-container">

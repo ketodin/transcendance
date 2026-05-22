@@ -1,15 +1,12 @@
 <script lang="ts">
-	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { m } from '$lib/paraglide/messages';
+	import { Badge } from '$lib/components/ui/badge/index.js';
+	import * as friends from "$lib/friends.remote";
 
-	type Props = {
-		name?: string;
-		online?: boolean;
-	};
+	type Props = { friend: friends.Friend; online: boolean };
+	let { friend, online }: Props = $props();
 
-	let { name = 'Player', online = false }: Props = $props();
-
-	const initial = $derived(name?.charAt(0).toUpperCase());
+	const initial = $derived(friend.name.charAt(0).toUpperCase());
 </script>
 
 <div class="glass user">
@@ -18,7 +15,8 @@
 	</div>
 
 	<div class="info">
-		<div class="name">{name}</div>
+		<div class="name">{friend.name}</div>
+		<div>{friend.friendStatus}</div>
 
 		{#if online}
 			<Badge variant="secondary">{m.online()}</Badge>
@@ -27,6 +25,7 @@
 				{m.offline()}
 			</Badge>
 		{/if}
+
 	</div>
 
 	<div class="actions">

@@ -1,27 +1,21 @@
 <script lang="ts">
-	import User from './User.svelte';
 	import { m } from '$lib/paraglide/messages';
+	import FriendCard from './FriendCard.svelte';
+	import * as friends from "$lib/friends.remote";
 
-	let users = [
-		{ name: 'Emporio', online: true },
-		{ name: 'timeo daclino', online: true },
-		{ name: 'Jaubry', online: false },
-		{ name: 'revoli', online: true },
-		{ name: 'Crabs', online: false },
-		{ name: 'le don', online: true },
-		{ name: 'charly', online: false },
-		{ name: 'lespenel', online: true },
-		{ name: 'androux', online: false }
-	];
+	const friendList = $derived(await friends.list());
 
-	let sortedUsers = $derived([...users].sort((a, b) => Number(b.online) - Number(a.online)));
+	const statusOrder: Record<friends.FriendStatus, number> = { 'RECEIVED': 3, 'ACCEPTED': 2, 'SENT': 1 };
+	let sortedFriends = $derived([...friendList].sort((a, b) => statusOrder[b.friendStatus] - statusOrder[a.friendStatus]));
+
 </script>
+
 
 <div class="glass sidebar">
 	<h2>{m.friends()}</h2>
 
-	{#each sortedUsers as user (user.name)}
-		<User name={user.name} online={user.online} />
+	{#each sortedFriends as friend (friend.id)}
+		<FriendCard friend={friend} online={true} />
 	{/each}
 </div>
 
