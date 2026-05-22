@@ -109,44 +109,9 @@
 		gap: 0.5rem;
 	}
 
-	.icon-btn {
-		width: 2rem;
-		height: 2rem;
-
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		border-radius: 0.5rem;
-		border: 1px solid rgba(255, 255, 255, 0.08);
-		background: rgba(255, 255, 255, 0.05);
-
-		color: white;
-
-		cursor: pointer;
-
-		transition:
-			background 0.15s ease,
-			transform 0.1s ease;
-	}
-
-	.icon-btn:hover {
-		background: rgba(255, 255, 255, 0.1);
-		transform: translateY(-1px);
-	}
-
-	.icon-btn svg {
-		width: 1rem;
-		height: 1rem;
-	}
-
 	.separator {
 		width: 1px;
 		height: 1.2rem;
 		background: rgba(255, 255, 255, 0.15);
-	}
-
-	.icon-btn.remove {
-		color: #f87171;
 	}
 </style>
