@@ -77,7 +77,6 @@
 	--game-weapon-inactive: var(--400); /* inactive weapon name */
 }
 
-
 .dark {
 	--0: #ffffff;
 	--50: #f9fafb;
@@ -201,7 +200,7 @@
 }
 
 .glass {
-	background: rgba(0,0,0,0.0);
+	background: rgba(0, 0, 0, 0);
 	backdrop-filter: blur(32px);
 	-webkit-backdrop-filter: blur(32px);
 	border-radius: var(--radius-xl);

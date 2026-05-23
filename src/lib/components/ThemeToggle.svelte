@@ -9,7 +9,7 @@
 	onclick={toggleShaderTheme}
 	variant="outline"
 	size="icon"
-	class="glass shrink-0 border-white/20 hover:bg-white/10 relative"
+	class="glass relative shrink-0 border-white/20 hover:bg-white/10"
 >
 	{#if $shaderTheme === 'dark'}
 		<MoonIcon class="h-[1.2rem] w-[1.2rem] transition-all" />
