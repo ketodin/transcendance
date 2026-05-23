@@ -19,7 +19,7 @@ export class TerrainView {
 		const { heights, cols, floorY, sceneWidth, sceneHeight } = terrain;
 		this.graphics.clear();
 
-		this.graphics.fillStyle(COLORS.terrain, 0.60);
+		this.graphics.fillStyle(COLORS.terrain, 0.6);
 		this.graphics.beginPath();
 		this.graphics.moveTo(0, heights[0]);
 		for (let i = 1; i < cols; i++) {
