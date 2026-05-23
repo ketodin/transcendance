@@ -9,8 +9,6 @@ function cssStr(varName: string): string {
 
 // ─── Theme-linked — driven by --game-* CSS variables in app.css ──────────
 export const COLORS = {
-	bg: 0xffffff,
-	skyTop: 0x111130,
 	navy: 0x0e0e24,
 	terrain: 0x3d7a52,
 	terrainDark: 0x2a5c3a,
@@ -60,8 +58,6 @@ export const COLOR_STRINGS = {
 
 export function syncFromCSS(): void {
 	// Only theme-linked — game-inherent stay hardcoded above
-	COLORS.bg = cssHex('--game-bg');
-	COLORS.skyTop = cssHex('--game-sky-top');
 	COLORS.navy = cssHex('--game-navy');
 	COLORS.terrain = cssHex('--game-terrain');
 	COLORS.terrainDark = cssHex('--game-terrain-dark');

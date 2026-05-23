@@ -62,8 +62,6 @@ export default class GameScene extends Scene {
 	private tankSprites: [TankSprite, TankSprite] | null = null;
 	private terrainView: TerrainView | null = null;
 	private projView: ProjectileView | null = null;
-	private skyGfx: GameObjects.Graphics | null = null;
-
 	private clientTrail: Array<{ x: number; y: number }> = [];
 	private lastProjActive = false;
 	private lastProjX = -Infinity;
@@ -145,13 +143,10 @@ export default class GameScene extends Scene {
 	}
 
 	private readonly onThemeChanged = () => {
-		this.cameras.main.setBackgroundColor(COLORS.bg);
-		this.drawSky();
 		if (this.terrainView && this.localTerrain) this.terrainView.sync(this.localTerrain);
 	};
 
 	create() {
-		this.cameras.main.setBackgroundColor(COLORS.bg);
 		this.createBackground();
 		this.setupUI();
 		this.setupKeys();
@@ -165,18 +160,8 @@ export default class GameScene extends Scene {
 		this.chatInput?.destroy();
 	}
 
-	private drawSky() {
-		const { width, height } = this.scale;
-		this.skyGfx!.clear();
-		this.skyGfx!.fillGradientStyle(COLORS.bg, COLORS.bg, COLORS.skyTop, COLORS.skyTop, 1);
-		this.skyGfx!.fillRect(0, 0, width, height);
-	}
-
 	private createBackground() {
 		const { width, height } = this.scale;
-		this.skyGfx = this.add.graphics().setDepth(-2);
-		this.drawSky();
-
 		const stars = this.add.graphics().setDepth(-1);
 		for (let i = 0; i < 80; i++) {
 			const sx = Math.random() * width;
