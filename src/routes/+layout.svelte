@@ -27,7 +27,7 @@
 		<Footer />
 
 		<main class="game-container">
-			<div class="glass content">
+			<div class="content">
 				{@render children?.()}
 			</div>
 		</main>

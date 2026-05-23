@@ -1,7 +1,6 @@
 import PreloadScene from './scenes/preloadScene';
 import GameScene from './scenes/gameScene';
 import { AUTO, Scale, Game, type Types } from 'phaser';
-import { COLOR_STRINGS } from './colors';
 
 // const DEFAULT_WIDTH = 1280;
 // const DEFAULT_HEIGHT = 720;
@@ -21,7 +20,7 @@ const config: Types.Core.GameConfig = {
 };
 
 const StartGame = (parent: string) => {
-	return new Game({ ...config, backgroundColor: COLOR_STRINGS.bg, parent });
+	return new Game({ ...config, transparent: true, parent });
 };
 
 export default StartGame;
