@@ -69,22 +69,23 @@ void main() {
 
 	float n = fbm(p * 2.0 + t);
 
-	vec3 d1 = vec3(0.03, 0.10, 0.22);
-	vec3 d2 = vec3(0.18, 0.06, 0.35);
-	vec3 d3 = vec3(0.05, 0.30, 0.25);
+	vec3 d1 = vec3(0.02, 0.03, 0.08);
+	vec3 d2 = vec3(0.10, 0.06, 0.18);
+	vec3 d3 = vec3(0.10, 0.15, 0.28);
 
 	vec3 darkCol = mix(d1, d2, n);
 	darkCol = mix(darkCol, d3, smoothstep(0.25, 0.85, n));
 	darkCol += n * 0.22;
-	darkCol *= 0.85;
+	darkCol *= 2.0;
 
-	vec3 l1 = vec3(0.35, 0.75, 1.0);
-	vec3 l2 = vec3(0.75, 0.55, 1.0);
-	vec3 l3 = vec3(0.35, 1.0, 0.85);
+	vec3 l1 = vec3(0.4, 0.4, 0.4);
+	vec3 l2 = vec3(0.20, 0.06, 0.18);
+	vec3 l3 = vec3(0.00, 0.15, 0.28);
 
 	vec3 lightCol = mix(l1, l2, n);
 	lightCol = mix(lightCol, l3, smoothstep(0.2, 0.9, n));
-	lightCol *= 1.05;
+	lightCol += n * 0.22;
+	lightCol *= 2.5;
 
 	vec3 color = mix(lightCol, darkCol, u_mix);
 
@@ -102,10 +103,6 @@ void main() {
 
 	$effect(() => {
 		targetMix = theme === 'dark' ? 1 : 0;
-
-		if (Math.abs(currentMix - targetMix) > 0.99) {
-			currentMix = targetMix;
-		}
 	});
 
 	function animateMix() {
