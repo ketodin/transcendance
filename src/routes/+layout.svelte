@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { ModeWatcher } from 'mode-watcher';
+	import { ModeWatcher, mode } from 'mode-watcher';
+	import Shader from '$lib/components/Shader.svelte';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import FriendList from '$lib/components/FriendList.svelte';
@@ -16,6 +17,8 @@
 </script>
 
 <ModeWatcher />
+
+<Shader theme={mode.current ?? 'dark'} />
 
 {#if !isAuthRoute}
 	<div class="app">
