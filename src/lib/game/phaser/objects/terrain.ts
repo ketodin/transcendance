@@ -2,7 +2,7 @@ import { Scene, GameObjects, Math as PhaserMath } from 'phaser';
 import { COLORS } from '../colors';
 
 const RESOLUTION = 3; // pixels per heightmap column
-const FLOOR_MARGIN = 40; // indestructible base height in pixels
+const FLOOR_MARGIN = 150;
 
 export class Terrain {
 	private scene: Scene;
@@ -23,7 +23,7 @@ export class Terrain {
 
 	private generate() {
 		const { width } = this.scene.scale;
-		const baseY = this.scene.scale.height * 0.68;
+		const baseY = this.scene.scale.height * 0.55;
 
 		const p1 = Math.random() * Math.PI * 2;
 		const p2 = Math.random() * Math.PI * 2;
@@ -33,11 +33,13 @@ export class Terrain {
 		const a3 = 10 + Math.random() * 15;
 		for (let i = 0; i < this.cols; i++) {
 			const x = (i / this.cols) * width;
-			this.heights[i] =
+			this.heights[i] = Math.min(
+				this.floorY,
 				baseY +
-				Math.sin(x * 0.005 + p1) * a1 +
-				Math.sin(x * 0.013 + p2) * a2 +
-				Math.sin(x * 0.027 + p3) * a3;
+					Math.sin(x * 0.005 + p1) * a1 +
+					Math.sin(x * 0.013 + p2) * a2 +
+					Math.sin(x * 0.027 + p3) * a3
+			);
 		}
 	}
 

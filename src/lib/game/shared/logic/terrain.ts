@@ -1,13 +1,13 @@
 import { type TerrainState } from '../state/TerrainState.js';
 
 const RESOLUTION = 3;
-const FLOOR_MARGIN = 40;
+const FLOOR_MARGIN = 150;
 
 export function generateTerrain(sceneWidth: number, sceneHeight: number): TerrainState {
 	const cols = Math.ceil(sceneWidth / RESOLUTION);
 	const floorY = sceneHeight - FLOOR_MARGIN;
 	const heights = new Array<number>(cols);
-	const baseY = sceneHeight * 0.68;
+	const baseY = sceneHeight * 0.55;
 
 	const p1 = Math.random() * Math.PI * 2;
 	const p2 = Math.random() * Math.PI * 2;
@@ -18,11 +18,13 @@ export function generateTerrain(sceneWidth: number, sceneHeight: number): Terrai
 
 	for (let i = 0; i < cols; i++) {
 		const x = (i / cols) * sceneWidth;
-		heights[i] =
+		heights[i] = Math.min(
+			floorY,
 			baseY +
-			Math.sin(x * 0.005 + p1) * a1 +
-			Math.sin(x * 0.013 + p2) * a2 +
-			Math.sin(x * 0.027 + p3) * a3;
+				Math.sin(x * 0.005 + p1) * a1 +
+				Math.sin(x * 0.013 + p2) * a2 +
+				Math.sin(x * 0.027 + p3) * a3
+		);
 	}
 
 	return { heights, cols, floorY, sceneWidth, sceneHeight };

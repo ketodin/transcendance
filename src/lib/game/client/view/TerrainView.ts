@@ -19,6 +19,14 @@ export class TerrainView {
 		const { heights, cols, floorY, sceneWidth, sceneHeight } = terrain;
 		this.graphics.clear();
 
+		this.graphics.fillStyle(COLORS.terrainBase, 0.15);
+		this.graphics.fillRect(0, floorY, sceneWidth, sceneHeight - floorY);
+		this.graphics.lineStyle(2, COLORS.neonGlow, 0.6);
+		this.graphics.beginPath();
+		this.graphics.moveTo(0, floorY);
+		this.graphics.lineTo(sceneWidth, floorY);
+		this.graphics.strokePath();
+
 		this.graphics.fillStyle(COLORS.terrain, 0.6);
 		this.graphics.beginPath();
 		this.graphics.moveTo(0, heights[0]);
@@ -44,13 +52,5 @@ export class TerrainView {
 			}
 			this.graphics.strokePath();
 		}
-
-		this.graphics.fillStyle(COLORS.terrainBase, 0.15);
-		this.graphics.fillRect(0, floorY, sceneWidth, sceneHeight - floorY);
-		this.graphics.lineStyle(2, COLORS.neonGlow, 0.6);
-		this.graphics.beginPath();
-		this.graphics.moveTo(0, floorY);
-		this.graphics.lineTo(sceneWidth, floorY);
-		this.graphics.strokePath();
 	}
 }
