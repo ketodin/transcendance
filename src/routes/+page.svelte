@@ -23,15 +23,4 @@
 			<p>Not logged in</p>
 		{/if}
 	</div>
-
-	<div>
-		<h1 class="font-extrabold">Add Friend</h1>
-		<form {...sendFriendRequest}>
-			<Input {...sendFriendRequest.fields.email.as('text')}></Input>
-			{#each sendFriendRequest.fields.email.issues() as issue (issue.message)}
-				<p class="text-red-400">{issue.message}</p>
-			{/each}
-			<Button type="submit" class="glass">Send</Button>
-		</form>
-	</div>
 </div>
