@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { useSession, signOut } from '$lib/auth-client';
 	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { send as sendFriendRequest } from '$lib/friends.remote';
 
 	const session = useSession();
 </script>

@@ -19,7 +19,7 @@
 	<div class="sidebar-header">
 		<h2>{m.friends()}</h2>
 		<button class="add-btn" onclick={() => (showAddFriend = !showAddFriend)} title="Add a friend">
-			<p> + </p>
+			<p>+</p>
 		</button>
 	</div>
 
