@@ -15,6 +15,7 @@ export default defineConfig(
 	{
 		ignores: [
 			'.github/',
+			'docusaurus/',
 			'src/lib/components/ui/',
 			'src/lib/paraglide/',
 			'*.config.js',
