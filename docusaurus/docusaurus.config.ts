@@ -15,9 +15,9 @@ const config: Config = {
 	},
 
 	url: 'https://ketodin.github.io',
-	baseUrl: '/transcendence/',
+	baseUrl: '/transcendance/',
 	organizationName: 'ketodin',
-	projectName: 'transcendence',
+	projectName: 'transcendance',
 	trailingSlash: false,
 	onBrokenLinks: 'throw',
 
