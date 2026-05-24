@@ -1,9 +1,8 @@
 name: ci-docs-deploy
 
 on:
-  workflow_dispatch:
   push:
-    branches: ['main', 'infra/**']
+    branches: [main]
     paths:
       - 'docusaurus/**'
       - 'docs/**'
