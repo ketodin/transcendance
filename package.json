@@ -23,7 +23,10 @@
 		"db:push": "prisma db push",
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate",
-		"db:studio": "prisma studio"
+		"db:studio": "prisma studio",
+		"docs:dev": "pnpm --filter docusaurus run start",
+		"docs:build": "pnpm --filter docusaurus run build",
+		"docs:serve": "pnpm --filter docusaurus run serve"
 	},
 	"devDependencies": {
 		"@better-auth/prisma-adapter": "^1.6.11",
