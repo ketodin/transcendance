@@ -2,6 +2,9 @@
 	import { m } from '$lib/paraglide/messages';
 	import FriendCard from './FriendCard.svelte';
 	import * as friends from '$lib/friends.remote';
+	import { send as sendFriendRequest } from '$lib/friends.remote';
+	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
 
 	const friendList = $derived(await friends.list());
 
@@ -9,10 +12,31 @@
 	let sortedFriends = $derived(
 		[...friendList].sort((a, b) => statusOrder[b.friendStatus] - statusOrder[a.friendStatus])
 	);
+	let showAddFriend = $state(false);
 </script>
 
 <div class="glass sidebar">
-	<h2>{m.friends()}</h2>
+	<div class="sidebar-header">
+		<h2>{m.friends()}</h2>
+		<button class="add-btn" onclick={() => (showAddFriend = !showAddFriend)} title="Add a friend">
+			<p>+</p>
+		</button>
+	</div>
+
+	{#if showAddFriend}
+		<form class="add-friend-form glass" {...sendFriendRequest}>
+			<Input {...sendFriendRequest.fields.email.as('text')} placeholder="friend@example.com" />
+			{#each sendFriendRequest.fields.email.issues() as issue (issue.message)}
+				<p class="error">{issue.message}</p>
+			{/each}
+			<div class="form-actions">
+				<button type="button" class="cancel-btn" onclick={() => (showAddFriend = false)}
+					>Cancel</button
+				>
+				<Button type="submit" size="sm">Send</Button>
+			</div>
+		</form>
+	{/if}
 
 	{#each sortedFriends as friend (friend.id)}
 		<FriendCard {friend} online={true} />
@@ -23,10 +47,6 @@
 	:global(:root) {
 		--header-height: 4rem;
 		--layout-gap: 1rem;
-	}
-
-	.sidebar h2 {
-		text-align: center;
 	}
 
 	.sidebar {
@@ -41,12 +61,79 @@
 		overflow-y: auto;
 	}
 
+	.sidebar-header {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+		margin-bottom: 0.5rem;
+	}
+
 	h2 {
 		font-size: 1rem;
 		font-weight: 600;
 		opacity: 0.6;
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
-		margin-bottom: 0.5rem;
+	}
+
+	.add-btn {
+		position: absolute;
+		right: 0;
+		background: none;
+		border: none;
+		cursor: pointer;
+		opacity: 0.5;
+		padding: 2px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 4px;
+		color: inherit;
+		transition:
+			opacity 0.2s,
+			background 0.2s;
+	}
+
+	.add-btn:hover {
+		opacity: 1;
+		background: rgba(255, 255, 255, 0.1);
+	}
+
+	.add-friend-form {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		margin-bottom: 0.75rem;
+		padding: 0.6rem;
+	}
+
+	.form-actions {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		gap: 0.5rem;
+		margin-top: 0.25rem;
+	}
+
+	.cancel-btn {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 0.8rem;
+		opacity: 0.5;
+		color: inherit;
+		padding: 0.25rem 0.5rem;
+		border-radius: 4px;
+		transition: opacity 0.2s;
+	}
+
+	.cancel-btn:hover {
+		opacity: 1;
+	}
+
+	.error {
+		font-size: 0.75rem;
+		color: #f87171;
 	}
 </style>
