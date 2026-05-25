@@ -38,8 +38,11 @@
 				onclick={() => friends.remove(friend.id)}><X /></Button
 			>
 		{:else if friend.friendStatus == 'RECEIVED'}
-			<Button class="glass" variant="outline" size="icon-sm" onclick={() => friends.accept(friend.id)}
-				><Check /></Button
+			<Button
+				class="glass"
+				variant="outline"
+				size="icon-sm"
+				onclick={() => friends.accept(friend.id)}><Check /></Button
 			>
 			<div class="separator"></div>
 			<Button
