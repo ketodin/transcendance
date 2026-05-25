@@ -86,6 +86,8 @@ export default class GameScene extends Scene {
 	private powerLabel!: GameObjects.Text;
 	private fuelBg!: GameObjects.Graphics;
 	private fuelFill!: GameObjects.Graphics;
+	private healthBg!: GameObjects.Graphics;
+	private healthFill!: GameObjects.Graphics;
 	private hintText!: GameObjects.Text;
 	private trajectoryGfx!: GameObjects.Graphics;
 	private weaponTexts: GameObjects.Text[] = [];
@@ -105,7 +107,7 @@ export default class GameScene extends Scene {
 		return this.sh(18);
 	}
 	private get fuelBarX() {
-		return this.sw(20);
+		return this.sw(35);
 	}
 	private get fuelBarW() {
 		return this.sw(200);
@@ -121,7 +123,19 @@ export default class GameScene extends Scene {
 		return this.scale.height - this.sh(32);
 	}
 	private get fuelBarY() {
-		return this.scale.height - this.sh(32);
+		return this.scale.height - this.sh(42);
+	}
+	private get healthBarW() {
+		return this.fuelBarW;
+	}
+	private get healthBarH() {
+		return this.sh(18);
+	}
+	private get healthBarX() {
+		return this.fuelBarX;
+	}
+	private get healthBarY() {
+		return this.fuelBarY - this.sh(20) - this.sh(18);
 	}
 
 	// bubble chat
@@ -281,27 +295,42 @@ export default class GameScene extends Scene {
 			.setDepth(10)
 			.setVisible(false);
 
+		this.healthBg = this.add.graphics().setDepth(10);
+		this.healthBg.fillStyle(COLORS.navy, 0.92);
+		this.healthBg.fillRect(
+			this.healthBarX - 1,
+			this.healthBarY - 1,
+			this.healthBarW + 2,
+			this.healthBarH + 2
+		);
+		this.healthBg.setVisible(false);
+
+		this.healthFill = this.add.graphics().setDepth(10);
+
 		this.trajectoryGfx = this.add.graphics().setDepth(8);
 
 		this.selectableWeaponIndices = PROJECTILE_TYPES
 			.map((t, i) => (t.selectable !== false ? i : -1))
 			.filter((i) => i !== -1);
-		const weaponXPositions = this.selectableWeaponIndices.map((_, si) => {
-			const step = this.sw(150);
-			return this.scale.width / 2 + (si - (this.selectableWeaponIndices.length - 1) / 2) * step;
-		});
-		this.weaponTexts = this.selectableWeaponIndices.map((typeIdx, si) =>
-			this.add
-				.text(weaponXPositions[si], this.sh(50), PROJECTILE_TYPES[typeIdx].name, {
-					fontSize: `${Math.round(this.sh(14))}px`,
+		const weaponStartX = this.fuelBarX + this.fuelBarW + this.sw(80);
+		const weaponRow1Y = this.scale.height - this.sh(74);
+		const weaponRow2Y = this.scale.height - this.sh(46);
+		this.weaponTexts = this.selectableWeaponIndices.map((typeIdx, si) => {
+			const row = si < 3 ? 0 : 1;
+			const col = si < 3 ? si : si - 3;
+			const x = weaponStartX + col * this.sw(105);
+			const y = row === 0 ? weaponRow1Y : weaponRow2Y;
+			return this.add
+				.text(x, y, PROJECTILE_TYPES[typeIdx].name, {
+					fontSize: `${Math.round(this.sh(12))}px`,
 					color: COLOR_STRINGS.white,
 					stroke: COLOR_STRINGS.navy,
-					strokeThickness: 3
+					strokeThickness: 2
 				})
 				.setOrigin(0.5)
 				.setDepth(10)
-				.setVisible(false)
-		);
+				.setVisible(false);
+		});
 	}
 
 	private async connectToServer() {
@@ -450,6 +479,7 @@ export default class GameScene extends Scene {
 		this.turnText.setVisible(true);
 		this.timerText.setVisible(true);
 		this.fuelBg.setVisible(true);
+		this.healthBg.setVisible(true);
 		this.weaponTexts.forEach((t) => t.setVisible(true));
 	}
 
@@ -534,6 +564,7 @@ export default class GameScene extends Scene {
 		}
 
 		this.updateFuelBar(data.fuel);
+		this.updateHealthBar(data.tanks[this.myPlayerIndex].health);
 		this.updateWeaponUI(data.weaponIndex);
 
 		if (phase === 'CHARGING') {
@@ -735,7 +766,7 @@ export default class GameScene extends Scene {
 			this.weaponTexts[si]
 				.setText(active ? `[ ${type.name} ]` : type.name)
 				.setColor(active ? COLOR_STRINGS.yellow : COLOR_STRINGS.weaponInactive)
-				.setFontSize(active ? Math.round(this.sh(17)) : Math.round(this.sh(13)));
+				.setFontSize(Math.round(this.sh(12)));
 		});
 	}
 
@@ -753,6 +784,14 @@ export default class GameScene extends Scene {
 		const color = pct > 0.5 ? COLORS.fuelHigh : pct > 0.25 ? COLORS.fuelMid : COLORS.fuelLow;
 		this.fuelFill.fillStyle(color);
 		this.fuelFill.fillRect(this.fuelBarX, this.fuelBarY, this.fuelBarW * pct, this.fuelBarH);
+	}
+
+	private updateHealthBar(health: number) {
+		this.healthFill.clear();
+		const pct = health / 100;
+		const color = pct > 0.5 ? COLORS.barHigh : pct > 0.25 ? COLORS.barMid : COLORS.barLow;
+		this.healthFill.fillStyle(color);
+		this.healthFill.fillRect(this.healthBarX, this.healthBarY, this.healthBarW * pct, this.healthBarH);
 	}
 
 	private showGameOver(winner: 0 | 1) {
