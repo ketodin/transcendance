@@ -265,8 +265,6 @@ export default class GameScene extends Scene {
 			.setDepth(10)
 			.setVisible(false);
 
-
-
 		this.fuelBg = this.add.graphics().setDepth(10);
 		this.fuelBg.fillStyle(COLORS.navy, 0.92);
 		this.fuelBg.fillRect(
@@ -321,9 +319,9 @@ export default class GameScene extends Scene {
 
 		this.trajectoryGfx = this.add.graphics().setDepth(8);
 
-		this.selectableWeaponIndices = PROJECTILE_TYPES
-			.map((t, i) => (t.selectable !== false ? i : -1))
-			.filter((i) => i !== -1);
+		this.selectableWeaponIndices = PROJECTILE_TYPES.map((t, i) =>
+			t.selectable !== false ? i : -1
+		).filter((i) => i !== -1);
 		const weaponStartX = this.fuelBarX + this.fuelBarW + this.sw(80);
 		const weaponRow1Y = this.scale.height - this.sh(74);
 		const weaponRow2Y = this.scale.height - this.sh(46);
@@ -519,13 +517,13 @@ export default class GameScene extends Scene {
 		this.healthIcon.setVisible(true);
 		this.weaponTexts.forEach((t) => t.setVisible(true));
 		const move = this.myPlayerIndex === 0 ? 'A / D' : '← / →';
-		const aim  = this.myPlayerIndex === 0 ? 'W / S' : '↑ / ↓';
+		const aim = this.myPlayerIndex === 0 ? 'W / S' : '↑ / ↓';
 		const fire = this.myPlayerIndex === 0 ? 'SPACE' : 'ENTER';
 		this.controlsText.setText(
 			`${move.padEnd(7)}  Move\n` +
-			`${aim.padEnd(7)}  Aim\n` +
-			`Q        Switch weapon\n` +
-			`${fire.padEnd(7)}  Charge / Fire`
+				`${aim.padEnd(7)}  Aim\n` +
+				`Q        Switch weapon\n` +
+				`${fire.padEnd(7)}  Charge / Fire`
 		);
 		this.controlsBg.setVisible(true);
 		this.controlsText.setVisible(true);
@@ -597,8 +595,15 @@ export default class GameScene extends Scene {
 			trail.push({ x: f.x, y: f.y });
 			if (trail.length > 20) trail.shift();
 			this.fragmentViews[i].sync({
-				x: f.x, y: f.y, prevX: 0, prevY: 0, vx: 0, vy: 0,
-				trail, typeIndex: f.typeIndex, bouncesLeft: 0
+				x: f.x,
+				y: f.y,
+				prevX: 0,
+				prevY: 0,
+				vx: 0,
+				vy: 0,
+				trail,
+				typeIndex: f.typeIndex,
+				bouncesLeft: 0
 			});
 		}
 
@@ -736,7 +741,13 @@ export default class GameScene extends Scene {
 		gfx.lineTo(x + SPREAD, h);
 		gfx.strokePath();
 
-		this.tweens.add({ targets: gfx, alpha: 0, duration: 500, delay: 300, onComplete: () => gfx.destroy() });
+		this.tweens.add({
+			targets: gfx,
+			alpha: 0,
+			duration: 500,
+			delay: 300,
+			onComplete: () => gfx.destroy()
+		});
 	}
 
 	private handleExplosionFx(x: number, y: number, craterRadius: number, blastRadius: number) {
@@ -829,7 +840,12 @@ export default class GameScene extends Scene {
 		const pct = health / 100;
 		const color = pct > 0.5 ? COLORS.barHigh : pct > 0.25 ? COLORS.barMid : COLORS.barLow;
 		this.healthFill.fillStyle(color);
-		this.healthFill.fillRect(this.healthBarX, this.healthBarY, this.healthBarW * pct, this.healthBarH);
+		this.healthFill.fillRect(
+			this.healthBarX,
+			this.healthBarY,
+			this.healthBarW * pct,
+			this.healthBarH
+		);
 	}
 
 	private showGameOver(winner: 0 | 1) {

@@ -10,7 +10,10 @@ import {
 	stepProjectile,
 	getTurretTip
 } from '../../src/lib/game/shared/logic/physics.js';
-import { PROJECTILE_TYPES, AIRSTRIKE_TYPE_INDEX } from '../../src/lib/game/shared/projectileTypes.js';
+import {
+	PROJECTILE_TYPES,
+	AIRSTRIKE_TYPE_INDEX
+} from '../../src/lib/game/shared/projectileTypes.js';
 import type { GameState } from '../../src/lib/game/shared/state/GameState.js';
 import type { TankState } from '../../src/lib/game/shared/state/TankState.js';
 // import chat handler
@@ -73,7 +76,9 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		this.onMessage('cycle_weapon', (client) => {
 			if (!this.isCurrentPlayer(client)) return;
 			if (this.physicsState?.phase !== 'AIMING') return;
-			const selectable = PROJECTILE_TYPES.map((t, i) => t.selectable !== false ? i : -1).filter(i => i !== -1);
+			const selectable = PROJECTILE_TYPES.map((t, i) => (t.selectable !== false ? i : -1)).filter(
+				(i) => i !== -1
+			);
 			const cur = selectable.indexOf(this.physicsState.weaponIndex);
 			this.physicsState.weaponIndex = selectable[(cur + 1) % selectable.length];
 			this.state.weaponIndex = this.physicsState.weaponIndex;
@@ -240,16 +245,27 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 					for (const deg of [-25, 0, 25]) {
 						const a = angle + (deg * Math.PI) / 180;
 						this.physicsState.fragments.push({
-							x: proj.x, y: proj.y, prevX: proj.x, prevY: proj.y,
+							x: proj.x,
+							y: proj.y,
+							prevX: proj.x,
+							prevY: proj.y,
 							vx: Math.cos(a) * speed * 0.75,
 							vy: Math.sin(a) * speed * 0.75,
-							trail: [], typeIndex: 0, bouncesLeft: 0, hasSplit: false
+							trail: [],
+							typeIndex: 0,
+							bouncesLeft: 0,
+							hasSplit: false
 						});
 					}
 					this.physicsState.projectile = undefined;
 					this.state.projectile.active = false;
 				} else {
-					const result = stepProjectile(proj, this.physicsState.terrain, this.physicsState.tanks, dt);
+					const result = stepProjectile(
+						proj,
+						this.physicsState.terrain,
+						this.physicsState.tanks,
+						dt
+					);
 					this.syncProjectile();
 					if (result.type === 'oob') {
 						this.physicsState.projectile = undefined;
