@@ -23,6 +23,7 @@
 	"invalid_name": "No se permiten espacios",
 	"invalid_repeat": "Las contraseñas no coinciden",
 	"already_email": "El correo electrónico ya está en uso",
+	"pending": "Pendiente",
 
 	"name_place_holder": "Esteban",
 	"mail_place_holder": "esteban.trabajos@gmail.com",
