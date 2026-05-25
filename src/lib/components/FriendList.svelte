@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
+	import { Plus, X } from '@lucide/svelte';
 	import FriendCard from './FriendCard.svelte';
 	import * as friends from '$lib/friends.remote';
 	import { send as sendFriendRequest } from '$lib/friends.remote';
-	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 
 	const friendList = $derived(await friends.list());
@@ -19,22 +19,20 @@
 	<div class="sidebar-header">
 		<h2>{m.friends()}</h2>
 		<button class="add-btn" onclick={() => (showAddFriend = !showAddFriend)} title="Add a friend">
-			<p>+</p>
+			{#if showAddFriend}
+				<X size={20} />
+			{:else}
+				<Plus size={20} />
+			{/if}
 		</button>
 	</div>
 
 	{#if showAddFriend}
 		<form class="add-friend-form glass" {...sendFriendRequest}>
-			<Input {...sendFriendRequest.fields.email.as('text')} placeholder="friend@example.com" />
+			<Input {...sendFriendRequest.fields.email.as('text')} placeholder={m.mail_place_holder()} />
 			{#each sendFriendRequest.fields.email.issues() as issue (issue.message)}
 				<p class="error">{issue.message}</p>
 			{/each}
-			<div class="form-actions">
-				<button type="button" class="cancel-btn" onclick={() => (showAddFriend = false)}
-					>Cancel</button
-				>
-				<Button type="submit" size="sm">Send</Button>
-			</div>
 		</form>
 	{/if}
 
