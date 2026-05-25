@@ -1,1 +1,0 @@
-ranking (or other) page
