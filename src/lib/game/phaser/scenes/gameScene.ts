@@ -86,9 +86,12 @@ export default class GameScene extends Scene {
 	private powerLabel!: GameObjects.Text;
 	private fuelBg!: GameObjects.Graphics;
 	private fuelFill!: GameObjects.Graphics;
+	private fuelIcon!: GameObjects.Text;
 	private healthBg!: GameObjects.Graphics;
 	private healthFill!: GameObjects.Graphics;
-	private hintText!: GameObjects.Text;
+	private healthIcon!: GameObjects.Text;
+	private controlsBg!: GameObjects.Graphics;
+	private controlsText!: GameObjects.Text;
 	private trajectoryGfx!: GameObjects.Graphics;
 	private weaponTexts: GameObjects.Text[] = [];
 	private statusText!: GameObjects.Text;
@@ -262,15 +265,7 @@ export default class GameScene extends Scene {
 			.setDepth(10)
 			.setVisible(false);
 
-		this.hintText = this.add
-			.text(this.scale.width / 2, this.scale.height - this.sh(20), '', {
-				fontSize: `${Math.round(this.sh(11))}px`,
-				color: COLOR_STRINGS.hint,
-				stroke: COLOR_STRINGS.navy,
-				strokeThickness: 2
-			})
-			.setOrigin(0.5, 0)
-			.setDepth(10);
+
 
 		this.fuelBg = this.add.graphics().setDepth(10);
 		this.fuelBg.fillStyle(COLORS.navy, 0.92);
@@ -283,6 +278,14 @@ export default class GameScene extends Scene {
 		this.fuelBg.setVisible(false);
 
 		this.fuelFill = this.add.graphics().setDepth(10);
+
+		this.fuelIcon = this.add
+			.text(this.fuelBarX - this.sw(14), this.fuelBarY + this.fuelBarH / 2, '⛽', {
+				fontSize: `${Math.round(this.sh(14))}px`
+			})
+			.setOrigin(0.5)
+			.setDepth(10)
+			.setVisible(false);
 
 		this.add
 			.text(this.fuelBarX + this.fuelBarW / 2, this.fuelBarY - this.sh(18), 'FUEL', {
@@ -306,6 +309,15 @@ export default class GameScene extends Scene {
 		this.healthBg.setVisible(false);
 
 		this.healthFill = this.add.graphics().setDepth(10);
+
+		this.healthIcon = this.add
+			.text(this.healthBarX - this.sw(14), this.healthBarY + this.healthBarH / 2, '♥', {
+				fontSize: `${Math.round(this.sh(26))}px`,
+				color: '#ff4444'
+			})
+			.setOrigin(0.5)
+			.setDepth(10)
+			.setVisible(false);
 
 		this.trajectoryGfx = this.add.graphics().setDepth(8);
 
@@ -331,6 +343,29 @@ export default class GameScene extends Scene {
 				.setDepth(10)
 				.setVisible(false);
 		});
+
+		const boxW = this.sw(190);
+		const boxH = this.sh(100);
+		const boxX = this.scale.width - this.sw(0) - boxW;
+		const boxY = this.scale.height - this.sh(0) - boxH;
+		this.controlsBg = this.add.graphics().setDepth(10);
+		this.controlsBg.fillStyle(COLORS.navy, 0.82);
+		this.controlsBg.fillRect(boxX, boxY, boxW, boxH);
+		this.controlsBg.lineStyle(1, COLORS.neonGlow, 0.3);
+		this.controlsBg.strokeRect(boxX, boxY, boxW, boxH);
+		this.controlsBg.setVisible(false);
+
+		this.controlsText = this.add
+			.text(boxX + this.sw(8), boxY + this.sh(18), '', {
+				fontSize: `${Math.round(this.sh(11))}px`,
+				color: COLOR_STRINGS.white,
+				stroke: COLOR_STRINGS.navy,
+				strokeThickness: 2,
+				lineSpacing: this.sh(4)
+			})
+			.setOrigin(0, 0)
+			.setDepth(10)
+			.setVisible(false);
 	}
 
 	private async connectToServer() {
@@ -479,8 +514,21 @@ export default class GameScene extends Scene {
 		this.turnText.setVisible(true);
 		this.timerText.setVisible(true);
 		this.fuelBg.setVisible(true);
+		this.fuelIcon.setVisible(true);
 		this.healthBg.setVisible(true);
+		this.healthIcon.setVisible(true);
 		this.weaponTexts.forEach((t) => t.setVisible(true));
+		const move = this.myPlayerIndex === 0 ? 'A / D' : '← / →';
+		const aim  = this.myPlayerIndex === 0 ? 'W / S' : '↑ / ↓';
+		const fire = this.myPlayerIndex === 0 ? 'SPACE' : 'ENTER';
+		this.controlsText.setText(
+			`${move.padEnd(7)}  Move\n` +
+			`${aim.padEnd(7)}  Aim\n` +
+			`Q        Switch weapon\n` +
+			`${fire.padEnd(7)}  Charge / Fire`
+		);
+		this.controlsBg.setVisible(true);
+		this.controlsText.setVisible(true);
 	}
 
 	update() {
@@ -590,17 +638,7 @@ export default class GameScene extends Scene {
 			this.handleInput(phase);
 		}
 
-		// Hint text
-		if (phase === 'AIMING' || phase === 'CHARGING') {
-			const p = this.myPlayerIndex;
-			const hint =
-				p === 0
-					? 'A/D: move   W/S: aim   Q: weapon   SPACE: charge'
-					: '←/→: move   ↑/↓: aim   Q: weapon   ENTER: charge';
-			this.hintText.setText(
-				currentPlayer === this.myPlayerIndex ? hint : 'Waiting for opponent...'
-			);
-		}
+		// Controls box
 	}
 
 	private handleInput(phase: string) {
