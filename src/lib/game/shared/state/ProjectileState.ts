@@ -8,4 +8,5 @@ export interface ProjectileState {
 	trail: Array<{ x: number; y: number }>;
 	typeIndex: number;
 	bouncesLeft: number;
+	hasSplit?: boolean;
 }

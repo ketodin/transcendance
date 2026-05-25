@@ -37,9 +37,12 @@ type ProjectileSnapshot = {
 	bouncesLeft: number;
 };
 
+type FragmentSnapshot = { x: number; y: number; typeIndex: number };
+
 type GameUpdateData = {
 	tanks: [TankState, TankState];
 	projectile: ProjectileSnapshot;
+	fragments?: FragmentSnapshot[];
 	turnTimeLeft: number;
 	power: number;
 	powerIncreasing: boolean;
@@ -65,6 +68,9 @@ export default class GameScene extends Scene {
 	private clientTrail: Array<{ x: number; y: number }> = [];
 	private lastProjActive = false;
 	private lastProjX = -Infinity;
+	private fragmentViews: ProjectileView[] = [];
+	private fragmentTrails: Array<Array<{ x: number; y: number }>> = [];
+	private selectableWeaponIndices: number[] = [];
 
 	private lastInput: InputSnapshot = {
 		moveLeft: false,
@@ -277,14 +283,16 @@ export default class GameScene extends Scene {
 
 		this.trajectoryGfx = this.add.graphics().setDepth(8);
 
-		const weaponXPositions = [
-			this.scale.width / 2 - this.sw(150),
-			this.scale.width / 2,
-			this.scale.width / 2 + this.sw(150)
-		];
-		this.weaponTexts = PROJECTILE_TYPES.map((type, i) =>
+		this.selectableWeaponIndices = PROJECTILE_TYPES
+			.map((t, i) => (t.selectable !== false ? i : -1))
+			.filter((i) => i !== -1);
+		const weaponXPositions = this.selectableWeaponIndices.map((_, si) => {
+			const step = this.sw(150);
+			return this.scale.width / 2 + (si - (this.selectableWeaponIndices.length - 1) / 2) * step;
+		});
+		this.weaponTexts = this.selectableWeaponIndices.map((typeIdx, si) =>
 			this.add
-				.text(weaponXPositions[i], this.sh(50), type.name, {
+				.text(weaponXPositions[si], this.sh(50), PROJECTILE_TYPES[typeIdx].name, {
 					fontSize: `${Math.round(this.sh(14))}px`,
 					color: COLOR_STRINGS.white,
 					stroke: COLOR_STRINGS.navy,
@@ -386,6 +394,10 @@ export default class GameScene extends Scene {
 				}
 			);
 
+			room.onMessage('airstrike_incoming', (data: { x: number }) => {
+				this.showAirstrikeZone(data.x);
+			});
+
 			room.onLeave.once(() => {
 				if (this.returningToLobby) {
 					this.returningToLobby = false;
@@ -412,6 +424,9 @@ export default class GameScene extends Scene {
 		this.tankSprites?.[0].destroy();
 		this.tankSprites?.[1].destroy();
 		this.projView?.destroy();
+		for (const fv of this.fragmentViews) fv.destroy();
+		this.fragmentViews = [];
+		this.fragmentTrails = [];
 
 		this.terrainView = new TerrainView(this);
 		this.terrainView.sync(this.localTerrain!);
@@ -482,6 +497,31 @@ export default class GameScene extends Scene {
 			this.lastProjActive = false;
 			this.clientTrail = [];
 			this.projView!.sync(undefined);
+		}
+
+		// Sync fragment views
+		const frags = data.fragments ?? [];
+		while (this.fragmentViews.length > frags.length) {
+			this.fragmentViews.pop()!.destroy();
+			this.fragmentTrails.pop();
+		}
+		while (this.fragmentViews.length < frags.length) {
+			this.fragmentViews.push(new ProjectileView(this));
+			this.fragmentTrails.push([]);
+		}
+		for (let i = 0; i < frags.length; i++) {
+			const f = frags[i];
+			const trail = this.fragmentTrails[i];
+			if (trail.length > 0) {
+				const last = trail[trail.length - 1];
+				if (Math.abs(f.x - last.x) + Math.abs(f.y - last.y) > 80) trail.length = 0;
+			}
+			trail.push({ x: f.x, y: f.y });
+			if (trail.length > 20) trail.shift();
+			this.fragmentViews[i].sync({
+				x: f.x, y: f.y, prevX: 0, prevY: 0, vx: 0, vy: 0,
+				trail, typeIndex: f.typeIndex, bouncesLeft: 0
+			});
 		}
 
 		// UI updates
@@ -605,6 +645,31 @@ export default class GameScene extends Scene {
 		}
 	}
 
+	private showAirstrikeZone(x: number) {
+		const SPREAD = 150;
+		const h = this.scale.height;
+		const gfx = this.add.graphics().setDepth(7);
+
+		gfx.fillStyle(0xff9900, 0.07);
+		gfx.fillRect(x - SPREAD, 0, SPREAD * 2, h);
+
+		gfx.lineStyle(2, 0xffee44, 0.9);
+		gfx.beginPath();
+		gfx.moveTo(x, 0);
+		gfx.lineTo(x, h);
+		gfx.strokePath();
+
+		gfx.lineStyle(1, 0xff9900, 0.5);
+		gfx.beginPath();
+		gfx.moveTo(x - SPREAD, 0);
+		gfx.lineTo(x - SPREAD, h);
+		gfx.moveTo(x + SPREAD, 0);
+		gfx.lineTo(x + SPREAD, h);
+		gfx.strokePath();
+
+		this.tweens.add({ targets: gfx, alpha: 0, duration: 500, delay: 300, onComplete: () => gfx.destroy() });
+	}
+
 	private handleExplosionFx(x: number, y: number, craterRadius: number, blastRadius: number) {
 		this.cameras.main.shake(350, blastRadius * 0.00018);
 
@@ -664,9 +729,10 @@ export default class GameScene extends Scene {
 	}
 
 	private updateWeaponUI(activeIndex: number) {
-		PROJECTILE_TYPES.forEach((type, i) => {
-			const active = i === activeIndex;
-			this.weaponTexts[i]
+		this.selectableWeaponIndices.forEach((typeIdx, si) => {
+			const type = PROJECTILE_TYPES[typeIdx];
+			const active = typeIdx === activeIndex;
+			this.weaponTexts[si]
 				.setText(active ? `[ ${type.name} ]` : type.name)
 				.setColor(active ? COLOR_STRINGS.yellow : COLOR_STRINGS.weaponInactive)
 				.setFontSize(active ? Math.round(this.sh(17)) : Math.round(this.sh(13)));

@@ -10,7 +10,7 @@ import {
 	stepProjectile,
 	getTurretTip
 } from '../../src/lib/game/shared/logic/physics.js';
-import { PROJECTILE_TYPES } from '../../src/lib/game/shared/projectileTypes.js';
+import { PROJECTILE_TYPES, AIRSTRIKE_TYPE_INDEX } from '../../src/lib/game/shared/projectileTypes.js';
 import type { GameState } from '../../src/lib/game/shared/state/GameState.js';
 import type { TankState } from '../../src/lib/game/shared/state/TankState.js';
 // import chat handler
@@ -23,7 +23,7 @@ const AIM_SPEED = 55;
 const POWER_RATE = 55;
 const MAX_SLOPE_ANGLE = 80;
 const MAX_FUEL_DISTANCE = 200;
-const TANK_X: [number, number] = [180, 1100];
+const TANK_X: [number, number] = [180, 1740];
 
 type InputState = {
 	moveLeft: boolean;
@@ -36,6 +36,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	private physicsState!: GameState;
 	private inputs = new Map<string, InputState>();
 	private tickCount = 0;
+	private _nextTurnPending = false;
 
 	onCreate() {
 		this.maxClients = 2;
@@ -72,7 +73,9 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		this.onMessage('cycle_weapon', (client) => {
 			if (!this.isCurrentPlayer(client)) return;
 			if (this.physicsState?.phase !== 'AIMING') return;
-			this.physicsState.weaponIndex = (this.physicsState.weaponIndex + 1) % PROJECTILE_TYPES.length;
+			const selectable = PROJECTILE_TYPES.map((t, i) => t.selectable !== false ? i : -1).filter(i => i !== -1);
+			const cur = selectable.indexOf(this.physicsState.weaponIndex);
+			this.physicsState.weaponIndex = selectable[(cur + 1) % selectable.length];
 			this.state.weaponIndex = this.physicsState.weaponIndex;
 		});
 
@@ -129,6 +132,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			terrain,
 			tanks: [makeTank(0), makeTank(1)],
 			projectile: undefined,
+			fragments: [],
 			currentPlayer: 0,
 			phase: 'AIMING',
 			power: 0,
@@ -224,21 +228,56 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			this.state.powerIncreasing = this.physicsState.powerIncreasing;
 		}
 
-		if (phase === 'FLYING' && this.physicsState.projectile) {
-			const result = stepProjectile(
-				this.physicsState.projectile,
-				this.physicsState.terrain,
-				this.physicsState.tanks,
-				dt
-			);
-			this.syncProjectile();
+		if (phase === 'FLYING') {
+			if (this.physicsState.projectile) {
+				const proj = this.physicsState.projectile;
+				const type = PROJECTILE_TYPES[proj.typeIndex];
 
-			if (result.type === 'oob') {
-				this.physicsState.projectile = undefined;
-				this.state.projectile.active = false;
-				this.nextTurn();
-			} else if (result.type === 'explode') {
-				this.handleExplosion(result.x, result.y);
+				if ((type.splitCount ?? 0) > 0 && proj.vy > 0 && !proj.hasSplit) {
+					proj.hasSplit = true;
+					const speed = Math.sqrt(proj.vx ** 2 + proj.vy ** 2);
+					const angle = Math.atan2(proj.vy, proj.vx);
+					for (const deg of [-25, 0, 25]) {
+						const a = angle + (deg * Math.PI) / 180;
+						this.physicsState.fragments.push({
+							x: proj.x, y: proj.y, prevX: proj.x, prevY: proj.y,
+							vx: Math.cos(a) * speed * 0.75,
+							vy: Math.sin(a) * speed * 0.75,
+							trail: [], typeIndex: 0, bouncesLeft: 0, hasSplit: false
+						});
+					}
+					this.physicsState.projectile = undefined;
+					this.state.projectile.active = false;
+				} else {
+					const result = stepProjectile(proj, this.physicsState.terrain, this.physicsState.tanks, dt);
+					this.syncProjectile();
+					if (result.type === 'oob') {
+						this.physicsState.projectile = undefined;
+						this.state.projectile.active = false;
+						this.checkFlightEnd();
+					} else if (result.type === 'explode') {
+						if (proj.typeIndex === AIRSTRIKE_TYPE_INDEX) {
+							this.triggerAirstrike(result.x);
+						} else {
+							this.handleExplosion(result.x, result.y);
+						}
+					}
+				}
+			}
+
+			for (let i = this.physicsState.fragments.length - 1; i >= 0; i--) {
+				if (this.physicsState.phase === 'OVER') break;
+				const frag = this.physicsState.fragments[i];
+				const result = stepProjectile(frag, this.physicsState.terrain, this.physicsState.tanks, dt);
+				if (result.type === 'oob') {
+					this.physicsState.fragments.splice(i, 1);
+					this.checkFlightEnd();
+				} else if (result.type === 'explode') {
+					const fragTypeIndex = frag.typeIndex;
+					this.physicsState.fragments.splice(i, 1);
+					this.applyExplosionAt(result.x, result.y, fragTypeIndex);
+					this.checkFlightEnd();
+				}
 			}
 		}
 
@@ -267,11 +306,15 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	}
 
 	private handleExplosion(x: number, y: number) {
-		const weapon = PROJECTILE_TYPES[this.physicsState.weaponIndex];
-		const { craterRadius, blastRadius, maxDamage } = weapon;
-
 		this.physicsState.projectile = undefined;
 		this.state.projectile.active = false;
+		const gameOver = this.applyExplosionAt(x, y, this.physicsState.weaponIndex);
+		if (!gameOver) this.checkFlightEnd();
+	}
+
+	private applyExplosionAt(x: number, y: number, typeIndex: number): boolean {
+		if (this.physicsState.phase === 'OVER') return true;
+		const { craterRadius, blastRadius, maxDamage } = PROJECTILE_TYPES[typeIndex];
 
 		let deadTankIdx = -1;
 		for (let i = 0; i < 2; i++) {
@@ -299,9 +342,9 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		});
 
 		if (deadTankIdx !== -1) {
-			const winner = deadTankIdx === 0 ? 1 : 0;
+			const winner = (deadTankIdx === 0 ? 1 : 0) satisfies 0 | 1;
 			this.physicsState.phase = 'OVER';
-			this.physicsState.winner = winner satisfies 0 | 1;
+			this.physicsState.winner = winner;
 			this.state.phase = 'OVER';
 			this.state.winner = winner;
 			this.broadcast('phase_change', {
@@ -310,9 +353,56 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 				winner
 			});
 			void this.lock();
-		} else {
-			this.clock.setTimeout(() => this.nextTurn(), 600);
+			return true;
 		}
+		return false;
+	}
+
+	private checkFlightEnd() {
+		if (this.physicsState.phase === 'OVER' || this._nextTurnPending) return;
+		const frags = this.physicsState.fragments;
+		if (!this.physicsState.projectile && frags.length === 0) {
+			this._nextTurnPending = true;
+			this.clock.setTimeout(() => {
+				this._nextTurnPending = false;
+				this.nextTurn();
+			}, 600);
+		}
+	}
+
+	private triggerAirstrike(targetX: number) {
+		this.physicsState.projectile = undefined;
+		this.state.projectile.active = false;
+		this._nextTurnPending = true;
+		this.broadcast('airstrike_incoming', { x: targetX });
+
+		const BOMB_COUNT = 5;
+		const SPREAD = 150;
+		const bombTypeIndex = PROJECTILE_TYPES.findIndex((t) => t.name === 'Strike Bomb');
+
+		this.clock.setTimeout(() => {
+			if (this.physicsState.phase === 'OVER') {
+				this._nextTurnPending = false;
+				return;
+			}
+			for (let i = 0; i < BOMB_COUNT; i++) {
+				const baseOffset = (i / (BOMB_COUNT - 1) - 0.5) * 2 * SPREAD;
+				const xOffset = baseOffset + (Math.random() - 0.5) * 40;
+				this.physicsState.fragments.push({
+					x: targetX + xOffset,
+					y: -50 - i * 120,
+					prevX: targetX + xOffset,
+					prevY: -50 - i * 120,
+					vx: 0,
+					vy: 700,
+					trail: [],
+					typeIndex: bombTypeIndex,
+					bouncesLeft: 0,
+					hasSplit: false
+				});
+			}
+			this._nextTurnPending = false;
+		}, 500);
 	}
 
 	private nextTurn() {
@@ -320,6 +410,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			| 0
 			| 1;
 		this.physicsState.phase = 'AIMING';
+		this.physicsState.fragments = [];
 		this.physicsState.fuel = 100;
 		this.physicsState.turnTimeLeft = 30;
 		this.state.currentPlayer = this.physicsState.currentPlayer;
@@ -346,6 +437,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 						bouncesLeft: proj.bouncesLeft
 					}
 				: { active: false, x: 0, y: 0, typeIndex: 0, bouncesLeft: 0 },
+			fragments: ps.fragments.map((f) => ({ x: f.x, y: f.y, typeIndex: f.typeIndex })),
 			turnTimeLeft: ps.turnTimeLeft,
 			power: ps.power,
 			powerIncreasing: ps.powerIncreasing,
@@ -381,8 +473,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		this.state.projectile.active = true;
 		this.state.projectile.x = proj.x;
 		this.state.projectile.y = proj.y;
-		this.state.projectile.vx = proj.vx;
-		this.state.projectile.vy = proj.vy;
 		this.state.projectile.typeIndex = proj.typeIndex;
 		this.state.projectile.bouncesLeft = proj.bouncesLeft;
 	}
