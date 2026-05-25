@@ -32,20 +32,20 @@
 	<div class="actions">
 		{#if friend.friendStatus == 'ACCEPTED'}
 			<Button
+				class="glass text-red-400"
 				variant="outline"
 				size="icon-sm"
-				class="text-red-400"
 				onclick={() => friends.remove(friend.id)}><X /></Button
 			>
 		{:else if friend.friendStatus == 'RECEIVED'}
-			<Button variant="outline" size="icon-sm" onclick={() => friends.accept(friend.id)}
+			<Button class="glass" variant="outline" size="icon-sm" onclick={() => friends.accept(friend.id)}
 				><Check /></Button
 			>
 			<div class="separator"></div>
 			<Button
+				class="glass text-red-400"
 				variant="outline"
 				size="icon-sm"
-				class="text-red-400"
 				onclick={() => friends.remove(friend.id)}><X /></Button
 			>
 		{/if}
