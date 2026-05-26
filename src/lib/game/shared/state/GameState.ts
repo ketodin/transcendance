@@ -8,6 +8,7 @@ export interface GameState {
 	tanks: [TankState, TankState];
 	terrain: TerrainState;
 	projectile?: ProjectileState;
+	fragments: ProjectileState[];
 	currentPlayer: 0 | 1;
 	phase: TurnPhase;
 	power: number;

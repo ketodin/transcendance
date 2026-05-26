@@ -38,7 +38,11 @@ export const COLORS = {
 	heavy: 0xff4444,
 	heavyGlow: 0xff2200,
 	bouncer: 0x44ffee,
-	bouncerGlow: 0x00aaff
+	bouncerGlow: 0x00aaff,
+	airstrike: 0xffee44,
+	airstrikeGlow: 0xffaa00,
+	strikeBomb: 0xff6600,
+	strikeBombGlow: 0xff3300
 };
 
 export const COLOR_STRINGS = {
