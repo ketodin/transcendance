@@ -5,6 +5,7 @@ import { auth } from '$lib/server/auth';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { building } from '$app/environment';
 import { sequence } from '@sveltejs/kit/hooks';
+import type { User } from '$lib/server/prisma/browser';
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
@@ -24,7 +25,7 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 	});
 	if (session) {
 		event.locals.session = session.session;
-		event.locals.user = session.user;
+		event.locals.user = session.user as User;
 	} else {
 		event.locals.session = null;
 		event.locals.user = null;
