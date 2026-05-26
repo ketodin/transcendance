@@ -37,9 +37,12 @@ type ProjectileSnapshot = {
 	bouncesLeft: number;
 };
 
+type FragmentSnapshot = { x: number; y: number; typeIndex: number };
+
 type GameUpdateData = {
 	tanks: [TankState, TankState];
 	projectile: ProjectileSnapshot;
+	fragments?: FragmentSnapshot[];
 	turnTimeLeft: number;
 	power: number;
 	powerIncreasing: boolean;
@@ -65,6 +68,9 @@ export default class GameScene extends Scene {
 	private clientTrail: Array<{ x: number; y: number }> = [];
 	private lastProjActive = false;
 	private lastProjX = -Infinity;
+	private fragmentViews: ProjectileView[] = [];
+	private fragmentTrails: Array<Array<{ x: number; y: number }>> = [];
+	private selectableWeaponIndices: number[] = [];
 
 	private lastInput: InputSnapshot = {
 		moveLeft: false,
@@ -80,7 +86,12 @@ export default class GameScene extends Scene {
 	private powerLabel!: GameObjects.Text;
 	private fuelBg!: GameObjects.Graphics;
 	private fuelFill!: GameObjects.Graphics;
-	private hintText!: GameObjects.Text;
+	private fuelIcon!: GameObjects.Text;
+	private healthBg!: GameObjects.Graphics;
+	private healthFill!: GameObjects.Graphics;
+	private healthIcon!: GameObjects.Text;
+	private controlsBg!: GameObjects.Graphics;
+	private controlsText!: GameObjects.Text;
 	private trajectoryGfx!: GameObjects.Graphics;
 	private weaponTexts: GameObjects.Text[] = [];
 	private statusText!: GameObjects.Text;
@@ -99,7 +110,7 @@ export default class GameScene extends Scene {
 		return this.sh(18);
 	}
 	private get fuelBarX() {
-		return this.sw(20);
+		return this.sw(35);
 	}
 	private get fuelBarW() {
 		return this.sw(200);
@@ -115,7 +126,19 @@ export default class GameScene extends Scene {
 		return this.scale.height - this.sh(32);
 	}
 	private get fuelBarY() {
-		return this.scale.height - this.sh(32);
+		return this.scale.height - this.sh(42);
+	}
+	private get healthBarW() {
+		return this.fuelBarW;
+	}
+	private get healthBarH() {
+		return this.sh(18);
+	}
+	private get healthBarX() {
+		return this.fuelBarX;
+	}
+	private get healthBarY() {
+		return this.fuelBarY - this.sh(20) - this.sh(18);
 	}
 
 	// bubble chat
@@ -242,16 +265,6 @@ export default class GameScene extends Scene {
 			.setDepth(10)
 			.setVisible(false);
 
-		this.hintText = this.add
-			.text(this.scale.width / 2, this.scale.height - this.sh(20), '', {
-				fontSize: `${Math.round(this.sh(11))}px`,
-				color: COLOR_STRINGS.hint,
-				stroke: COLOR_STRINGS.navy,
-				strokeThickness: 2
-			})
-			.setOrigin(0.5, 0)
-			.setDepth(10);
-
 		this.fuelBg = this.add.graphics().setDepth(10);
 		this.fuelBg.fillStyle(COLORS.navy, 0.92);
 		this.fuelBg.fillRect(
@@ -264,6 +277,14 @@ export default class GameScene extends Scene {
 
 		this.fuelFill = this.add.graphics().setDepth(10);
 
+		this.fuelIcon = this.add
+			.text(this.fuelBarX - this.sw(14), this.fuelBarY + this.fuelBarH / 2, '⛽', {
+				fontSize: `${Math.round(this.sh(14))}px`
+			})
+			.setOrigin(0.5)
+			.setDepth(10)
+			.setVisible(false);
+
 		this.add
 			.text(this.fuelBarX + this.fuelBarW / 2, this.fuelBarY - this.sh(18), 'FUEL', {
 				fontSize: `${Math.round(this.sh(13))}px`,
@@ -275,25 +296,74 @@ export default class GameScene extends Scene {
 			.setDepth(10)
 			.setVisible(false);
 
+		this.healthBg = this.add.graphics().setDepth(10);
+		this.healthBg.fillStyle(COLORS.navy, 0.92);
+		this.healthBg.fillRect(
+			this.healthBarX - 1,
+			this.healthBarY - 1,
+			this.healthBarW + 2,
+			this.healthBarH + 2
+		);
+		this.healthBg.setVisible(false);
+
+		this.healthFill = this.add.graphics().setDepth(10);
+
+		this.healthIcon = this.add
+			.text(this.healthBarX - this.sw(14), this.healthBarY + this.healthBarH / 2, '♥', {
+				fontSize: `${Math.round(this.sh(26))}px`,
+				color: '#ff4444'
+			})
+			.setOrigin(0.5)
+			.setDepth(10)
+			.setVisible(false);
+
 		this.trajectoryGfx = this.add.graphics().setDepth(8);
 
-		const weaponXPositions = [
-			this.scale.width / 2 - this.sw(150),
-			this.scale.width / 2,
-			this.scale.width / 2 + this.sw(150)
-		];
-		this.weaponTexts = PROJECTILE_TYPES.map((type, i) =>
-			this.add
-				.text(weaponXPositions[i], this.sh(50), type.name, {
-					fontSize: `${Math.round(this.sh(14))}px`,
+		this.selectableWeaponIndices = PROJECTILE_TYPES.map((t, i) =>
+			t.selectable !== false ? i : -1
+		).filter((i) => i !== -1);
+		const weaponStartX = this.fuelBarX + this.fuelBarW + this.sw(80);
+		const weaponRow1Y = this.scale.height - this.sh(74);
+		const weaponRow2Y = this.scale.height - this.sh(46);
+		this.weaponTexts = this.selectableWeaponIndices.map((typeIdx, si) => {
+			const row = si < 3 ? 0 : 1;
+			const col = si < 3 ? si : si - 3;
+			const x = weaponStartX + col * this.sw(105);
+			const y = row === 0 ? weaponRow1Y : weaponRow2Y;
+			return this.add
+				.text(x, y, PROJECTILE_TYPES[typeIdx].name, {
+					fontSize: `${Math.round(this.sh(12))}px`,
 					color: COLOR_STRINGS.white,
 					stroke: COLOR_STRINGS.navy,
-					strokeThickness: 3
+					strokeThickness: 2
 				})
 				.setOrigin(0.5)
 				.setDepth(10)
-				.setVisible(false)
-		);
+				.setVisible(false);
+		});
+
+		const boxW = this.sw(190);
+		const boxH = this.sh(100);
+		const boxX = this.scale.width - this.sw(0) - boxW;
+		const boxY = this.scale.height - this.sh(0) - boxH;
+		this.controlsBg = this.add.graphics().setDepth(10);
+		this.controlsBg.fillStyle(COLORS.navy, 0.82);
+		this.controlsBg.fillRect(boxX, boxY, boxW, boxH);
+		this.controlsBg.lineStyle(1, COLORS.neonGlow, 0.3);
+		this.controlsBg.strokeRect(boxX, boxY, boxW, boxH);
+		this.controlsBg.setVisible(false);
+
+		this.controlsText = this.add
+			.text(boxX + this.sw(8), boxY + this.sh(18), '', {
+				fontSize: `${Math.round(this.sh(11))}px`,
+				color: COLOR_STRINGS.white,
+				stroke: COLOR_STRINGS.navy,
+				strokeThickness: 2,
+				lineSpacing: this.sh(4)
+			})
+			.setOrigin(0, 0)
+			.setDepth(10)
+			.setVisible(false);
 	}
 
 	private async connectToServer() {
@@ -386,6 +456,10 @@ export default class GameScene extends Scene {
 				}
 			);
 
+			room.onMessage('airstrike_incoming', (data: { x: number }) => {
+				this.showAirstrikeZone(data.x);
+			});
+
 			room.onLeave.once(() => {
 				if (this.returningToLobby) {
 					this.returningToLobby = false;
@@ -412,6 +486,9 @@ export default class GameScene extends Scene {
 		this.tankSprites?.[0].destroy();
 		this.tankSprites?.[1].destroy();
 		this.projView?.destroy();
+		for (const fv of this.fragmentViews) fv.destroy();
+		this.fragmentViews = [];
+		this.fragmentTrails = [];
 
 		this.terrainView = new TerrainView(this);
 		this.terrainView.sync(this.localTerrain!);
@@ -435,7 +512,21 @@ export default class GameScene extends Scene {
 		this.turnText.setVisible(true);
 		this.timerText.setVisible(true);
 		this.fuelBg.setVisible(true);
+		this.fuelIcon.setVisible(true);
+		this.healthBg.setVisible(true);
+		this.healthIcon.setVisible(true);
 		this.weaponTexts.forEach((t) => t.setVisible(true));
+		const move = this.myPlayerIndex === 0 ? 'A / D' : '← / →';
+		const aim = this.myPlayerIndex === 0 ? 'W / S' : '↑ / ↓';
+		const fire = this.myPlayerIndex === 0 ? 'SPACE' : 'ENTER';
+		this.controlsText.setText(
+			`${move.padEnd(7)}  Move\n` +
+				`${aim.padEnd(7)}  Aim\n` +
+				`Q        Switch weapon\n` +
+				`${fire.padEnd(7)}  Charge / Fire`
+		);
+		this.controlsBg.setVisible(true);
+		this.controlsText.setVisible(true);
 	}
 
 	update() {
@@ -484,6 +575,38 @@ export default class GameScene extends Scene {
 			this.projView!.sync(undefined);
 		}
 
+		// Sync fragment views
+		const frags = data.fragments ?? [];
+		while (this.fragmentViews.length > frags.length) {
+			this.fragmentViews.pop()!.destroy();
+			this.fragmentTrails.pop();
+		}
+		while (this.fragmentViews.length < frags.length) {
+			this.fragmentViews.push(new ProjectileView(this));
+			this.fragmentTrails.push([]);
+		}
+		for (let i = 0; i < frags.length; i++) {
+			const f = frags[i];
+			const trail = this.fragmentTrails[i];
+			if (trail.length > 0) {
+				const last = trail[trail.length - 1];
+				if (Math.abs(f.x - last.x) + Math.abs(f.y - last.y) > 80) trail.length = 0;
+			}
+			trail.push({ x: f.x, y: f.y });
+			if (trail.length > 20) trail.shift();
+			this.fragmentViews[i].sync({
+				x: f.x,
+				y: f.y,
+				prevX: 0,
+				prevY: 0,
+				vx: 0,
+				vy: 0,
+				trail,
+				typeIndex: f.typeIndex,
+				bouncesLeft: 0
+			});
+		}
+
 		// UI updates
 		if (phase === 'AIMING' || phase === 'CHARGING') {
 			const secs = Math.ceil(data.turnTimeLeft);
@@ -494,6 +617,7 @@ export default class GameScene extends Scene {
 		}
 
 		this.updateFuelBar(data.fuel);
+		this.updateHealthBar(data.tanks[this.myPlayerIndex].health);
 		this.updateWeaponUI(data.weaponIndex);
 
 		if (phase === 'CHARGING') {
@@ -519,17 +643,7 @@ export default class GameScene extends Scene {
 			this.handleInput(phase);
 		}
 
-		// Hint text
-		if (phase === 'AIMING' || phase === 'CHARGING') {
-			const p = this.myPlayerIndex;
-			const hint =
-				p === 0
-					? 'A/D: move   W/S: aim   Q: weapon   SPACE: charge'
-					: '←/→: move   ↑/↓: aim   Q: weapon   ENTER: charge';
-			this.hintText.setText(
-				currentPlayer === this.myPlayerIndex ? hint : 'Waiting for opponent...'
-			);
-		}
+		// Controls box
 	}
 
 	private handleInput(phase: string) {
@@ -605,6 +719,37 @@ export default class GameScene extends Scene {
 		}
 	}
 
+	private showAirstrikeZone(x: number) {
+		const SPREAD = 150;
+		const h = this.scale.height;
+		const gfx = this.add.graphics().setDepth(7);
+
+		gfx.fillStyle(0xff9900, 0.07);
+		gfx.fillRect(x - SPREAD, 0, SPREAD * 2, h);
+
+		gfx.lineStyle(2, 0xffee44, 0.9);
+		gfx.beginPath();
+		gfx.moveTo(x, 0);
+		gfx.lineTo(x, h);
+		gfx.strokePath();
+
+		gfx.lineStyle(1, 0xff9900, 0.5);
+		gfx.beginPath();
+		gfx.moveTo(x - SPREAD, 0);
+		gfx.lineTo(x - SPREAD, h);
+		gfx.moveTo(x + SPREAD, 0);
+		gfx.lineTo(x + SPREAD, h);
+		gfx.strokePath();
+
+		this.tweens.add({
+			targets: gfx,
+			alpha: 0,
+			duration: 500,
+			delay: 300,
+			onComplete: () => gfx.destroy()
+		});
+	}
+
 	private handleExplosionFx(x: number, y: number, craterRadius: number, blastRadius: number) {
 		this.cameras.main.shake(350, blastRadius * 0.00018);
 
@@ -664,12 +809,13 @@ export default class GameScene extends Scene {
 	}
 
 	private updateWeaponUI(activeIndex: number) {
-		PROJECTILE_TYPES.forEach((type, i) => {
-			const active = i === activeIndex;
-			this.weaponTexts[i]
+		this.selectableWeaponIndices.forEach((typeIdx, si) => {
+			const type = PROJECTILE_TYPES[typeIdx];
+			const active = typeIdx === activeIndex;
+			this.weaponTexts[si]
 				.setText(active ? `[ ${type.name} ]` : type.name)
 				.setColor(active ? COLOR_STRINGS.yellow : COLOR_STRINGS.weaponInactive)
-				.setFontSize(active ? Math.round(this.sh(17)) : Math.round(this.sh(13)));
+				.setFontSize(Math.round(this.sh(12)));
 		});
 	}
 
@@ -687,6 +833,19 @@ export default class GameScene extends Scene {
 		const color = pct > 0.5 ? COLORS.fuelHigh : pct > 0.25 ? COLORS.fuelMid : COLORS.fuelLow;
 		this.fuelFill.fillStyle(color);
 		this.fuelFill.fillRect(this.fuelBarX, this.fuelBarY, this.fuelBarW * pct, this.fuelBarH);
+	}
+
+	private updateHealthBar(health: number) {
+		this.healthFill.clear();
+		const pct = health / 100;
+		const color = pct > 0.5 ? COLORS.barHigh : pct > 0.25 ? COLORS.barMid : COLORS.barLow;
+		this.healthFill.fillStyle(color);
+		this.healthFill.fillRect(
+			this.healthBarX,
+			this.healthBarY,
+			this.healthBarW * pct,
+			this.healthBarH
+		);
 	}
 
 	private showGameOver(winner: 0 | 1) {
