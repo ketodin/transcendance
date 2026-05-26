@@ -24,6 +24,9 @@ model User {
   sentRequests     FriendRequest[] @relation("SentRequests")
   receivedRequests FriendRequest[] @relation("ReceivedRequests")
 
+  twoFactorEnabled Boolean?    @default(false)
+  twofactors       TwoFactor[]
+
   @@unique([email])
   @@unique([name])
   @@map("user")
@@ -92,4 +95,17 @@ model FriendRequest {
 enum FriendRequestStatus {
   PENDING
   ACCEPTED
+}
+
+model TwoFactor {
+  id          String   @id
+  secret      String
+  backupCodes String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verified    Boolean? @default(true)
+
+  @@index([secret])
+  @@index([userId])
+  @@map("twoFactor")
 }

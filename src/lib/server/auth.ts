@@ -5,6 +5,7 @@ import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 import { env } from '$env/dynamic/private';
 import { building } from '$app/environment';
+import { twoFactor } from 'better-auth/plugins';
 
 export const auth = betterAuth({
 	database: prismaAdapter(db, {
@@ -12,6 +13,13 @@ export const auth = betterAuth({
 	}),
 	experimental: { joins: true },
 	emailAndPassword: { enabled: true },
-	plugins: [sveltekitCookies(getRequestEvent)],
+	plugins: [
+		twoFactor({
+		issuer: 'ft_transcendence',
+		TOTPOptions: { window: 1 },
+		backupCodes: { count: 8, length: 10 },
+		}),
+		sveltekitCookies(getRequestEvent),
+	],
 	secret: building ? 'a' : env.BETTER_AUTH_SECRET
 });
