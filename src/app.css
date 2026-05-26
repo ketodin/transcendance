@@ -34,18 +34,18 @@
 	--900: #111827;
 	--950: #0b0f19;
 	--1000: #000000;
-	--background: var(--500);
-	--foreground: var(--0);
-	--secondary: #ffffff;
-	--secondary-foreground: #18181b;
-	--muted: #f4f4f5;
-	--muted-foreground: #71717a;
-	--accent: #f4f4f5;
-	--accent-foreground: #18181b;
-	--destructive: #dc2626;
-	--border: #e4e4e7;
-	--input: #e4e4e76;
-	--ring: #a1a1aa;
+	--background: var(--50);
+	--foreground: var(--950);
+	--secondary: #27272a;
+	--secondary-foreground: #fafafa;
+	--muted: #27272a;
+	--muted-foreground: #a1a1aa;
+	--accent: #27272a;
+	--accent-foreground: #fafafa;
+	--destructive: #f87171;
+	--border: #ffffff1a;
+	--input: #ffffff26;
+	--ring: #71717a;
 	--chart-1: #d4d4d8;
 	--chart-2: #71717a;
 	--chart-3: #52525b;
@@ -53,28 +53,28 @@
 	--chart-5: #27272a;
 	--radius: 0.625rem;
 
-	/* Game colors — light mode (daytime) */
-	--game-bg: var(--0); /* canvas background */
-	--game-sky-top: var(--700);
-	--game-navy: var(--200); /* HUD panel bg + text stroke */
-	--game-terrain: var(--500);
-	--game-terrain-dark: var(--950);
-	--game-terrain-base: var(--500); /* Bot bar */
-	--game-neon-glow: var(--800); /* HUD text + terrain glow */
-	--game-neon-bright: var(--200); /* terrain glow bright pass */
-	--game-bar-high: var(--800);
-	--game-bar-mid: var(--800);
+	/* Game colors — dark mode (night time) */
+	--game-bg: var(--700); /* canvas background */
+	--game-sky-top: var(--950);
+	--game-navy: var(--800); /* HUD panel bg + text stroke */
+	--game-terrain: var(--950);
+	--game-terrain-dark: var(--100);
+	--game-terrain-base: var(--950);
+	--game-neon-glow: var(--100); /* HUD text + terrain glow */
+	--game-neon-bright: var(--800); /* terrain glow bright pass */
+	--game-bar-high: var(--200);
+	--game-bar-mid: var(--200);
 	--game-bar-low: var(--destructive);
-	--game-fuel-high: var(--800);
-	--game-fuel-mid: var(--800);
+	--game-fuel-high: var(--200);
+	--game-fuel-mid: var(--200);
 	--game-fuel-low: var(--destructive);
-	--game-white: var(--100); /* tank name + weapon text */
+	--game-white: var(--50); /* tank name + weapon text */
 	--game-black: var(--950); /* tank name stroke + FPS */
 	--game-gold: var(--500); /* "Player X Wins!" text */
-	--game-yellow: var(--800); /* timer warning + active weapon */
+	--game-yellow: var(--500); /* timer warning + active weapon */
 	--game-red: var(--destructive); /* timer critical (≤5s) */
-	--game-hint: var(--800); /* controls hint text */
-	--game-weapon-inactive: var(--400); /* inactive weapon name */
+	--game-hint: var(--200); /* controls hint text */
+	--game-weapon-inactive: var(--600); /* inactive weapon name */
 }
 
 .dark {
@@ -178,12 +178,14 @@
 }
 
 .content {
-	width: 100%;
-	height: 100%;
-
-	padding-top: 1.75%;
+	top: calc(var(--header-height) + var(--layout-gap) + 1rem);
+	right: 1%;
+	left: 22%;
+	bottom: 1%;
+	position: fixed;
 
 	overflow-y: auto;
+	border-radius: var(--radius-xl);
 }
 
 .glass {
