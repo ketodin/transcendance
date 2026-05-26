@@ -23,6 +23,7 @@
 	"invalid_name": "Les espaces ne sont pas autorisés",
 	"invalid_repeat": "Les mots de passe ne correspondent pas",
 	"already_email": "E-mail déjà utilisé",
+	"pending": "En attente",
 
 	"name_place_holder": "Stephane",
 	"mail_place_holder": "stephane.travail@gmail.com",
