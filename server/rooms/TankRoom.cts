@@ -337,9 +337,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			const t = this.physicsState.tanks[i];
 			const dist = Math.sqrt((x - t.x) ** 2 + (y - t.y) ** 2);
 			if (dist < blastRadius) {
-				const dmg = fixedDamage
-					? maxDamage
-					: Math.round(maxDamage * (1 - dist / blastRadius));
+				const dmg = fixedDamage ? maxDamage : Math.round(maxDamage * (1 - dist / blastRadius));
 				t.health = Math.max(0, t.health - dmg);
 				this.syncTank(i as 0 | 1);
 				if (t.health === 0) deadTankIdx = i;

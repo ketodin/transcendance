@@ -50,7 +50,7 @@ export const COLORS = {
 	strikeBombTrail: 0xffffff,
 	sniper: 0x0ac248,
 	sniperGlow: 0x2af46e,
-	sniperTrail: 0x60f793,
+	sniperTrail: 0x60f793
 };
 
 export const COLOR_STRINGS = {
