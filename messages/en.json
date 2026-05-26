@@ -23,6 +23,7 @@
 	"invalid_name": "Spaces are not allowed",
 	"invalid_repeat": "Passwords does not match",
 	"already_email": "Email already in use",
+	"pending": "Pending",
 
 	"name_place_holder": "Steve",
 	"mail_place_holder": "steve.jobs@gmail.com",

@@ -16,8 +16,11 @@
 
 	<div class="info">
 		<div class="name">{friend.name}</div>
-		<div>{friend.friendStatus}</div>
-		{#if online}
+		{#if friend.friendStatus == 'SENT' || friend.friendStatus == 'RECEIVED'}
+			<Badge variant="destructive" class="status offline">
+				{m.pending()}
+			</Badge>
+		{:else if online}
 			<Badge variant="secondary">{m.online()}</Badge>
 		{:else}
 			<Badge variant="outline" class="status offline">
@@ -29,24 +32,25 @@
 	<div class="actions">
 		{#if friend.friendStatus == 'ACCEPTED'}
 			<Button
+				class="glass text-red-400"
 				variant="outline"
 				size="icon-sm"
-				class="text-red-400"
 				onclick={() => friends.remove(friend.id)}><X /></Button
 			>
 		{:else if friend.friendStatus == 'RECEIVED'}
-			<Button variant="outline" size="icon-sm" onclick={() => friends.accept(friend.id)}
-				><Check /></Button
+			<Button
+				class="glass"
+				variant="outline"
+				size="icon-sm"
+				onclick={() => friends.accept(friend.id)}><Check /></Button
 			>
 			<div class="separator"></div>
 			<Button
+				class="glass text-red-400"
 				variant="outline"
 				size="icon-sm"
-				class="text-red-400"
 				onclick={() => friends.remove(friend.id)}><X /></Button
 			>
-		{:else if friend.friendStatus == 'SENT'}
-			<div>Waiting...</div>
 		{/if}
 	</div>
 </div>
