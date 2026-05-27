@@ -35,7 +35,7 @@ We decided to keep game domain code in shared modules under `src/lib/game`, with
 
 ## Links
 
-| Type   | Reference                                                       |
-| ------ | --------------------------------------------------------------- |
-| Commit | `8e328b2 task(game): plug colysseus`                            |
-| Docs   | `src/lib/game/{client,colyseus,phaser,shared}`                  |
+| Type   | Reference                                      |
+| ------ | ---------------------------------------------- |
+| Commit | `8e328b2 task(game): plug colysseus`           |
+| Docs   | `src/lib/game/{client,colyseus,phaser,shared}` |

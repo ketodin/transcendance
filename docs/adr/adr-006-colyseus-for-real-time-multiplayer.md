@@ -39,7 +39,7 @@ We decided to use Colyseus as the real-time multiplayer server layer, integrated
 
 ## Links
 
-| Type   | Reference                                                                        |
-| ------ | -------------------------------------------------------------------------------- |
-| Commit | `8e328b2 task(game): plug colysseus`                                             |
+| Type   | Reference                                                                                           |
+| ------ | --------------------------------------------------------------------------------------------------- |
+| Commit | `8e328b2 task(game): plug colysseus`                                                                |
 | Docs   | `src/lib/game/colyseus/TankRoom.ts`, `src/lib/game/colyseus/schema/`, `server.ts`, `vite.config.ts` |
