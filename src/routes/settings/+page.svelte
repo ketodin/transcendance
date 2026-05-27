@@ -18,22 +18,31 @@
 
 	let { data }: PageProps = $props();
 
-	const enableForm = superForm(untrack(() => data.enableForm), {
-		id: 'enable',
-		validators: zod4Client(enableSchema)
-	});
+	const enableForm = superForm(
+		untrack(() => data.enableForm),
+		{
+			id: 'enable',
+			validators: zod4Client(enableSchema)
+		}
+	);
 	const { form: enableData, enhance: enableEnhance, message: enableMsg } = enableForm;
 
-	const verifyForm = superForm(untrack(() => data.verifyForm), {
-		id: 'verify',
-		validators: zod4Client(verifySchema)
-	});
+	const verifyForm = superForm(
+		untrack(() => data.verifyForm),
+		{
+			id: 'verify',
+			validators: zod4Client(verifySchema)
+		}
+	);
 	const { form: verifyData, enhance: verifyEnhance, message: verifyMsg } = verifyForm;
 
-	const disableForm = superForm(untrack(() => data.disableForm), {
-		id: 'disable',
-		validators: zod4Client(disableSchema)
-	});
+	const disableForm = superForm(
+		untrack(() => data.disableForm),
+		{
+			id: 'disable',
+			validators: zod4Client(disableSchema)
+		}
+	);
 	const { form: disableData, enhance: disableEnhance } = disableForm;
 
 	type EnableMsg = { totpUri: string; backupCodes: string[] } | null;
@@ -83,7 +92,10 @@
 			>
 				{copiedIndex === -1 ? `${m.copied()} ✓` : m.copy_all()}
 			</Form.Button>
-			<a href={resolve('/settings')} class="text-muted-foreground block text-center text-sm underline">
+			<a
+				href={resolve('/settings')}
+				class="text-muted-foreground block text-center text-sm underline"
+			>
 				{m.back_to_settings()}
 			</a>
 		</div>
