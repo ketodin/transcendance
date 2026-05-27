@@ -5,11 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"dev:server": "tsx watch server/index.cts",
-		"dev:all": "concurrently \"pnpm run dev\" \"pnpm run dev:server\"",
 		"build": "vite build",
-		"build:server": "tsc --project tsconfig.server.json",
-		"start": "node build-server/server/index.cjs",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"generate": "svelte-kit sync && pnpm run db:generate && pnpm exec paraglide-js compile --project ./.inlang --outdir ./src/lib/paraglide",
