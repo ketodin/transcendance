@@ -6,6 +6,10 @@ import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { building } from '$app/environment';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { User } from '$lib/server/prisma/browser';
+import { type Server as ColyseusServer, matchMaker } from 'colyseus';
+import { TankRoom } from '$lib/game/colyseus/TankRoom';
+
+let gameServer: ColyseusServer | null = null;
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
@@ -33,4 +37,12 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 	return svelteKitHandler({ event, resolve, auth, building });
 };
 
-export const handle: Handle = sequence(handleParaglide, handleBetterAuth);
+export const handleColyseus: Handle = async ({ event, resolve }) => {
+	if (!gameServer) {
+		gameServer = globalThis.gameServer;
+		matchMaker.defineRoomType('tank_room', TankRoom);
+	}
+	return resolve(event, {});
+};
+
+export const handle: Handle = sequence(handleParaglide, handleBetterAuth, handleColyseus);
