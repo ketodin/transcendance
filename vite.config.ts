@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig, type ViteDevServer } from 'vite';
 import { WebSocketTransport } from '@colyseus/ws-transport';
 import { defineServer } from 'colyseus';
+import type { Server } from 'node:http';
 
 export default defineConfig({
 	plugins: [
@@ -63,21 +64,22 @@ function colyseusVitePlugin() {
 			});
 
 			return async () => {
-				const viteUpgradeListeners = server.httpServer!.listeners('upgrade').slice();
-				server.httpServer!.removeAllListeners('upgrade');
+				const httpServer = server.httpServer! as Server;
+				const viteUpgradeListeners = httpServer.listeners('upgrade').slice();
+				httpServer.removeAllListeners('upgrade');
 
 				const gameServer = defineServer({
-					transport: new WebSocketTransport({ server: server.httpServer! }),
+					transport: new WebSocketTransport({ server: httpServer }),
 					rooms: {}
 				});
 				(globalThis as any).gameServer = gameServer;
 
-				await gameServer.attach({ server: server.httpServer! });
+				await gameServer.attach({});
 
-				const colyseusUpgradeListeners = server.httpServer!.listeners('upgrade').slice(0, 1);
-				server.httpServer!.removeAllListeners('upgrade');
+				const colyseusUpgradeListeners = httpServer.listeners('upgrade').slice(0, 1);
+				httpServer.removeAllListeners('upgrade');
 
-				server.httpServer!.on('upgrade', (req, socket, head) => {
+				httpServer.on('upgrade', (req, socket, head) => {
 					const url = req.url ?? '';
 					if (url.includes('token=')) {
 						for (const fn of viteUpgradeListeners) (fn as Function)(req, socket, head);
