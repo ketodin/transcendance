@@ -15,18 +15,19 @@ export interface ProjectileType {
 	splitCount?: number;
 	airstrikeCount?: number;
 	selectable?: boolean;
+	fixedDamage?: boolean;
 }
 
 export const PROJECTILE_TYPES: ProjectileType[] = [
-	// indices: 0=Shell 1=Heavy 2=Bouncer 3=Split 4=Airstrike 5=StrikeBomb
+	// indices: 0=Shell 1=Heavy 2=Bouncer 3=Split 4=Airstrike 5=StrikeBomb 6=Sniper
 	{
 		name: 'Shell',
 		color: COLORS.shell,
 		glowColor: COLORS.shellGlow,
 		trailColor: COLORS.shellTrail,
 		size: 5,
-		speedFactor: 6,
-		gravity: 400,
+		speedFactor: 7,
+		gravity: 350,
 		craterRadius: 45,
 		blastRadius: 80,
 		maxDamage: 45,
@@ -38,11 +39,11 @@ export const PROJECTILE_TYPES: ProjectileType[] = [
 		glowColor: COLORS.heavyGlow,
 		trailColor: COLORS.heavyGlow,
 		size: 9,
-		speedFactor: 4,
-		gravity: 520,
+		speedFactor: 7,
+		gravity: 400,
 		craterRadius: 60,
 		blastRadius: 110,
-		maxDamage: 70,
+		maxDamage: 60,
 		bounces: 0
 	},
 	{
@@ -52,20 +53,21 @@ export const PROJECTILE_TYPES: ProjectileType[] = [
 		trailColor: COLORS.bouncerGlow,
 		size: 4,
 		speedFactor: 7,
-		gravity: 350,
+		gravity: 280,
 		craterRadius: 22,
 		blastRadius: 50,
-		maxDamage: 22,
-		bounces: 2
+		maxDamage: 30,
+		bounces: 2,
+		fixedDamage: true
 	},
 	{
 		name: 'Split',
-		color: COLORS.shell,
-		glowColor: COLORS.shellGlow,
-		trailColor: COLORS.shellTrail,
+		color: COLORS.split,
+		glowColor: COLORS.splitGlow,
+		trailColor: COLORS.splitTrail,
 		size: 6,
-		speedFactor: 6,
-		gravity: 380,
+		speedFactor: 7,
+		gravity: 280,
 		craterRadius: 30,
 		blastRadius: 60,
 		maxDamage: 30,
@@ -74,12 +76,12 @@ export const PROJECTILE_TYPES: ProjectileType[] = [
 	},
 	{
 		name: 'Airstrike',
-		color: 0xffee44,
-		glowColor: 0xffaa00,
-		trailColor: 0xffaa00,
+		color: COLORS.airstrike,
+		glowColor: COLORS.airstrikeGlow,
+		trailColor: COLORS.airstrikeTrail,
 		size: 5,
 		speedFactor: 7,
-		gravity: 300,
+		gravity: 280,
 		craterRadius: 0,
 		blastRadius: 0,
 		maxDamage: 0,
@@ -88,9 +90,9 @@ export const PROJECTILE_TYPES: ProjectileType[] = [
 	},
 	{
 		name: 'Strike Bomb',
-		color: 0xff6600,
-		glowColor: 0xff3300,
-		trailColor: 0xff8800,
+		color: COLORS.strikeBomb,
+		glowColor: COLORS.strikeBombGlow,
+		trailColor: COLORS.strikeBombTrail,
 		size: 4,
 		speedFactor: 0,
 		gravity: 400,
@@ -99,6 +101,20 @@ export const PROJECTILE_TYPES: ProjectileType[] = [
 		maxDamage: 30,
 		bounces: 0,
 		selectable: false
+	},
+	{
+		name: 'Sniper',
+		color: COLORS.sniper,
+		glowColor: COLORS.sniperGlow,
+		trailColor: COLORS.sniperTrail,
+		size: 4,
+		speedFactor: 7,
+		gravity: 280,
+		craterRadius: 22,
+		blastRadius: 40,
+		maxDamage: 50,
+		bounces: 0,
+		fixedDamage: true
 	}
 ];
 

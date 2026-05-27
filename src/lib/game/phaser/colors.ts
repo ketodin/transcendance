@@ -35,14 +35,22 @@ export const COLORS = {
 	shell: 0xffdd55,
 	shellGlow: 0xff8800,
 	shellTrail: 0xff7828,
+	split: 0x7f00ff,
+	splitGlow: 0xa54dff,
+	splitTrail: 0xb266ff,
 	heavy: 0xff4444,
 	heavyGlow: 0xff2200,
 	bouncer: 0x44ffee,
 	bouncerGlow: 0x00aaff,
-	airstrike: 0xffee44,
-	airstrikeGlow: 0xffaa00,
+	airstrike: 0xffffff,
+	airstrikeGlow: 0xffffff,
+	airstrikeTrail: 0xffffff,
 	strikeBomb: 0xff6600,
-	strikeBombGlow: 0xff3300
+	strikeBombGlow: 0xff3300,
+	strikeBombTrail: 0xffffff,
+	sniper: 0x0ac248,
+	sniperGlow: 0x2af46e,
+	sniperTrail: 0x60f793
 };
 
 export const COLOR_STRINGS = {
