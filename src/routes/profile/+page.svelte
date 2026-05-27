@@ -1,61 +1,99 @@
-
 <script lang="ts">
 	import type { PageProps } from './$types';
 	const { data }: PageProps = $props();
+	import { m } from '$lib/paraglide/messages';
+	import { Button } from '$lib/components/ui/button';
+	import { Settings } from '@lucide/svelte';
+
+	let userType = 0;
+	// 0 : Self
+	// 1 : Friend
+	// 2 : Someone
 </script>
 
-<div class="layout">
-	<aside class="sidebar glass p-6">
-		<div class="avatar">
-			{data.user.name?.charAt(0)?.toUpperCase() ?? '?'}
+<div class="glass w-full h-full p-6">
+	<div class="glass header p-6">
+		<div class="avatar outline">
+			{#if data.user.image}
+				<img src={data.user.image} alt="avatar" />
+			{:else}
+				<div class="placeholder">
+					{data.user.name?.charAt(0)?.toUpperCase() ?? '?'}
+				</div>
+			{/if}
 		</div>
-		<p>{data.user.name}</p>
-		<p>{data.user.email}</p>
-	</aside>
 
-	<div class="right">
-		<div class="glass"></div>
-		<div class="glass"></div>
+		<div class="p-8 info">
+			<p class="name">{data.user.name}</p>
+			<p class="botinfo">Inscription le {new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(data.user.createdAt))}</p>
+		</div>
+		<div class="action">
+			{#if userType === 0}
+				<Button
+					href="/settings"
+					class="glassbutton"
+					variant="outline">
+					<p> settings </p> 
+					<!-- TODO: i18n -->
+					<Settings size={20} />
+				</Button>
+			{:else if userType === 1}
+				<Button
+					class="glassbutton"
+					variant="outline">
+					<p> {m.remove_friend()} </p>
+				</Button>
+				<Button
+					class="glassbutton"
+					variant="outline">
+					<p> {m.invite_play()} </p>
+				</Button>
+			{:else}
+				<Button
+					class="glassbutton"
+					variant="outline">
+					<p> add friend </p>
+					<!-- TODO: i18n -->
+				</Button>
+			{/if}
+		</div>
 	</div>
 </div>
 
 <style>
 
-.layout {
-	display: grid;
+.avatar {
+	margin: 1vw;
+	width: 15%;
+	aspect-ratio: 1 / 1;
 
-	grid-template-columns: 1fr 1fr;
-
-	height: 100%;
-	width: 100%;
-	gap: 2rem;
-
-	overflow: hidden;
-}
-
-.sidebar {
 	display: flex;
-	flex-direction: column;
+	align-items: center;
 	justify-content: center;
 
-
-	overflow: hidden;
-}
-
-.right {
-	display: grid;
-
-	grid-template-rows: 1fr 1fr;
-	gap: 2rem;
-
-	min-width: 0;
-	min-height: 0;
-}
-
-.avatar {
-	height: 30%;
-	font-size: 48px;
+	font-size: 3vw;
 	font-weight: bold;
-	background: rgba(255, 255, 255, 0.1);
+}
+
+.header {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+}
+.info {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	flex: 1;
+	min-height: 10vw;
+}
+
+.name {
+	font-size: 3vw;
+}
+
+.botinfo {
+	font-size: 1vw;
+	opacity: 0.7;
 }
 </style>

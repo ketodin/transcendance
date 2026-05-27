@@ -20,7 +20,7 @@
 {#if $session.data}
 	{@const user = $session.data.user}
 	<div
-		class="card glass"
+		class="card glassbutton"
 		role="link"
 		tabindex="0"
 		onclick={handleCardClick}
@@ -48,8 +48,6 @@
 		align-items: center;
 		gap: 8px;
 		padding: 6px 10px;
-		cursor: pointer;
-		transition: background 0.2s;
 	}
 
 	.card:hover {

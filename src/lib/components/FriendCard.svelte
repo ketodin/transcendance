@@ -11,7 +11,7 @@
 	const initial = $derived(friend.name.charAt(0).toUpperCase());
 </script>
 
-<div class="glass user">
+<div class="glassdeep user">
 	<div class="avatar">{initial}</div>
 
 	<div class="info">
@@ -82,7 +82,7 @@
 
 	.avatar {
 		width: 2.5rem;
-		height: 2.5rem;
+		aspect-ratio: 1 / 1;
 		border-radius: 50%;
 
 		display: flex;
@@ -93,6 +93,7 @@
 
 		background: rgba(255, 255, 255, 0.1);
 		border: 1px solid rgba(255, 255, 255, 0.08);
+		font-size: 1vw;
 	}
 
 	.info {

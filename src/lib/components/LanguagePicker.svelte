@@ -31,13 +31,13 @@
 <div class="lang-picker relative flex items-center">
 	<button
 		onclick={() => (open = !open)}
-		class="flex h-9 w-9 items-center justify-center rounded-xl text-lg transition hover:bg-white/10 active:scale-95"
+		class="glassbutton flex h-9 w-9 items-center justify-center text-lg transition hover:bg-white/10 active:scale-95"
 	>
 		{currentLang.flag}
 	</button>
 
 	{#if open}
-		<div class="glass dropdown">
+		<div class="dropdown glassdeep">
 			{#each languages as lang (lang.code)}
 				<button
 					onclick={() => selectLanguage(lang.code)}

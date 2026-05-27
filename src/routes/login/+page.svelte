@@ -72,7 +72,7 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-				<Form.Button class="glass h-11 w-full text-base font-medium">{m.login()}</Form.Button>
+				<Form.Button class="glassbutton h-11 w-full text-base font-medium">{m.login()}</Form.Button>
 				<p class="text-muted-foreground text-center text-sm">
 					{m.no_account()} <a href={resolve('/register')} class="underline">{m.register()}</a>
 				</p>
