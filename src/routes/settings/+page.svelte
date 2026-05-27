@@ -17,13 +17,22 @@
 
 	let { data }: PageProps = $props();
 
-	const enableForm = superForm(data.enableForm, { id: 'enable', validators: zod4Client(enableSchema) });
+	const enableForm = superForm(data.enableForm, {
+		id: 'enable',
+		validators: zod4Client(enableSchema)
+	});
 	const { form: enableData, enhance: enableEnhance, message: enableMsg } = enableForm;
 
-	const verifyForm = superForm(data.verifyForm, { id: 'verify', validators: zod4Client(verifySchema) });
+	const verifyForm = superForm(data.verifyForm, {
+		id: 'verify',
+		validators: zod4Client(verifySchema)
+	});
 	const { form: verifyData, enhance: verifyEnhance, message: verifyMsg } = verifyForm;
 
-	const disableForm = superForm(data.disableForm, { id: 'disable', validators: zod4Client(disableSchema) });
+	const disableForm = superForm(data.disableForm, {
+		id: 'disable',
+		validators: zod4Client(disableSchema)
+	});
 	const { form: disableData, enhance: disableEnhance } = disableForm;
 
 	type EnableMsg = { totpUri: string; backupCodes: string[] } | null;
@@ -53,7 +62,7 @@
 
 	{#if data.user.twoFactorEnabled}
 		<form method="POST" action="?/disable" use:disableEnhance class="space-y-5">
-			<h2 class="text-lg font-medium">{m.disable_2fa_title()}</h2>	
+			<h2 class="text-lg font-medium">{m.disable_2fa_title()}</h2>
 			<Form.Field form={disableForm} name="password">
 				<Form.Control>
 					{#snippet children({ props })}
@@ -73,7 +82,6 @@
 				{m.disable()}
 			</Form.Button>
 		</form>
-
 	{:else if step === 'idle'}
 		<form method="POST" action="?/enable" use:enableEnhance class="space-y-5">
 			<div>
@@ -99,7 +107,6 @@
 				{m.generate_qr()}
 			</Form.Button>
 		</form>
-
 	{:else if step === 'scan'}
 		<div class="space-y-5">
 			<h2 class="text-lg font-medium">{m.scan_qr_title()}</h2>
@@ -126,7 +133,6 @@
 				</Form.Button>
 			</form>
 		</div>
-
 	{:else if step === 'done'}
 		<div class="space-y-5">
 			<h2 class="text-lg font-medium text-green-600">{m.two_fa_enabled_title()} ✓</h2>

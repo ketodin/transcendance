@@ -15,11 +15,11 @@ export const auth = betterAuth({
 	emailAndPassword: { enabled: true },
 	plugins: [
 		twoFactor({
-		issuer: 'ft_transcendence',
-		TOTPOptions: { window: 1 },
-		backupCodes: { count: 8, length: 10 },
+			issuer: 'ft_transcendence',
+			TOTPOptions: { window: 1 },
+			backupCodes: { count: 8, length: 10 }
 		}),
-		sveltekitCookies(getRequestEvent),
+		sveltekitCookies(getRequestEvent)
 	],
 	secret: building ? 'a' : env.BETTER_AUTH_SECRET
 });
