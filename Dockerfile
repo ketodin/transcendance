@@ -24,4 +24,4 @@ COPY ./entrypoint.sh ./
 
 EXPOSE 3000
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["node", "build"]
+CMD ["pnpm", "run", "start"]

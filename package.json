@@ -7,6 +7,7 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
+		"start": "node index.js",
 		"prepare": "svelte-kit sync || echo ''",
 		"generate": "svelte-kit sync && pnpm run db:generate && pnpm exec paraglide-js compile --project ./.inlang --outdir ./src/lib/paraglide",
 		"lint:prettier": "prettier --check .",
