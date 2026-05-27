@@ -1,5 +1,6 @@
 packages:
   - 'docusaurus'
+blockExoticSubdeps: false
 allowBuilds:
   '@prisma/engines': true
   '@swc/core': true
@@ -8,3 +9,6 @@ allowBuilds:
   esbuild: true
   msgpackr-extract: true
   prisma: true
+engineStrict: true
+publicHoistPattern:
+  - '@colyseus/*'
