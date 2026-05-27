@@ -18,8 +18,8 @@ import { CHAT_BUBBLE_DURATION } from '$lib/game/shared/chatConfig';
 
 const PLAYER_NAMES = ['Player 1', 'Player 2'];
 
-const COLYSEUS_PROTOCOL = window.location.protocol === "https:" ? "wss" : "ws";
-const COLYSEUS_URL = `${COLYSEUS_PROTOCOL}://${window.location.host}`
+const COLYSEUS_PROTOCOL = window.location.protocol === 'https:' ? 'wss' : 'ws';
+const COLYSEUS_URL = `${COLYSEUS_PROTOCOL}://${window.location.host}`;
 
 type InputSnapshot = {
 	moveLeft: boolean;

@@ -59,5 +59,5 @@ export default defineConfig(
 			'svelte/no-top-level-browser-globals': 'error',
 			'svelte/block-lang': ['error', { script: ['ts'] }]
 		}
-	},
+	}
 );

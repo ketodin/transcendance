@@ -23,8 +23,7 @@ function colyseusVitePlugin() {
 		name: 'colyseus-dev-server',
 		configureServer(server: ViteDevServer) {
 			server.middlewares.use(async (_req, _res, next) => {
-				while (!(globalThis as any).gameServer)
-				await new Promise(r => setTimeout(r, 50));
+				while (!(globalThis as any).gameServer) await new Promise((r) => setTimeout(r, 50));
 				next();
 			});
 
@@ -37,15 +36,15 @@ function colyseusVitePlugin() {
 
 					const body: Buffer[] = [];
 					req.on('data', (chunk: Buffer) => body.push(chunk));
-					await new Promise<void>(r => req.on('end', r));
+					await new Promise<void>((r) => req.on('end', r));
 					const json = body.length ? JSON.parse(Buffer.concat(body).toString()) : {};
 
 					const [method, roomType] = url.replace('/matchmake/', '').split('/');
 					const methods: Record<string, Function> = {
 						joinOrCreate: (r: string, o: any) => matchMaker.joinOrCreate(r, o),
-						join:         (r: string, o: any) => matchMaker.join(r, o),
-						create:       (r: string, o: any) => matchMaker.create(r, o),
-						joinById:     (r: string, o: any) => matchMaker.joinById(r, o),
+						join: (r: string, o: any) => matchMaker.join(r, o),
+						create: (r: string, o: any) => matchMaker.create(r, o),
+						joinById: (r: string, o: any) => matchMaker.joinById(r, o)
 					};
 
 					if (!methods[method]) {
@@ -69,7 +68,7 @@ function colyseusVitePlugin() {
 
 				const gameServer = defineServer({
 					transport: new WebSocketTransport({ server: server.httpServer! }),
-					rooms: {},
+					rooms: {}
 				});
 				(globalThis as any).gameServer = gameServer;
 
@@ -89,6 +88,6 @@ function colyseusVitePlugin() {
 
 				console.log('Colyseus attached to Vite dev server');
 			};
-		},
+		}
 	};
 }
