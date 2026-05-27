@@ -210,6 +210,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 					this.physicsState.fuel = Math.max(0, this.physicsState.fuel);
 					tank.x = nx;
 					tank.y = newY;
+					this.clampTurretAngle(p);
 					this.syncTank(p);
 					this.state.fuel = this.physicsState.fuel;
 				}
@@ -462,9 +463,18 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		});
 	}
 
+	private clampTurretAngle(playerIndex: 0 | 1) {
+		const tank = this.physicsState.tanks[playerIndex];
+		const ly = getHeightAt(this.physicsState.terrain, tank.x - 15);
+		const ry = getHeightAt(this.physicsState.terrain, tank.x + 15);
+		const slopeDeg = Math.atan2(ry - ly, 30) * (180 / Math.PI);
+		tank.turretAngle = Math.max(-slopeDeg, Math.min(180 - slopeDeg, tank.turretAngle));
+	}
+
 	private rotateTurret(playerIndex: 0 | 1, delta: number) {
 		const tank = this.physicsState.tanks[playerIndex];
-		tank.turretAngle = Math.max(5, Math.min(175, tank.turretAngle + delta * tank.facing));
+		tank.turretAngle += delta * tank.facing;
+		this.clampTurretAngle(playerIndex);
 		this.syncTank(playerIndex);
 	}
 
