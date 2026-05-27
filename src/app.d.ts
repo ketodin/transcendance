@@ -1,4 +1,5 @@
-import { User, Session } from 'better-auth/types';
+import { Session } from 'better-auth/types';
+import type { User } from '$lib/server/prisma/browser';
 
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces

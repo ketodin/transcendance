@@ -34,5 +34,25 @@
 	"name": "Nombre de usuario",
 
 	"terms_of_service": "Términos de servicio\nServicio en línea Transcendence\n\nÚltima actualización: 11 de mayo de 2026\n\n1. Descripción\nAceptas usar este servicio de forma responsable y de acuerdo con estos términos.\n\n2. Elegibilidad\nDebes tener al menos 13 años y cumplir las leyes aplicables.\n\n3. Reglas de uso\nNo se permite hacer trampas, explotar errores, acosar o abusar del servicio.\n\n4. Cuentas\nEres responsable de tu cuenta y de toda actividad realizada en ella.\n\n5. Terminación\nEl acceso puede ser suspendido o eliminado en cualquier momento por incumplimiento.\n\n6. Descargo de responsabilidad\nEl servicio se proporciona tal cual, sin garantías. No somos responsables de pérdidas o daños.\n\n7. Aceptación\nEl uso del servicio implica la aceptación de estos términos.\n",
-	"privacy_policy": "Política de privacidad\nServicio en línea Transcendence\n\nÚltima actualización: 11 de mayo de 2026\n\n1. Datos recopilados\nRecopilamos datos mínimos como información de cuenta, estadísticas y registros técnicos.\n\n2. Uso\nLos datos se usan solo para operar y mejorar el servicio.\n\n3. Compartición\nNo vendemos datos personales.\n\n4. Seguridad\nAplicamos medidas razonables sin garantía total.\n\n5. Retención\nLos datos se conservan solo el tiempo necesario.\n\n6. Derechos\nLos usuarios pueden solicitar acceso o eliminación según la ley."
+	"privacy_policy": "Política de privacidad\nServicio en línea Transcendence\n\nÚltima actualización: 11 de mayo de 2026\n\n1. Datos recopilados\nRecopilamos datos mínimos como información de cuenta, estadísticas y registros técnicos.\n\n2. Uso\nLos datos se usan solo para operar y mejorar el servicio.\n\n3. Compartición\nNo vendemos datos personales.\n\n4. Seguridad\nAplicamos medidas razonables sin garantía total.\n\n5. Retención\nLos datos se conservan solo el tiempo necesario.\n\n6. Derechos\nLos usuarios pueden solicitar acceso o eliminación según la ley.",
+
+	"settings": "Configuración",
+	"two_fa_enable_title": "Activar 2FA",
+	"two_fa_enable_description": "Escanee el código QR con Google Authenticator o Authy.",
+	"current_password_placeholder": "Contraseña actual",
+	"generate_qr": "Generar código QR",
+	"scan_qr_title": "Escanee este código QR",
+	"scan_qr_description": "Luego ingrese el código de 6 dígitos que aparece en su aplicación de autenticación.",
+	"verify_activate": "Verificar y activar",
+	"two_fa_enabled_title": "2FA activado",
+	"backup_codes_description": "Guarde estos códigos de respaldo — no se mostrarán de nuevo después de abandonar esta página.",
+	"copy_all": "Copiar todo",
+	"copied": "Copiado",
+	"back_to_settings": "Volver a configuración",
+	"disable_2fa_title": "Desactivar 2FA",
+	"disable": "Desactivar",
+	"error_invalid_password": "Contraseña incorrecta.",
+	"error_generic": "Ocurrió un error. Por favor, inténtelo de nuevo.",
+	"error_session_expired": "Sesión expirada, por favor empiece de nuevo.",
+	"error_invalid_code": "Código incorrecto. Por favor, inténtelo de nuevo."
 }
