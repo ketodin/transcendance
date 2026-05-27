@@ -108,7 +108,7 @@
               class="h-11"
             />
             {#if fieldErrors.email}
-              <p class="text-destructive text-sm">{fieldErrors.email}</p>
+              <p class="text-destructive text-sm font-medium">{fieldErrors.email}</p>
             {/if}
           </div>
 
@@ -122,12 +122,12 @@
               class="h-11"
             />
             {#if fieldErrors.password}
-              <p class="text-destructive text-sm">{fieldErrors.password}</p>
+              <p class="text-destructive text-sm font-medium">{fieldErrors.password}</p>
             {/if}
           </div>
 
           {#if error}
-            <p class="text-destructive text-sm">{error}</p>
+            <p class="text-destructive text-sm font-medium">{error}</p>
           {/if}
 
           <button type="submit" class="glass h-11 w-full text-base font-medium">
@@ -163,7 +163,7 @@
           </div>
 
           {#if error}
-            <p class="text-destructive text-sm">{error}</p>
+            <p class="text-destructive text-sm font-medium">{error}</p>
           {/if}
 
           <button type="submit" class="glass h-11 w-full text-base font-medium">
