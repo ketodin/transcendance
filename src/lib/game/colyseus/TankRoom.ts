@@ -1,4 +1,4 @@
-import { Room, Client } from 'colyseus';
+import { Room, type Client } from 'colyseus';
 import { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 import {
 	generateTerrain,
