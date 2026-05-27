@@ -46,7 +46,7 @@
 	"backup_codes_description": "Sauvegardez ces codes de secours — ils ne seront plus affichés après avoir quitté cette page.",
 	"copy_all": "Tout copier",
 	"copied": "Copié",
-	"continue_to_app": "Continuer vers l'application",
+	"back_to_settings": "Retour aux paramètres",
 	"disable_2fa_title": "Désactiver la 2FA",
 	"disable": "Désactiver",
 	"error_invalid_password": "Mot de passe incorrect.",

@@ -61,7 +61,33 @@
 <div class="glass mx-auto max-w-md space-y-6 p-6">
 	<h1 class="text-2xl font-semibold tracking-tight">{m.settings()}</h1>
 
-	{#if data.user.twoFactorEnabled}
+	{#if step === 'done'}
+		<div class="space-y-5">
+			<h2 class="text-lg font-medium text-green-600">{m.two_fa_enabled_title()} ✓</h2>
+			<p class="text-muted-foreground text-sm">{m.backup_codes_description()}</p>
+			<div class="bg-muted rounded-lg p-4">
+				<div class="flex flex-col gap-2">
+					{#each backupCodes as c, i (i)}
+						<div class="flex items-center font-mono text-sm">
+							<span class="text-muted-foreground w-5">{i + 1}.</span>
+							<span class="flex-1 tracking-wider">{c}</span>
+						</div>
+					{/each}
+				</div>
+			</div>
+			<Form.Button
+				type="button"
+				onclick={copyAll}
+				variant="outline"
+				class="h-11 w-full text-base font-medium"
+			>
+				{copiedIndex === -1 ? `${m.copied()} ✓` : m.copy_all()}
+			</Form.Button>
+			<a href={resolve('/settings')} class="text-muted-foreground block text-center text-sm underline">
+				{m.back_to_settings()}
+			</a>
+		</div>
+	{:else if data.user.twoFactorEnabled}
 		<form method="POST" action="?/disable" use:disableEnhance class="space-y-5">
 			<h2 class="text-lg font-medium">{m.disable_2fa_title()}</h2>
 			<Form.Field form={disableForm} name="password">
@@ -133,32 +159,6 @@
 					{m.verify_activate()}
 				</Form.Button>
 			</form>
-		</div>
-	{:else if step === 'done'}
-		<div class="space-y-5">
-			<h2 class="text-lg font-medium text-green-600">{m.two_fa_enabled_title()} ✓</h2>
-			<p class="text-muted-foreground text-sm">{m.backup_codes_description()}</p>
-			<div class="bg-muted rounded-lg p-4">
-				<div class="flex flex-col gap-2">
-					{#each backupCodes as c, i (i)}
-						<div class="flex items-center font-mono text-sm">
-							<span class="text-muted-foreground w-5">{i + 1}.</span>
-							<span class="flex-1 tracking-wider">{c}</span>
-						</div>
-					{/each}
-				</div>
-			</div>
-			<Form.Button
-				type="button"
-				onclick={copyAll}
-				variant="outline"
-				class="h-11 w-full text-base font-medium"
-			>
-				{copiedIndex === -1 ? `${m.copied()} ✓` : m.copy_all()}
-			</Form.Button>
-			<a href={resolve('/')} class="text-muted-foreground block text-center text-sm underline">
-				{m.continue_to_app()}
-			</a>
 		</div>
 	{/if}
 </div>
