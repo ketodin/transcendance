@@ -17,10 +17,9 @@ import { ChatInput } from '../../client/view/ChatInput';
 import { CHAT_BUBBLE_DURATION } from '$lib/game/shared/chatConfig';
 
 const PLAYER_NAMES = ['Player 1', 'Player 2'];
-const COLYSEUS_URL =
-	typeof window !== 'undefined' && window.location.hostname !== 'localhost'
-		? `wss://${window.location.host}`
-		: 'ws://localhost:2567';
+
+const COLYSEUS_PROTOCOL = window.location.protocol === "https:" ? "wss" : "ws";
+const COLYSEUS_URL = `${COLYSEUS_PROTOCOL}://${window.location.host}`
 
 type InputSnapshot = {
 	moveLeft: boolean;
