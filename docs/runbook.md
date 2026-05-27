@@ -27,11 +27,12 @@ pnpm install
 
 cp .env.example .env
 # Open .env and fill in all values before continuing
+# Required: BETTER_AUTH_URL, ORIGIN (and any other project secrets)
 
 pnpm generate          # Prisma client + Paraglide i18n
 pnpm db:push           # create dev.db from schema
 
-pnpm dev:all           # or: docker compose up --build
+pnpm dev               # or: docker compose up --build
 ```
 
 ---
@@ -47,12 +48,23 @@ docker compose down         # stop, keep volumes
 docker compose down -v      # stop and wipe volumes (destroys local DB)
 ```
 
+> Docker exposes a single port: **3000**. SvelteKit and Colyseus share the same process and the same port.
+
 ### Without Docker (dev mode)
 
 ```bash
-pnpm dev:all        # SvelteKit + game server concurrently
-pnpm dev            # SvelteKit only
-pnpm dev:server     # game server only
+pnpm dev        # starts Vite — SvelteKit + Colyseus run in one process on port 3000
+```
+
+The `colyseus-dev-server` Vite plugin attaches Colyseus to Vite's HTTP server automatically. HMR continues to work alongside the WebSocket game traffic.
+
+> The old `pnpm dev:all` / `pnpm dev:server` / `pnpm devserver` scripts no longer exist. Everything is `pnpm dev`.
+
+### Production (manual / outside Docker)
+
+```bash
+pnpm build              # build the SvelteKit app
+pnpm start              # tsx server.ts — one Express + SvelteKit + Colyseus process on port 3000
 ```
 
 ---
@@ -124,7 +136,7 @@ pnpm typecheck:watch    # re-run on file change while working
 ### `ci-typecheck-game-server`
 
 ```bash
-pnpm --filter game-server check   # tsc --noEmit on the game server
+pnpm typecheck          # tsc --noEmit uses the root tsconfig.json (no separate tsconfig.server.json)
 ```
 
 ### `ci-test-unit`
@@ -246,7 +258,7 @@ Errors and warnings from CI scripts appear in the **Annotations** panel at the b
 ### Reset code artifacts and DB only
 
 ```bash
-rm -rf node_modules .svelte-kit build build-server prisma/dev.db
+rm -rf node_modules .svelte-kit build prisma/dev.db
 pnpm install
 pnpm generate
 pnpm db:push
