@@ -129,7 +129,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			y: getHeightAt(terrain, TANK_X[index]),
 			turretAngle: index === 0 ? 60 : 120,
 			health: 100,
-			color: 0xd4b832,
+			color: index === 0 ? 0xcc2222 : 0x2255cc,
 			name: `Player ${index + 1}`,
 			facing: index === 0 ? 1 : -1
 		});

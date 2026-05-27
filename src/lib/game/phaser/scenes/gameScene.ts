@@ -54,7 +54,7 @@ export default class GameScene extends Scene {
 	private room: Room<GameRoomState> | null = null;
 	private returningToLobby = false;
 	private myPlayerIndex: 0 | 1 = 0;
-	private myPlayerIndexSet = false;
+
 	private roomReady = false;
 	private localPhase = '';
 	private localCurrentPlayer = 0;
@@ -368,7 +368,6 @@ export default class GameScene extends Scene {
 
 	private async connectToServer() {
 		this.roomReady = false;
-		this.myPlayerIndexSet = false;
 		this.returningToLobby = false;
 		this.room = null;
 		this.tankSprites = null;
@@ -400,7 +399,6 @@ export default class GameScene extends Scene {
 					turnTimeLeft: number;
 					power: number;
 				}) => {
-					this.myPlayerIndexSet = true;
 					this.myPlayerIndex = data.player0Id === room.sessionId ? 0 : 1;
 					this.localCurrentPlayer = data.currentPlayer;
 					this.localPhase = 'AIMING';
@@ -537,8 +535,8 @@ export default class GameScene extends Scene {
 		const currentPlayer = this.localCurrentPlayer;
 
 		// Sync tank sprites
-		this.tankSprites[0].sync(data.tanks[0]);
-		this.tankSprites[1].sync(data.tanks[1]);
+		this.tankSprites[0].sync(data.tanks[0], this.localTerrain);
+		this.tankSprites[1].sync(data.tanks[1], this.localTerrain);
 		// Bubble chat
 		this.speechBubbles[0].sync(data.tanks[0]);
 		this.speechBubbles[1].sync(data.tanks[1]);
