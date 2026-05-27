@@ -5,7 +5,6 @@
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { enableSchema, verifySchema, disableSchema } from './schema';
 	import QRCode from 'qrcode';
-	import { resolve } from '$app/paths';
 	import type { PageProps } from './$types';
 	import { untrack } from 'svelte';
 	import { m } from '$lib/paraglide/messages';
@@ -18,38 +17,38 @@
 
 	let { data }: PageProps = $props();
 
-	const enableForm = superForm(
+	const enableForm = $derived(superForm(
 		untrack(() => data.enableForm),
 		{
 			id: 'enable',
 			validators: zod4Client(enableSchema)
 		}
-	);
-	const { form: enableData, enhance: enableEnhance, message: enableMsg } = enableForm;
+	));
+	const { form: enableData, enhance: enableEnhance, message: enableMsg } = $derived(enableForm);
 
-	const verifyForm = superForm(
+	const verifyForm = $derived(superForm(
 		untrack(() => data.verifyForm),
 		{
 			id: 'verify',
 			validators: zod4Client(verifySchema)
 		}
-	);
-	const { form: verifyData, enhance: verifyEnhance, message: verifyMsg } = verifyForm;
+	));
+	const { form: verifyData, enhance: verifyEnhance, message: verifyMsg } = $derived(verifyForm);
 
-	const disableForm = superForm(
+	const disableForm = $derived(superForm(
 		untrack(() => data.disableForm),
 		{
 			id: 'disable',
 			validators: zod4Client(disableSchema)
 		}
-	);
-	const { form: disableData, enhance: disableEnhance } = disableForm;
+	));
+	const { form: disableData, enhance: disableEnhance } = $derived(disableForm);
 
 	type EnableMsg = { totpUri: string; backupCodes: string[] } | null;
 
 	const totpUri = $derived(($enableMsg as EnableMsg)?.totpUri ?? '');
 	const backupCodes = $derived(($enableMsg as EnableMsg)?.backupCodes ?? []);
-	const step = $derived($verifyMsg === 'done' ? 'done' : totpUri ? 'scan' : 'idle');
+	let step = $derived($verifyMsg === 'done' ? 'done' : totpUri ? 'scan' : 'idle');
 
 	let canvasEl = $state<HTMLCanvasElement | null>(null);
 	let copiedIndex = $state<number | null>(null);
@@ -92,12 +91,12 @@
 			>
 				{copiedIndex === -1 ? `${m.copied()} ✓` : m.copy_all()}
 			</Form.Button>
-			<a
-				href={resolve('/settings')}
+			<button
+				onclick={() => {step = 'idle'}}
 				class="text-muted-foreground block text-center text-sm underline"
 			>
 				{m.back_to_settings()}
-			</a>
+			</button>
 		</div>
 	{:else if data.user.twoFactorEnabled}
 		<form method="POST" action="?/disable" use:disableEnhance class="space-y-5">
