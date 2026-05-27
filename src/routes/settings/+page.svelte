@@ -7,6 +7,7 @@
 	import QRCode from 'qrcode';
 	import { resolve } from '$app/paths';
 	import type { PageProps } from './$types';
+	import { untrack } from 'svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import * as z from 'zod';
@@ -17,19 +18,19 @@
 
 	let { data }: PageProps = $props();
 
-	const enableForm = superForm(data.enableForm, {
+	const enableForm = superForm(untrack(() => data.enableForm), {
 		id: 'enable',
 		validators: zod4Client(enableSchema)
 	});
 	const { form: enableData, enhance: enableEnhance, message: enableMsg } = enableForm;
 
-	const verifyForm = superForm(data.verifyForm, {
+	const verifyForm = superForm(untrack(() => data.verifyForm), {
 		id: 'verify',
 		validators: zod4Client(verifySchema)
 	});
 	const { form: verifyData, enhance: verifyEnhance, message: verifyMsg } = verifyForm;
 
-	const disableForm = superForm(data.disableForm, {
+	const disableForm = superForm(untrack(() => data.disableForm), {
 		id: 'disable',
 		validators: zod4Client(disableSchema)
 	});
