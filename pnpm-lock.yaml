@@ -14,9 +14,6 @@ importers:
       prisma:
         specifier: ^7.8.0
         version: 7.8.0(@types/react@19.2.14)(better-sqlite3@12.10.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@6.0.3)
-      qrcode:
-        specifier: ^1.5.4
-        version: 1.5.4
     devDependencies:
       '@better-auth/prisma-adapter':
         specifier: ^1.6.11
@@ -117,6 +114,9 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.8.0
         version: 0.8.0(prettier-plugin-svelte@3.5.2(prettier@3.8.3)(svelte@5.55.5(@typescript-eslint/types@8.59.3)))(prettier@3.8.3)
+      qrcode:
+        specifier: ^1.5.4
+        version: 1.5.4
       shadcn-svelte:
         specifier: ^1.2.7
         version: 1.2.7(svelte@5.55.5(@typescript-eslint/types@8.59.3))
