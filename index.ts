@@ -13,7 +13,7 @@ const httpServer = createServer(app);
 
 const gameServer = defineServer({
 	transport: new WebSocketTransport({ server: httpServer }),
-  rooms: {},
+  	rooms: {},
 });
 
 globalThis.gameServer = gameServer;

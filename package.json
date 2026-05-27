@@ -7,7 +7,7 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
-		"start": "node index.js",
+		"start": "tsx index.ts",
 		"prepare": "svelte-kit sync || echo ''",
 		"generate": "svelte-kit sync && pnpm run db:generate && pnpm exec paraglide-js compile --project ./.inlang --outdir ./src/lib/paraglide",
 		"lint:prettier": "prettier --check .",
@@ -47,7 +47,6 @@
 		"better-auth": "^1.6.11",
 		"bits-ui": "^2.18.0",
 		"clsx": "^2.1.1",
-		"colyseus": "^0.17.10",
 		"eslint": "^10.2.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.17.0",
@@ -73,9 +72,13 @@
 		"zod": "^4.4.3"
 	},
 	"dependencies": {
+		"@colyseus/tools": "^0.17.19",
+		"@colyseus/ws-transport": "^0.17.13",
 		"@prisma/adapter-better-sqlite3": "^7.8.0",
+		"colyseus": "^0.17.10",
 		"express": "^5.2.1",
-		"prisma": "^7.8.0"
+		"prisma": "^7.8.0",
+		"tsx": "^4.22.3"
 	},
 	"packageManager": "pnpm@11.4.0"
 }

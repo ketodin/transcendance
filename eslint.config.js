@@ -19,8 +19,7 @@ export default defineConfig(
 			'src/lib/components/ui/',
 			'src/lib/paraglide/',
 			'*.config.js',
-			'*.config.ts',
-			'index.js'
+			'*.config.ts'
 		]
 	},
 	js.configs.recommended,
@@ -33,7 +32,7 @@ export default defineConfig(
 			globals: { ...globals.browser, ...globals.node },
 			parserOptions: {
 				projectService: {
-					allowDefaultProject: ['*.config.js', '*.config.ts', 'index.js'],
+					allowDefaultProject: ['*.config.js', '*.config.ts', 'index.ts'],
 					defaultProject: 'tsconfig.json'
 				},
 				tsconfigRootDir: import.meta.dirname
