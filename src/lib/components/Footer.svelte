@@ -31,7 +31,6 @@
 
 	.link {
 		font-size: 0.85rem;
-		color: rgba(255, 255, 255, 0.7);
 		text-decoration: none;
 		transition: 0.2s ease;
 		white-space: nowrap;

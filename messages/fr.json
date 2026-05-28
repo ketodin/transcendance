@@ -24,6 +24,9 @@
 	"invalid_repeat": "Les mots de passe ne correspondent pas",
 	"already_email": "E-mail déjà utilisé",
 	"pending": "En attente",
+	"settings": "Paramètres",
+	"add_friend": "Ajouter un ami",
+	"joined_on": "Inscription le {date}",
 
 	"name_place_holder": "Stephane",
 	"mail_place_holder": "stephane.travail@gmail.com",
