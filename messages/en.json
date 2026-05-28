@@ -24,6 +24,9 @@
 	"invalid_repeat": "Passwords does not match",
 	"already_email": "Email already in use",
 	"pending": "Pending",
+	"settings": "Settings",
+	"add_friend": "Add friend",
+	"joined_on": "Joined on {date}",
 
 	"name_place_holder": "Steve",
 	"mail_place_holder": "steve.jobs@gmail.com",
