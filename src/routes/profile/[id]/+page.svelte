@@ -7,6 +7,15 @@
 	import * as friends from '$lib/friends.remote';
 
 	const { data }: PageProps = $props();
+	import { getLocale } from '$lib/paraglide/runtime';
+
+	const formattedDate = $derived(
+		new Intl.DateTimeFormat(getLocale(), {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric'
+		}).format(new Date(data.user.createdAt))
+	);
 </script>
 
 <div class="glass w-full h-full p-6">
@@ -23,7 +32,7 @@
 
 		<div class="p-8 info">
 			<p class="name">{data.user.name}</p>
-			<p class="botinfo">Inscription le {new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(data.user.createdAt))}</p>
+			<p class="botinfo">{m.joined_on({ date: formattedDate})}</p>
 		</div>
 		<div class="action">
 			{#if data.userType === 'self'}
@@ -31,8 +40,7 @@
 					href={resolve("/settings")}
 					class="glassbutton"
 					variant="outline">
-					settings
-					<!-- TODO: i18n -->
+					{m.settings()}
 					<Settings size={20} />
 				</Button>
 			{:else if data.userType === 'friend'}
@@ -52,8 +60,7 @@
 					onclick={() => friends.accept(data.user.id)}
 					class="glassbutton"
 					variant="outline">
-					add friend
-					<!-- TODO: i18n -->
+					{m.add_friend()}
 				</Button>
 			{/if}
 		</div>
