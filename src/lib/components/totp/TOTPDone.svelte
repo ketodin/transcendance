@@ -35,6 +35,6 @@
 		{copiedIndex === -1 ? `${m.copied()} ✓` : m.copy_all()}
 	</Form.Button>
 	<button onclick={onBack} class="text-muted-foreground block text-center text-sm underline">
-		{m.back_to_settings()}
+		{m.close_backup_code()}
 	</button>
 </div>
