@@ -61,9 +61,7 @@
 	const backupCodes = $derived(($enableMsg as EnableMsg)?.backupCodes ?? []);
 
 	let manualStep = $state<'idle' | null>(null);
-	const step = $derived(
-		manualStep ?? ($verifyMsg === 'done' ? 'done' : totpUri ? 'scan' : 'idle')
-	);
+	const step = $derived(manualStep ?? ($verifyMsg === 'done' ? 'done' : totpUri ? 'scan' : 'idle'));
 </script>
 
 {#if step === 'done'}
