@@ -1,24 +1,30 @@
 <script lang="ts">
-	import { useSession, signOut } from '$lib/auth-client';
+	import TOTPSection from '$lib/components/totp/TOTPSection.svelte';
+	import { signOut } from '$lib/auth-client';
 	import { Button } from '$lib/components/ui/button';
+	import { m } from '$lib/paraglide/messages';
+	import type { PageProps } from './$types';
 
-	const session = useSession();
+	let { data }: PageProps = $props();
 </script>
 
-<div class="glass w-full h-full p-6">
+<div class="flex flex-col gap-16">
 	<div>
-		{#if $session.data}
-			{#each Object.entries($session.data.user) as [key, value] (key)}
-				<p><strong>{key}:</strong> {value}</p>
-			{/each}
-			<Button
-				class="glass"
-				onclick={async () => {
-					await signOut();
-				}}>Logout</Button
-			>
-		{:else}
-			<p>Not logged in</p>
-		{/if}
+		<h1 class="text-2xl font-semibold tracking-tight">{m.settings()}</h1>
+		{#each Object.entries(data.user) as [key, value] (key)}
+			<p><strong>{key}:</strong> {value}</p>
+		{/each}
+		<Button
+			class="glass"
+			onclick={async () => {
+				await signOut();
+			}}>Logout</Button
+		>
 	</div>
+	<TOTPSection
+		user={data.user}
+		enableForm={data.enableForm}
+		verifyForm={data.verifyForm}
+		disableForm={data.disableForm}
+	/>
 </div>

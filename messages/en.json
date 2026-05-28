@@ -36,5 +36,25 @@
 	"name": "Username",
 
 	"terms_of_service": "Terms of Service\nTranscendence Online Service\n\nLast updated: May 11, 2026\n\n1. Overview\nYou agree to use this service responsibly and in accordance with these terms.\n\n2. Eligibility\nYou must be at least 13 years old and comply with all applicable laws in your jurisdiction.\n\n3. User Rules\nYou agree not to cheat, exploit bugs, harass other users, or misuse the platform in any way.\n\n4. Accounts\nYou are responsible for maintaining the security of your account and all activity under it.\n\n5. Termination\nWe reserve the right to suspend or terminate access at any time in case of violation of these terms.\n\n6. Disclaimer\nThe service is provided \"as-is\" without warranties of any kind. We are not liable for any data loss or damages resulting from use of the service.\n\n7. Acceptance\nBy continuing to use the service, you agree to these terms.\n",
-	"privacy_policy": "Privacy Policy\nTranscendence Online Service\n\nLast updated: May 11, 2026\n\n1. Data Collection\nWe collect minimal data such as account info, gameplay statistics, and technical logs.\n\n2. Usage\nData is used only to operate and improve the service.\n\n3. Sharing\nWe do not sell personal data to third parties.\n\n4. Security\nWe apply reasonable security measures but cannot guarantee full protection.\n\n5. Retention\nData is kept only as long as necessary for service operation.\n\n6. Rights\nUsers may request access or deletion where applicable by law."
+	"privacy_policy": "Privacy Policy\nTranscendence Online Service\n\nLast updated: May 11, 2026\n\n1. Data Collection\nWe collect minimal data such as account info, gameplay statistics, and technical logs.\n\n2. Usage\nData is used only to operate and improve the service.\n\n3. Sharing\nWe do not sell personal data to third parties.\n\n4. Security\nWe apply reasonable security measures but cannot guarantee full protection.\n\n5. Retention\nData is kept only as long as necessary for service operation.\n\n6. Rights\nUsers may request access or deletion where applicable by law.",
+
+	"settings": "Settings",
+	"two_fa_enable_title": "Enable 2FA",
+	"two_fa_enable_description": "Scan the QR code with Google Authenticator or Authy.",
+	"current_password_placeholder": "Current password",
+	"generate_qr": "Generate QR code",
+	"scan_qr_title": "Scan this QR code",
+	"scan_qr_description": "Then enter the 6-digit code shown in your authenticator app.",
+	"verify_activate": "Verify and activate",
+	"two_fa_enabled_title": "2FA enabled",
+	"backup_codes_description": "Save these backup codes — they will not be shown again after you leave this page.",
+	"copy_all": "Copy all",
+	"copied": "Copied",
+	"close_backup_code": "Close",
+	"disable_2fa_title": "Disable 2FA",
+	"disable": "Disable",
+	"error_invalid_password": "Incorrect password.",
+	"error_generic": "An error occurred. Please try again.",
+	"error_session_expired": "Session expired, please start over.",
+	"error_invalid_code": "Incorrect code. Please try again."
 }

@@ -1,4 +1,6 @@
-import { User, Session } from 'better-auth/types';
+import { Session } from 'better-auth/types';
+import type { User } from '$lib/server/prisma/browser';
+import { type Server as ColyseusServer } from 'colyseus';
 
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
@@ -13,6 +15,7 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+	var gameServer: ColyseusServer;
 }
 
 export {};

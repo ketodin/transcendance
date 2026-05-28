@@ -1,4 +1,4 @@
-name: ci-typecheck-frontend
+name: ci-typecheck-game-server
 
 on:
   push:
@@ -14,14 +14,12 @@ permissions:
   contents: read
 
 jobs:
-  typecheck-frontend:
+  typecheck-game-server:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
-        with:
-          version: '10.33.0'
 
       - uses: actions/setup-node@v4
         with:
@@ -32,4 +30,4 @@ jobs:
 
       - run: pnpm generate
 
-      - run: .github/scripts/ci/ci-typecheck-frontend.sh
+      - run: .github/scripts/ci/ci-typecheck.sh
