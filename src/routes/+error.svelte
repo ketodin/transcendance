@@ -12,7 +12,7 @@
 			{page.error?.message}
 		</p>
 
-		<a class="home" href={resolve("/")}>{m.home_page()}</a>
+		<a class="home" href={resolve('/')}>{m.home_page()}</a>
 	</div>
 </div>
 
