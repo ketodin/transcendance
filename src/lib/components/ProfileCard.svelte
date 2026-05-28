@@ -9,12 +9,12 @@
 	function handleCardClick(e: MouseEvent) {
 		const target = e.target as HTMLElement;
 		if (target.closest('.settings-link')) return;
-		void goto(resolve('/profile/[id]', { id: $session.data!.user.id }))
+		void goto(resolve('/profile/[id]', { id: $session.data!.user.id }));
 	}
 
 	function handleCardKeydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' || e.key === ' ') {
-		void goto(resolve('/profile/[id]', { id: $session.data!.user.id }))
+			void goto(resolve('/profile/[id]', { id: $session.data!.user.id }));
 		}
 	}
 </script>
@@ -28,10 +28,12 @@
 		onclick={handleCardClick}
 		onkeydown={handleCardKeydown}
 	>
-		<a href={resolve("/settings")} class="settings-link" onclick={(e) => e.stopPropagation()}>
+		<a href={resolve('/settings')} class="settings-link" onclick={(e) => e.stopPropagation()}>
 			<Settings size={20} />
 		</a>
-		<span class="name">{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}</span>
+		<span class="name"
+			>{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}</span
+		>
 		<div class="avatar">
 			{#if user.image}
 				<img src={user.image} alt="avatar" />
@@ -65,7 +67,9 @@
 		color: inherit;
 		text-decoration: none;
 		opacity: 0.5;
-		transition: opacity 0.15s, background 0.15s;
+		transition:
+			opacity 0.15s,
+			background 0.15s;
 	}
 
 	.settings-link:hover {

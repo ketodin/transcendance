@@ -18,7 +18,7 @@
 	);
 </script>
 
-<div class="glass w-full h-full p-6">
+<div class="glass h-full w-full p-6">
 	<div class="glass header p-6">
 		<div class="avatar outline">
 			{#if data.user.image}
@@ -30,36 +30,25 @@
 			{/if}
 		</div>
 
-		<div class="p-8 info">
+		<div class="info p-8">
 			<p class="name">{data.user.name}</p>
-			<p class="botinfo">{m.joined_on({ date: formattedDate})}</p>
+			<p class="botinfo">{m.joined_on({ date: formattedDate })}</p>
 		</div>
 		<div class="action">
 			{#if data.userType === 'self'}
-				<Button
-					href={resolve("/settings")}
-					class="glassbutton"
-					variant="outline">
+				<Button href={resolve('/settings')} class="glassbutton" variant="outline">
 					{m.settings()}
 					<Settings size={20} />
 				</Button>
 			{:else if data.userType === 'friend'}
-				<Button
-					onclick={() => friends.remove(data.user.id)}
-					class="glassbutton"
-					variant="outline">
-					<p> {m.remove_friend()} </p>
+				<Button onclick={() => friends.remove(data.user.id)} class="glassbutton" variant="outline">
+					<p>{m.remove_friend()}</p>
 				</Button>
-				<Button
-					class="glassbutton"
-					variant="outline">
+				<Button class="glassbutton" variant="outline">
 					{m.invite_play()}
 				</Button>
 			{:else if data.userType === 'someone'}
-				<Button
-					onclick={() => friends.accept(data.user.id)}
-					class="glassbutton"
-					variant="outline">
+				<Button onclick={() => friends.accept(data.user.id)} class="glassbutton" variant="outline">
 					{m.add_friend()}
 				</Button>
 			{/if}
@@ -68,39 +57,38 @@
 </div>
 
 <style>
+	.avatar {
+		margin: 1vw;
+		width: 15%;
+		aspect-ratio: 1 / 1;
 
-.avatar {
-	margin: 1vw;
-	width: 15%;
-	aspect-ratio: 1 / 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
-	display: flex;
-	align-items: center;
-	justify-content: center;
+		font-size: 3vw;
+		font-weight: bold;
+	}
 
-	font-size: 3vw;
-	font-weight: bold;
-}
+	.header {
+		display: flex;
+		flex-direction: row;
+		align-items: stretch;
+	}
+	.info {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		flex: 1;
+		min-height: 10vw;
+	}
 
-.header {
-	display: flex;
-	flex-direction: row;
-	align-items: stretch;
-}
-.info {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	flex: 1;
-	min-height: 10vw;
-}
+	.name {
+		font-size: 3vw;
+	}
 
-.name {
-	font-size: 3vw;
-}
-
-.botinfo {
-	font-size: 1vw;
-	opacity: 0.7;
-}
+	.botinfo {
+		font-size: 1vw;
+		opacity: 0.7;
+	}
 </style>

@@ -2,7 +2,7 @@
 	import { m } from '$lib/paraglide/messages';
 </script>
 
-<div class="glass w-full h-full p-6">
+<div class="glass h-full w-full p-6">
 	<h1 class="terms">
 		{m.privacy_policy()}
 	</h1>

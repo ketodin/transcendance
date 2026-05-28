@@ -2,7 +2,7 @@
 	import { m } from '$lib/paraglide/messages';
 </script>
 
-<div class="glass w-full h-full p-6">
+<div class="glass h-full w-full p-6">
 	<h1 class="terms">
 		{m.terms_of_service()}
 	</h1>
@@ -11,6 +11,5 @@
 <style>
 	.terms {
 		white-space: pre-line;
-
 	}
 </style>
