@@ -27,6 +27,8 @@
 	"settings": "Configuración",
 	"add_friend": "Agregar amigo",
 	"joined_on": "Registrado el {date}",
+	"home_page": "Página de inicio",
+	"no_user": "Usuario no encontrado",
 
 	"name_place_holder": "Esteban",
 	"mail_place_holder": "esteban.trabajos@gmail.com",
