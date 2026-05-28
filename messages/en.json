@@ -47,7 +47,7 @@
 	"backup_codes_description": "Save these backup codes — they will not be shown again after you leave this page.",
 	"copy_all": "Copy all",
 	"copied": "Copied",
-	"back_to_settings": "Back to settings",
+	"close_backup_code": "Close",
 	"disable_2fa_title": "Disable 2FA",
 	"disable": "Disable",
 	"error_invalid_password": "Incorrect password.",

@@ -48,7 +48,7 @@
 	"backup_codes_description": "Guarde estos códigos de respaldo — no se mostrarán de nuevo después de abandonar esta página.",
 	"copy_all": "Copiar todo",
 	"copied": "Copiado",
-	"back_to_settings": "Volver a configuración",
+	"close_backup_code": "Cerrar",
 	"disable_2fa_title": "Desactivar 2FA",
 	"disable": "Desactivar",
 	"error_invalid_password": "Contraseña incorrecta.",
