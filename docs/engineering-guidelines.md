@@ -24,11 +24,13 @@
 This is a SvelteKit + Colyseus + Prisma monorepo (`ft-transcendence`). The stack includes:
 
 - **Frontend:** SvelteKit 2 · Svelte 5 (runes mode) · TailwindCSS 4 · shadcn-svelte
-- **Backend:** Express 4 · Colyseus 0.15 (game server) · Better-Auth
+- **Backend:** Express 5 · Colyseus 0.17 (game server, bundled into SvelteKit via Vite) · Better-Auth
 - **Database:** Prisma 7 + SQLite (better-sqlite3)
 - **i18n:** Paraglide JS
 - **Package manager:** `pnpm 10.33.0`
 - **Runtime:** Node 24
+
+> **Architecture note:** Colyseus runs inside the same Node.js process as SvelteKit — not as a separate service. In development, a custom Vite plugin (`colyseus-dev-server`) attaches Colyseus to Vite's HTTP server. In production, `server.ts` creates a single Express + HTTP server shared by SvelteKit and Colyseus (`WebSocketTransport`). Both use **port 3000**. There is no separate game-server process, no port 2567, and no `devserver` / `devall` scripts.
 
 **Non-negotiable rules:**
 
@@ -68,14 +70,16 @@ TypeScript strict mode is enabled. Key `tsconfig.json` flags:
 		"rewriteRelativeImportExtensions": true,
 		"forceConsistentCasingInFileNames": true,
 		"resolveJsonModule": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"useDefineForClassFields": false
 	}
 }
 ```
 
 - No `any` unless explicitly justified and scoped.
 - `no-undef` ESLint rule is disabled for TypeScript files (TypeScript handles this natively).
-- The game server uses a separate `tsconfig.server.json`.
+- `experimentalDecorators: true` and `useDefineForClassFields: false` are required for Colyseus `@type` schema decorators — they live in the root `tsconfig.json`. There is no separate `tsconfig.server.json`.
 
 ### 2.3 Svelte
 
@@ -168,7 +172,7 @@ pnpm db:studio     # prisma studio
 | `frontend` | SvelteKit routes, Svelte components, shadcn-svelte, Vite config     |
 | `backend`  | Server-side services, API routes, `hooks.server.ts`                 |
 | `auth`     | OAuth 42, JWT, TOTP, session injection                              |
-| `game`     | Phaser engine, Colyseus rooms, game-server, game logic              |
+| `game`     | Phaser engine, Colyseus rooms, schemas, game logic                  |
 | `db`       | Prisma schema, migrations, database client, queries                 |
 | `shared`   | `packages/game-shared` — code used by both game-server and frontend |
 | `infra`    | Docker, `compose.yaml`, deployment, `.github`                       |
@@ -176,7 +180,21 @@ pnpm db:studio     # prisma studio
 
 `auth` is intentionally separate from `backend`: auth issues are security-sensitive, span the frontend/backend boundary, and require a distinct resolution path.
 
-### 3.3 Architecture Decision Records (ADRs)
+### 3.3 Game Server Layout
+
+All Colyseus server-side code lives under `src/lib/game/colyseus/`:
+
+```
+src/lib/game/colyseus/
+├── TankRoom.ts          # Room definition — registered in hooks.server.ts
+└── schema/              # GameRoomState, TankSchema, TerrainSchema, ProjectileSchema
+```
+
+- Rooms are registered via `matchMaker.defineRoomType('tankroom', TankRoom)` inside the `handleColyseus` hook in `src/hooks.server.ts`.
+- `globalThis.gameServer` guards against double-initialisation across HMR reloads.
+- Client connections use `ws://localhost:3000` in development and `wss://<host>` in production — no port 2567.
+
+### 3.4 Architecture Decision Records (ADRs)
 
 Any architectural decision with lasting impact must be documented as an ADR:
 
@@ -185,7 +203,7 @@ docs/adr/0001-use-sveltekit-and-prisma.md
 docs/adr/0002-server-authoritative-game-state.md
 ```
 
-### 3.4 Anti-patterns
+### 3.5 Anti-patterns
 
 - No god functions or mega-components.
 - No feature logic in route files.
@@ -402,11 +420,11 @@ Full CI runs on every PR to `main`.
 | `ci-lint-prisma`           | `prisma format --check`                               |
 | `ci-lint-pr-title`         | Conventional Commit regex on PR title                 |
 | `ci-typecheck-frontend`    | `svelte-check`                                        |
-| `ci-typecheck-game-server` | `tsc --noEmit` on game-server                         |
+| `ci-typecheck-game-server` | `tsc --noEmit` (root `tsconfig.json`)                 |
 | `ci-test-unit`             | Vitest                                                |
 | `ci-test-e2e`              | Playwright (PR to `main` only)                        |
 | `ci-test-integration`      | Docker Compose stack + assertions (PR to `main` only) |
-| `ci-docker-build`          | Build both Dockerfiles via `compose.yaml` (no push)   |
+| `ci-docker-build`          | Build Dockerfile via `compose.yaml` (no push)         |
 
 ### 7.4 Automation Workflows
 
@@ -448,7 +466,7 @@ Full CI runs on every PR to `main`.
 ### 8.3 Secrets Management
 
 - All sensitive values go in `.env`, which is git-ignored.
-- A `.env.example` with placeholder values must be kept up to date.
+- A `.env.example` with placeholder values must be kept up to date. Required variables include `BETTER_AUTH_URL` and `ORIGIN` (SvelteKit CSRF origin check in production).
 - CI secrets are stored in GitHub Actions Secrets — never in workflow YAML files.
 
 ### 8.4 Dependency Auditing
