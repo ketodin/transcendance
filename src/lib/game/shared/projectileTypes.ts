@@ -119,4 +119,3 @@ export const PROJECTILE_TYPES: ProjectileType[] = [
 ];
 
 export const AIRSTRIKE_TYPE_INDEX = PROJECTILE_TYPES.findIndex((t) => t.name === 'Airstrike');
-export const STRIKE_BOMB_TYPE_INDEX = PROJECTILE_TYPES.findIndex((t) => t.name === 'Strike Bomb');

@@ -47,6 +47,7 @@ type GameUpdateData = {
 	powerIncreasing: boolean;
 	fuel: number;
 	weaponIndex: number;
+	weaponCooldowns?: [boolean[], boolean[]];
 };
 
 export default class GameScene extends Scene {
@@ -70,6 +71,7 @@ export default class GameScene extends Scene {
 	private fragmentViews: ProjectileView[] = [];
 	private fragmentTrails: Array<Array<{ x: number; y: number }>> = [];
 	private selectableWeaponIndices: number[] = [];
+	private weaponCooldowns: [boolean[], boolean[]] = [[], []];
 
 	private lastInput: InputSnapshot = {
 		moveLeft: false,
@@ -147,16 +149,11 @@ export default class GameScene extends Scene {
 	private chatKey!: Input.Keyboard.Key;
 
 	private keys!: {
-		p1Left: Input.Keyboard.Key;
-		p1Right: Input.Keyboard.Key;
-		p1AimUp: Input.Keyboard.Key;
-		p1AimDown: Input.Keyboard.Key;
-		p1Shoot: Input.Keyboard.Key;
-		p2Left: Input.Keyboard.Key;
-		p2Right: Input.Keyboard.Key;
-		p2AimUp: Input.Keyboard.Key;
-		p2AimDown: Input.Keyboard.Key;
-		p2Shoot: Input.Keyboard.Key;
+		left: Input.Keyboard.Key;
+		right: Input.Keyboard.Key;
+		aimUp: Input.Keyboard.Key;
+		aimDown: Input.Keyboard.Key;
+		shoot: Input.Keyboard.Key;
 		weaponKey: Input.Keyboard.Key;
 	};
 
@@ -196,16 +193,11 @@ export default class GameScene extends Scene {
 	private setupKeys() {
 		const kb = this.input.keyboard!;
 		this.keys = {
-			p1Right: kb.addKey(Input.Keyboard.KeyCodes.D),
-			p1Left: kb.addKey(Input.Keyboard.KeyCodes.A),
-			p1AimUp: kb.addKey(Input.Keyboard.KeyCodes.W),
-			p1AimDown: kb.addKey(Input.Keyboard.KeyCodes.S),
-			p1Shoot: kb.addKey(Input.Keyboard.KeyCodes.SPACE),
-			p2Left: kb.addKey(Input.Keyboard.KeyCodes.LEFT),
-			p2Right: kb.addKey(Input.Keyboard.KeyCodes.RIGHT),
-			p2AimUp: kb.addKey(Input.Keyboard.KeyCodes.UP),
-			p2AimDown: kb.addKey(Input.Keyboard.KeyCodes.DOWN),
-			p2Shoot: kb.addKey(Input.Keyboard.KeyCodes.ENTER),
+			right: kb.addKey(Input.Keyboard.KeyCodes.RIGHT),
+			left: kb.addKey(Input.Keyboard.KeyCodes.LEFT),
+			aimUp: kb.addKey(Input.Keyboard.KeyCodes.UP),
+			aimDown: kb.addKey(Input.Keyboard.KeyCodes.DOWN),
+			shoot: kb.addKey(Input.Keyboard.KeyCodes.SPACE),
 			weaponKey: kb.addKey(Input.Keyboard.KeyCodes.Q)
 		};
 		//Chat key
@@ -379,11 +371,13 @@ export default class GameScene extends Scene {
 					weaponIndex: number;
 					turnTimeLeft: number;
 					power: number;
+					weaponCooldowns?: [boolean[], boolean[]];
 				}) => {
 					this.myPlayerIndex = data.player0Id === room.sessionId ? 0 : 1;
 					this.localCurrentPlayer = data.currentPlayer;
 					this.localPhase = 'AIMING';
 					this.localTerrain = data.terrain;
+					if (data.weaponCooldowns) this.weaponCooldowns = data.weaponCooldowns;
 					this.localGameData = {
 						tanks: data.tanks,
 						projectile: { active: false, x: 0, y: 0, typeIndex: 0, bouncesLeft: 0 },
@@ -401,6 +395,7 @@ export default class GameScene extends Scene {
 			);
 
 			room.onMessage('game_update', (data: GameUpdateData) => {
+				if (data.weaponCooldowns) this.weaponCooldowns = data.weaponCooldowns;
 				this.localGameData = data;
 			});
 
@@ -496,14 +491,11 @@ export default class GameScene extends Scene {
 		this.healthIcon.setVisible(true);
 		this.weaponUiGfx.setVisible(true);
 		this.weaponNameLabel.setVisible(true);
-		const move = this.myPlayerIndex === 0 ? 'A / D' : '← / →';
-		const aim = this.myPlayerIndex === 0 ? 'W / S' : '↑ / ↓';
-		const fire = this.myPlayerIndex === 0 ? 'SPACE' : 'ENTER';
 		this.controlsText.setText(
-			`${move.padEnd(7)}  Move\n` +
-				`${aim.padEnd(7)}  Aim\n` +
+			`${'← / →'.padEnd(7)}  Move\n` +
+				`${'↑ / ↓'.padEnd(7)}  Aim\n` +
 				`Q        Switch weapon\n` +
-				`${fire.padEnd(7)}  Charge / Fire`
+				`${'SPACE'.padEnd(7)}  Charge / Fire`
 		);
 		this.controlsBg.setVisible(true);
 		this.controlsText.setVisible(true);
@@ -625,19 +617,14 @@ export default class GameScene extends Scene {
 	}
 
 	private handleInput(phase: string) {
-		const p = this.myPlayerIndex;
-		const moveLeft = p === 0 ? this.keys.p1Left : this.keys.p2Left;
-		const moveRight = p === 0 ? this.keys.p1Right : this.keys.p2Right;
-		const aimUp = p === 0 ? this.keys.p1AimUp : this.keys.p2AimUp;
-		const aimDown = p === 0 ? this.keys.p1AimDown : this.keys.p2AimDown;
-		const shootKey = p === 0 ? this.keys.p1Shoot : this.keys.p2Shoot;
+		const shootKey = this.keys.shoot;
 
 		// Continuous input: send only when state changes
 		const snap: InputSnapshot = {
-			moveLeft: moveLeft.isDown,
-			moveRight: moveRight.isDown,
-			aimUp: aimUp.isDown,
-			aimDown: aimDown.isDown
+			moveLeft: this.keys.left.isDown,
+			moveRight: this.keys.right.isDown,
+			aimUp: this.keys.aimUp.isDown,
+			aimDown: this.keys.aimDown.isDown
 		};
 		if (
 			snap.moveLeft !== this.lastInput.moveLeft ||
@@ -796,14 +783,17 @@ export default class GameScene extends Scene {
 		const r = this.sw(5);
 		const half = iSize / 2;
 
+		const myCooldowns = this.weaponCooldowns[this.myPlayerIndex] ?? [];
+
 		this.selectableWeaponIndices.forEach((typeIdx, si) => {
 			const cx = startX + si * (iSize + iGap) + half;
 			const cy = iconY;
 			const active = typeIdx === activeIndex;
+			const onCooldown = myCooldowns[typeIdx] === true;
 			const type = PROJECTILE_TYPES[typeIdx];
 
 			// Outer glow for active icon
-			if (active) {
+			if (active && !onCooldown) {
 				this.weaponUiGfx.lineStyle(this.sw(6), type.glowColor, 0.12);
 				this.weaponUiGfx.strokeRoundedRect(cx - half - this.sw(3), cy - half - this.sw(3), iSize + this.sw(6), iSize + this.sw(6), r + this.sw(2));
 				this.weaponUiGfx.lineStyle(this.sw(2), type.glowColor, 0.3);
@@ -811,14 +801,14 @@ export default class GameScene extends Scene {
 			}
 
 			// Background
-			this.weaponUiGfx.fillStyle(0x0c1520, active ? 1 : 0.82);
+			this.weaponUiGfx.fillStyle(onCooldown ? 0x080c10 : 0x0c1520, active ? 1 : 0.82);
 			this.weaponUiGfx.fillRoundedRect(cx - half, cy - half, iSize, iSize, r);
 			// Subtle top-half lighter panel
-			this.weaponUiGfx.fillStyle(0xffffff, 0.03);
+			this.weaponUiGfx.fillStyle(0xffffff, onCooldown ? 0.01 : 0.03);
 			this.weaponUiGfx.fillRect(cx - half, cy - half, iSize, half);
 
 			// Border
-			this.weaponUiGfx.lineStyle(active ? this.sw(1.5) : this.sw(1), active ? type.color : 0x2a3a4a, active ? 1 : 0.8);
+			this.weaponUiGfx.lineStyle(active ? this.sw(1.5) : this.sw(1), onCooldown ? 0x1a2028 : (active ? type.color : 0x2a3a4a), active && !onCooldown ? 1 : 0.8);
 			this.weaponUiGfx.strokeRoundedRect(cx - half, cy - half, iSize, iSize, r);
 			// Metallic top-edge bevel
 			this.weaponUiGfx.lineStyle(this.sw(1), 0xffffff, active ? 0.18 : 0.06);
@@ -827,12 +817,27 @@ export default class GameScene extends Scene {
 			this.weaponUiGfx.lineTo(cx + half - r, cy - half);
 			this.weaponUiGfx.strokePath();
 
-			this.drawWeaponIconShape(cx, cy, typeIdx, active);
+			this.drawWeaponIconShape(cx, cy, typeIdx, active && !onCooldown);
+
+			// Cooldown overlay
+			if (onCooldown) {
+				this.weaponUiGfx.fillStyle(0x000000, 0.55);
+				this.weaponUiGfx.fillRoundedRect(cx - half, cy - half, iSize, iSize, r);
+				// X mark
+				const m = this.sw(8);
+				this.weaponUiGfx.lineStyle(this.sw(2), 0x556070, 0.9);
+				this.weaponUiGfx.beginPath();
+				this.weaponUiGfx.moveTo(cx - m, cy - m);
+				this.weaponUiGfx.lineTo(cx + m, cy + m);
+				this.weaponUiGfx.moveTo(cx + m, cy - m);
+				this.weaponUiGfx.lineTo(cx - m, cy + m);
+				this.weaponUiGfx.strokePath();
+			}
 
 			if (active) {
 				this.weaponNameLabel
 					.setPosition(cx, cy - half - this.sh(10))
-					.setText(type.name.toUpperCase())
+					.setText(onCooldown ? `${type.name.toUpperCase()} (USED)` : type.name.toUpperCase())
 					.setFontSize(Math.round(this.sh(11)));
 			}
 		});

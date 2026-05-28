@@ -17,4 +17,5 @@ export interface GameState {
 	fuel: number;
 	turnTimeLeft: number;
 	winner?: 0 | 1;
+	weaponCooldowns: [boolean[], boolean[]];
 }
