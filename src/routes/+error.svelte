@@ -1,6 +1,7 @@
-<script>
+<script lang="ts">
 	import { m } from '$lib/paraglide/messages';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 </script>
 
 <div class="error">
@@ -11,7 +12,7 @@
 			{page.error?.message}
 		</p>
 
-		<a class="home" href="/">{m.home_page()}</a>
+		<a class="home" href={resolve("/")}>{m.home_page()}</a>
 	</div>
 </div>
 
