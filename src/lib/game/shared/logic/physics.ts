@@ -15,8 +15,8 @@ export type PhysicsResult =
 export function getTurretTip(tank: TankState): { x: number; y: number } {
 	const rad = (tank.turretAngle * Math.PI) / 180;
 	return {
-		x: tank.x + Math.cos(rad) * 34,
-		y: tank.y - 10 - Math.sin(rad) * 34
+		x: tank.x + Math.cos(rad) * 40,
+		y: tank.y - 24 - Math.sin(rad) * 40
 	};
 }
 

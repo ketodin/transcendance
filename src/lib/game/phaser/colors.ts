@@ -25,9 +25,6 @@ export const COLORS = {
 	black: 0x000000,
 
 	// ─── Game-inherent — hardcoded, never affected by theme ──────────────
-	tankTracks: 0x222222,
-	tankWheels: 0x555555,
-	tankDebris: 0x333333,
 	craterOuter: 0xff6600,
 	craterMid: 0xffcc00,
 	craterStone: 0x5a4a30,
@@ -63,9 +60,7 @@ export const COLOR_STRINGS = {
 	gold: '#d4b832',
 	yellow: '#ffdd55',
 	red: '#ff4444',
-	fuelHigh: '#00ccff',
-	hint: 'rgba(255,255,255,0.5)',
-	weaponInactive: 'rgba(200,200,200,0.4)'
+	fuelHigh: '#00ccff'
 };
 
 export function syncFromCSS(): void {
@@ -94,6 +89,4 @@ export function syncFromCSS(): void {
 	COLOR_STRINGS.yellow = cssStr('--game-yellow');
 	COLOR_STRINGS.red = cssStr('--game-red');
 	COLOR_STRINGS.fuelHigh = cssStr('--game-fuel-high');
-	COLOR_STRINGS.hint = cssStr('--game-hint');
-	COLOR_STRINGS.weaponInactive = cssStr('--game-weapon-inactive');
 }

@@ -47,13 +47,14 @@ type GameUpdateData = {
 	powerIncreasing: boolean;
 	fuel: number;
 	weaponIndex: number;
+	weaponCooldowns?: [boolean[], boolean[]];
 };
 
 export default class GameScene extends Scene {
 	private room: Room<GameRoomState> | null = null;
 	private returningToLobby = false;
 	private myPlayerIndex: 0 | 1 = 0;
-	private myPlayerIndexSet = false;
+
 	private roomReady = false;
 	private localPhase = '';
 	private localCurrentPlayer = 0;
@@ -70,6 +71,8 @@ export default class GameScene extends Scene {
 	private fragmentViews: ProjectileView[] = [];
 	private fragmentTrails: Array<Array<{ x: number; y: number }>> = [];
 	private selectableWeaponIndices: number[] = [];
+	private weaponZones: GameObjects.Zone[] = [];
+	private weaponCooldowns: [boolean[], boolean[]] = [[], []];
 
 	private lastInput: InputSnapshot = {
 		moveLeft: false,
@@ -82,7 +85,6 @@ export default class GameScene extends Scene {
 	private timerText!: GameObjects.Text;
 	private powerBg!: GameObjects.Graphics;
 	private powerFill!: GameObjects.Graphics;
-	private powerLabel!: GameObjects.Text;
 	private fuelBg!: GameObjects.Graphics;
 	private fuelFill!: GameObjects.Graphics;
 	private fuelIcon!: GameObjects.Text;
@@ -92,7 +94,8 @@ export default class GameScene extends Scene {
 	private controlsBg!: GameObjects.Graphics;
 	private controlsText!: GameObjects.Text;
 	private trajectoryGfx!: GameObjects.Graphics;
-	private weaponTexts: GameObjects.Text[] = [];
+	private weaponUiGfx!: GameObjects.Graphics;
+	private weaponNameLabel!: GameObjects.Text;
 	private statusText!: GameObjects.Text;
 
 	private sh(n: number) {
@@ -122,7 +125,7 @@ export default class GameScene extends Scene {
 		return this.scale.width / 2 - this.barW / 2;
 	}
 	private get barY() {
-		return this.scale.height - this.sh(32);
+		return this.scale.height - this.sh(24);
 	}
 	private get fuelBarY() {
 		return this.scale.height - this.sh(42);
@@ -147,16 +150,11 @@ export default class GameScene extends Scene {
 	private chatKey!: Input.Keyboard.Key;
 
 	private keys!: {
-		p1Left: Input.Keyboard.Key;
-		p1Right: Input.Keyboard.Key;
-		p1AimUp: Input.Keyboard.Key;
-		p1AimDown: Input.Keyboard.Key;
-		p1Shoot: Input.Keyboard.Key;
-		p2Left: Input.Keyboard.Key;
-		p2Right: Input.Keyboard.Key;
-		p2AimUp: Input.Keyboard.Key;
-		p2AimDown: Input.Keyboard.Key;
-		p2Shoot: Input.Keyboard.Key;
+		left: Input.Keyboard.Key;
+		right: Input.Keyboard.Key;
+		aimUp: Input.Keyboard.Key;
+		aimDown: Input.Keyboard.Key;
+		shoot: Input.Keyboard.Key;
 		weaponKey: Input.Keyboard.Key;
 	};
 
@@ -196,16 +194,11 @@ export default class GameScene extends Scene {
 	private setupKeys() {
 		const kb = this.input.keyboard!;
 		this.keys = {
-			p1Right: kb.addKey(Input.Keyboard.KeyCodes.D),
-			p1Left: kb.addKey(Input.Keyboard.KeyCodes.A),
-			p1AimUp: kb.addKey(Input.Keyboard.KeyCodes.W),
-			p1AimDown: kb.addKey(Input.Keyboard.KeyCodes.S),
-			p1Shoot: kb.addKey(Input.Keyboard.KeyCodes.SPACE),
-			p2Left: kb.addKey(Input.Keyboard.KeyCodes.LEFT),
-			p2Right: kb.addKey(Input.Keyboard.KeyCodes.RIGHT),
-			p2AimUp: kb.addKey(Input.Keyboard.KeyCodes.UP),
-			p2AimDown: kb.addKey(Input.Keyboard.KeyCodes.DOWN),
-			p2Shoot: kb.addKey(Input.Keyboard.KeyCodes.ENTER),
+			right: kb.addKey(Input.Keyboard.KeyCodes.RIGHT),
+			left: kb.addKey(Input.Keyboard.KeyCodes.LEFT),
+			aimUp: kb.addKey(Input.Keyboard.KeyCodes.UP),
+			aimDown: kb.addKey(Input.Keyboard.KeyCodes.DOWN),
+			shoot: kb.addKey(Input.Keyboard.KeyCodes.SPACE),
 			weaponKey: kb.addKey(Input.Keyboard.KeyCodes.Q)
 		};
 		//Chat key
@@ -252,17 +245,6 @@ export default class GameScene extends Scene {
 
 		this.powerFill = this.add.graphics().setDepth(10);
 		this.powerFill.setVisible(false);
-
-		this.powerLabel = this.add
-			.text(this.scale.width / 2, this.barY - this.sh(22), 'POWER — release to fire', {
-				fontSize: `${Math.round(this.sh(13))}px`,
-				color: COLOR_STRINGS.neonGlow,
-				stroke: COLOR_STRINGS.navy,
-				strokeThickness: 3
-			})
-			.setOrigin(0.5, 0)
-			.setDepth(10)
-			.setVisible(false);
 
 		this.fuelBg = this.add.graphics().setDepth(10);
 		this.fuelBg.fillStyle(COLORS.navy, 0.92);
@@ -321,25 +303,37 @@ export default class GameScene extends Scene {
 		this.selectableWeaponIndices = PROJECTILE_TYPES.map((t, i) =>
 			t.selectable !== false ? i : -1
 		).filter((i) => i !== -1);
-		const weaponStartX = this.fuelBarX + this.fuelBarW + this.sw(80);
-		const weaponRow1Y = this.scale.height - this.sh(74);
-		const weaponRow2Y = this.scale.height - this.sh(46);
-		this.weaponTexts = this.selectableWeaponIndices.map((typeIdx, si) => {
-			const row = si < 3 ? 0 : 1;
-			const col = si < 3 ? si : si - 3;
-			const x = weaponStartX + col * this.sw(105);
-			const y = row === 0 ? weaponRow1Y : weaponRow2Y;
-			return this.add
-				.text(x, y, PROJECTILE_TYPES[typeIdx].name, {
-					fontSize: `${Math.round(this.sh(12))}px`,
-					color: COLOR_STRINGS.white,
-					stroke: COLOR_STRINGS.navy,
-					strokeThickness: 2
-				})
-				.setOrigin(0.5)
-				.setDepth(10)
-				.setVisible(false);
+
+		const iSize = this.sw(42);
+		const iGap = this.sw(8);
+		const n = this.selectableWeaponIndices.length;
+		const startX = (this.scale.width - (n * iSize + (n - 1) * iGap)) / 2;
+		const iconY = this.scale.height - this.sh(66) + 6;
+		this.weaponZones = this.selectableWeaponIndices.map((typeIdx, si) => {
+			const cx = startX + si * (iSize + iGap) + iSize / 2;
+			const zone = this.add
+				.zone(cx, iconY, iSize, iSize)
+				.setDepth(11)
+				.setInteractive({ useHandCursor: true });
+			zone.on('pointerdown', () => {
+				if (this.localCurrentPlayer !== this.myPlayerIndex) return;
+				if (this.localPhase !== 'AIMING') return;
+				this.room?.send('select_weapon', { index: typeIdx });
+			});
+			return zone;
 		});
+
+		this.weaponUiGfx = this.add.graphics().setDepth(10).setVisible(false);
+		this.weaponNameLabel = this.add
+			.text(0, 0, '', {
+				fontSize: `${Math.round(this.sh(11))}px`,
+				color: COLOR_STRINGS.yellow,
+				stroke: COLOR_STRINGS.navy,
+				strokeThickness: 3
+			})
+			.setOrigin(0.5)
+			.setDepth(10)
+			.setVisible(false);
 
 		const boxW = this.sw(190);
 		const boxH = this.sh(100);
@@ -367,7 +361,6 @@ export default class GameScene extends Scene {
 
 	private async connectToServer() {
 		this.roomReady = false;
-		this.myPlayerIndexSet = false;
 		this.returningToLobby = false;
 		this.room = null;
 		this.tankSprites = null;
@@ -398,12 +391,13 @@ export default class GameScene extends Scene {
 					weaponIndex: number;
 					turnTimeLeft: number;
 					power: number;
+					weaponCooldowns?: [boolean[], boolean[]];
 				}) => {
-					this.myPlayerIndexSet = true;
 					this.myPlayerIndex = data.player0Id === room.sessionId ? 0 : 1;
 					this.localCurrentPlayer = data.currentPlayer;
 					this.localPhase = 'AIMING';
 					this.localTerrain = data.terrain;
+					if (data.weaponCooldowns) this.weaponCooldowns = data.weaponCooldowns;
 					this.localGameData = {
 						tanks: data.tanks,
 						projectile: { active: false, x: 0, y: 0, typeIndex: 0, bouncesLeft: 0 },
@@ -421,6 +415,7 @@ export default class GameScene extends Scene {
 			);
 
 			room.onMessage('game_update', (data: GameUpdateData) => {
+				if (data.weaponCooldowns) this.weaponCooldowns = data.weaponCooldowns;
 				this.localGameData = data;
 			});
 
@@ -514,15 +509,13 @@ export default class GameScene extends Scene {
 		this.fuelIcon.setVisible(true);
 		this.healthBg.setVisible(true);
 		this.healthIcon.setVisible(true);
-		this.weaponTexts.forEach((t) => t.setVisible(true));
-		const move = this.myPlayerIndex === 0 ? 'A / D' : '← / →';
-		const aim = this.myPlayerIndex === 0 ? 'W / S' : '↑ / ↓';
-		const fire = this.myPlayerIndex === 0 ? 'SPACE' : 'ENTER';
+		this.weaponUiGfx.setVisible(true);
+		this.weaponNameLabel.setVisible(true);
 		this.controlsText.setText(
-			`${move.padEnd(7)}  Move\n` +
-				`${aim.padEnd(7)}  Aim\n` +
+			`${'← / →'.padEnd(7)}  Move\n` +
+				`${'↑ / ↓'.padEnd(7)}  Aim\n` +
 				`Q        Switch weapon\n` +
-				`${fire.padEnd(7)}  Charge / Fire`
+				`${'SPACE'.padEnd(7)}  Charge / Fire`
 		);
 		this.controlsBg.setVisible(true);
 		this.controlsText.setVisible(true);
@@ -536,8 +529,8 @@ export default class GameScene extends Scene {
 		const currentPlayer = this.localCurrentPlayer;
 
 		// Sync tank sprites
-		this.tankSprites[0].sync(data.tanks[0]);
-		this.tankSprites[1].sync(data.tanks[1]);
+		this.tankSprites[0].sync(data.tanks[0], this.localTerrain);
+		this.tankSprites[1].sync(data.tanks[1], this.localTerrain);
 		// Bubble chat
 		this.speechBubbles[0].sync(data.tanks[0]);
 		this.speechBubbles[1].sync(data.tanks[1]);
@@ -622,12 +615,10 @@ export default class GameScene extends Scene {
 		if (phase === 'CHARGING') {
 			this.powerBg.setVisible(true);
 			this.powerFill.setVisible(true);
-			this.powerLabel.setVisible(true);
 			this.updatePowerBar(data.power);
 		} else {
 			this.powerBg.setVisible(false);
 			this.powerFill.setVisible(false);
-			this.powerLabel.setVisible(false);
 		}
 
 		// Trajectory preview
@@ -646,19 +637,14 @@ export default class GameScene extends Scene {
 	}
 
 	private handleInput(phase: string) {
-		const p = this.myPlayerIndex;
-		const moveLeft = p === 0 ? this.keys.p1Left : this.keys.p2Left;
-		const moveRight = p === 0 ? this.keys.p1Right : this.keys.p2Right;
-		const aimUp = p === 0 ? this.keys.p1AimUp : this.keys.p2AimUp;
-		const aimDown = p === 0 ? this.keys.p1AimDown : this.keys.p2AimDown;
-		const shootKey = p === 0 ? this.keys.p1Shoot : this.keys.p2Shoot;
+		const shootKey = this.keys.shoot;
 
 		// Continuous input: send only when state changes
 		const snap: InputSnapshot = {
-			moveLeft: moveLeft.isDown,
-			moveRight: moveRight.isDown,
-			aimUp: aimUp.isDown,
-			aimDown: aimDown.isDown
+			moveLeft: this.keys.left.isDown,
+			moveRight: this.keys.right.isDown,
+			aimUp: this.keys.aimUp.isDown,
+			aimDown: this.keys.aimDown.isDown
 		};
 		if (
 			snap.moveLeft !== this.lastInput.moveLeft ||
@@ -808,14 +794,300 @@ export default class GameScene extends Scene {
 	}
 
 	private updateWeaponUI(activeIndex: number) {
+		this.weaponUiGfx.clear();
+		const iSize = this.sw(42);
+		const iGap = this.sw(8);
+		const n = this.selectableWeaponIndices.length;
+		const startX = (this.scale.width - (n * iSize + (n - 1) * iGap)) / 2;
+		const iconY = this.scale.height - this.sh(66) + 6;
+		const r = this.sw(5);
+		const half = iSize / 2;
+
+		const myCooldowns = this.weaponCooldowns[this.myPlayerIndex] ?? [];
+
 		this.selectableWeaponIndices.forEach((typeIdx, si) => {
-			const type = PROJECTILE_TYPES[typeIdx];
+			const cx = startX + si * (iSize + iGap) + half;
+			const cy = iconY;
 			const active = typeIdx === activeIndex;
-			this.weaponTexts[si]
-				.setText(active ? `[ ${type.name} ]` : type.name)
-				.setColor(active ? COLOR_STRINGS.yellow : COLOR_STRINGS.weaponInactive)
-				.setFontSize(Math.round(this.sh(12)));
+			const onCooldown = myCooldowns[typeIdx] === true;
+			const type = PROJECTILE_TYPES[typeIdx];
+
+			// Outer glow for active icon
+			if (active && !onCooldown) {
+				this.weaponUiGfx.lineStyle(this.sw(6), type.glowColor, 0.12);
+				this.weaponUiGfx.strokeRoundedRect(
+					cx - half - this.sw(3),
+					cy - half - this.sw(3),
+					iSize + this.sw(6),
+					iSize + this.sw(6),
+					r + this.sw(2)
+				);
+				this.weaponUiGfx.lineStyle(this.sw(2), type.glowColor, 0.3);
+				this.weaponUiGfx.strokeRoundedRect(
+					cx - half - this.sw(1),
+					cy - half - this.sw(1),
+					iSize + this.sw(2),
+					iSize + this.sw(2),
+					r + this.sw(1)
+				);
+			}
+
+			// Background
+			this.weaponUiGfx.fillStyle(onCooldown ? 0x080c10 : 0x0c1520, active ? 1 : 0.82);
+			this.weaponUiGfx.fillRoundedRect(cx - half, cy - half, iSize, iSize, r);
+			// Subtle top-half lighter panel
+			this.weaponUiGfx.fillStyle(0xffffff, onCooldown ? 0.01 : 0.03);
+			this.weaponUiGfx.fillRect(cx - half, cy - half, iSize, half);
+
+			// Border
+			this.weaponUiGfx.lineStyle(
+				active ? this.sw(1.5) : this.sw(1),
+				onCooldown ? 0x1a2028 : active ? type.color : 0x2a3a4a,
+				active && !onCooldown ? 1 : 0.8
+			);
+			this.weaponUiGfx.strokeRoundedRect(cx - half, cy - half, iSize, iSize, r);
+			// Metallic top-edge bevel
+			this.weaponUiGfx.lineStyle(this.sw(1), 0xffffff, active ? 0.18 : 0.06);
+			this.weaponUiGfx.beginPath();
+			this.weaponUiGfx.moveTo(cx - half + r, cy - half);
+			this.weaponUiGfx.lineTo(cx + half - r, cy - half);
+			this.weaponUiGfx.strokePath();
+
+			this.drawWeaponIconShape(cx, cy, typeIdx, active && !onCooldown);
+
+			// Cooldown overlay
+			if (onCooldown) {
+				this.weaponUiGfx.fillStyle(0x000000, 0.55);
+				this.weaponUiGfx.fillRoundedRect(cx - half, cy - half, iSize, iSize, r);
+				// X mark
+				const m = this.sw(8);
+				this.weaponUiGfx.lineStyle(this.sw(2), 0x556070, 0.9);
+				this.weaponUiGfx.beginPath();
+				this.weaponUiGfx.moveTo(cx - m, cy - m);
+				this.weaponUiGfx.lineTo(cx + m, cy + m);
+				this.weaponUiGfx.moveTo(cx + m, cy - m);
+				this.weaponUiGfx.lineTo(cx - m, cy + m);
+				this.weaponUiGfx.strokePath();
+			}
+
+			if (active) {
+				this.weaponNameLabel
+					.setPosition(cx, cy - half - this.sh(10))
+					.setText(onCooldown ? `${type.name.toUpperCase()} (USED)` : type.name.toUpperCase())
+					.setFontSize(Math.round(this.sh(11)));
+			}
 		});
+	}
+
+	private drawWeaponIconShape(cx: number, cy: number, typeIdx: number, active: boolean): void {
+		const g = this.weaponUiGfx;
+		const type = PROJECTILE_TYPES[typeIdx];
+		const s = this.sw(1);
+		const c = type.color;
+		const a = active ? 1 : 0.55;
+		const shade = (col: number, f: number) => {
+			const r = Math.min(255, Math.floor(((col >> 16) & 0xff) * f));
+			const gr = Math.min(255, Math.floor(((col >> 8) & 0xff) * f));
+			const b = Math.min(255, Math.floor((col & 0xff) * f));
+			return (r << 16) | (gr << 8) | b;
+		};
+
+		switch (type.name) {
+			case 'Shell': {
+				// Tail fins
+				g.fillStyle(shade(c, 0.5), a);
+				g.fillTriangle(
+					cx - s * 10,
+					cy - s * 4.5,
+					cx - s * 13,
+					cy - s * 9,
+					cx - s * 6,
+					cy - s * 4.5
+				);
+				g.fillTriangle(
+					cx - s * 10,
+					cy + s * 4.5,
+					cx - s * 13,
+					cy + s * 9,
+					cx - s * 6,
+					cy + s * 4.5
+				);
+				// Body
+				g.fillStyle(c, a);
+				g.fillRoundedRect(cx - s * 11, cy - s * 4.5, s * 19, s * 9, s * 2.5);
+				// Nose cone
+				g.beginPath();
+				g.moveTo(cx + s * 8, cy - s * 4.5);
+				g.lineTo(cx + s * 8, cy + s * 4.5);
+				g.lineTo(cx + s * 15, cy);
+				g.closePath();
+				g.fillPath();
+				// Rotating band
+				g.fillStyle(shade(c, 0.5), a);
+				g.fillRect(cx + s * 1, cy - s * 4.5, s * 2.5, s * 9);
+				// Top highlight
+				g.fillStyle(0xffffff, 0.22 * a);
+				g.fillRect(cx - s * 9, cy - s * 3.5, s * 17, s * 1.5);
+				// Nose tip glint
+				g.fillStyle(0xffffff, 0.15 * a);
+				g.fillTriangle(cx + s * 8, cy - s * 4.5, cx + s * 15, cy, cx + s * 11, cy - s * 2.5);
+				break;
+			}
+			case 'Heavy': {
+				// Tail fins (bigger)
+				g.fillStyle(shade(c, 0.45), a);
+				g.fillTriangle(cx - s * 11, cy - s * 5, cx - s * 15, cy - s * 11, cx - s * 5, cy - s * 5);
+				g.fillTriangle(cx - s * 11, cy + s * 5, cx - s * 15, cy + s * 11, cx - s * 5, cy + s * 5);
+				// Thick body
+				g.fillStyle(c, a);
+				g.fillRoundedRect(cx - s * 12, cy - s * 6, s * 23, s * 12, s * 4);
+				// Nose cone
+				g.beginPath();
+				g.moveTo(cx + s * 11, cy - s * 6);
+				g.lineTo(cx + s * 11, cy + s * 6);
+				g.lineTo(cx + s * 18, cy);
+				g.closePath();
+				g.fillPath();
+				// Double body bands
+				g.fillStyle(shade(c, 0.45), a);
+				g.fillRect(cx - s * 2, cy - s * 6, s * 3, s * 12);
+				g.fillRect(cx + s * 3.5, cy - s * 6, s * 2, s * 12);
+				// Warning stripe (yellow)
+				g.fillStyle(0xffcc00, 0.55 * a);
+				g.fillRect(cx - s * 8, cy - s * 2, s * 11, s * 1.5);
+				// Top highlight
+				g.fillStyle(0xffffff, 0.2 * a);
+				g.fillRect(cx - s * 10, cy - s * 5, s * 20, s * 2);
+				break;
+			}
+			case 'Bouncer': {
+				// Outer energy ring
+				g.lineStyle(s * 1.5, type.glowColor, 0.45 * a);
+				g.strokeCircle(cx, cy - s * 2, s * 11);
+				// Ball
+				g.fillStyle(c, a);
+				g.fillCircle(cx, cy - s * 2, s * 8);
+				// Sheen
+				g.fillStyle(0xffffff, 0.35 * a);
+				g.fillEllipse(cx - s * 2, cy - s * 6, s * 7, s * 4);
+				g.fillStyle(0xffffff, 0.12 * a);
+				g.fillEllipse(cx - s * 1, cy - s * 4.5, s * 4, s * 2.5);
+				// Bounce zigzag below ball
+				g.lineStyle(s * 1.5, type.glowColor, 0.7 * a);
+				g.beginPath();
+				g.moveTo(cx - s * 11, cy + s * 11);
+				g.lineTo(cx - s * 6, cy + s * 7);
+				g.lineTo(cx - s * 1, cy + s * 11);
+				g.lineTo(cx + s * 4, cy + s * 7);
+				g.lineTo(cx + s * 9, cy + s * 11);
+				g.strokePath();
+				// Impact dots on zigzag peaks
+				g.fillStyle(type.glowColor, 0.5 * a);
+				g.fillCircle(cx - s * 6, cy + s * 7, s * 1.5);
+				g.fillCircle(cx + s * 4, cy + s * 7, s * 1.5);
+				break;
+			}
+			case 'Split': {
+				// Three sub-projectiles fanning right
+				const subAngles = [-38, 0, 38];
+				for (const deg of subAngles) {
+					const rad = (deg * Math.PI) / 180;
+					const ex = cx + Math.cos(rad) * s * 11;
+					const ey = cy + Math.sin(rad) * s * 11;
+					// Trail
+					g.lineStyle(s * 1.5, shade(c, 0.55), 0.45 * a);
+					g.beginPath();
+					g.moveTo(cx, cy);
+					g.lineTo(ex, ey);
+					g.strokePath();
+					// Sub-projectile
+					g.fillStyle(c, a);
+					g.fillCircle(ex, ey, s * 3.5);
+					// Shine
+					g.fillStyle(0xffffff, 0.3 * a);
+					g.fillCircle(ex - s * 1, ey - s * 1, s * 1.5);
+				}
+				// Central burst
+				g.fillStyle(type.glowColor, 0.9 * a);
+				g.fillCircle(cx, cy, s * 4.5);
+				g.fillStyle(0xffffff, 0.5 * a);
+				g.fillCircle(cx, cy, s * 2);
+				break;
+			}
+			case 'Airstrike': {
+				// Swept wings
+				g.fillStyle(shade(c, 0.72), a);
+				g.fillTriangle(cx, cy - s * 2, cx - s * 4, cy - s * 14, cx - s * 11, cy - s * 2);
+				g.fillTriangle(cx, cy + s * 2, cx - s * 4, cy + s * 14, cx - s * 11, cy + s * 2);
+				// Fuselage
+				g.fillStyle(c, a);
+				g.beginPath();
+				g.moveTo(cx + s * 14, cy);
+				g.lineTo(cx + s * 8, cy - s * 2);
+				g.lineTo(cx - s * 11, cy - s * 1.5);
+				g.lineTo(cx - s * 14, cy);
+				g.lineTo(cx - s * 11, cy + s * 1.5);
+				g.lineTo(cx + s * 8, cy + s * 2);
+				g.closePath();
+				g.fillPath();
+				// Tail fins
+				g.fillStyle(shade(c, 0.55), a);
+				g.fillTriangle(cx - s * 9, cy - s * 1.5, cx - s * 7, cy - s * 6, cx - s * 13, cy - s * 1.5);
+				g.fillTriangle(cx - s * 9, cy + s * 1.5, cx - s * 7, cy + s * 6, cx - s * 13, cy + s * 1.5);
+				// Cockpit
+				g.fillStyle(0x88ccff, 0.85 * a);
+				g.fillEllipse(cx + s * 9, cy, s * 6, s * 3);
+				// Afterburner flame
+				g.fillStyle(0xff6600, 0.75 * a);
+				g.fillTriangle(cx - s * 14, cy - s * 1, cx - s * 14, cy + s * 1, cx - s * 19, cy);
+				g.fillStyle(0xffdd00, 0.55 * a);
+				g.fillTriangle(cx - s * 14, cy - s * 0.5, cx - s * 14, cy + s * 0.5, cx - s * 17, cy);
+				break;
+			}
+			case 'Sniper': {
+				// Casing
+				g.fillStyle(shade(c, 0.6), a);
+				g.fillRoundedRect(cx - s * 13, cy + s * 0.5, s * 16, s * 7, s * 2);
+				// Bullet head
+				g.fillStyle(c, a);
+				g.beginPath();
+				g.moveTo(cx + s * 3, cy + s * 0.5);
+				g.lineTo(cx + s * 3, cy + s * 7.5);
+				g.lineTo(cx + s * 14, cy + s * 4);
+				g.closePath();
+				g.fillPath();
+				// Tip glint
+				g.fillStyle(0xffffff, 0.28 * a);
+				g.fillTriangle(cx + s * 3, cy + s * 0.5, cx + s * 14, cy + s * 4, cx + s * 8, cy + s * 1.5);
+				// Scope body
+				g.fillStyle(0x111a11, 0.95);
+				g.fillRoundedRect(cx - s * 4, cy - s * 10, s * 12, s * 6, s * 1.5);
+				g.lineStyle(s, type.glowColor, 0.8 * a);
+				g.strokeRoundedRect(cx - s * 4, cy - s * 10, s * 12, s * 6, s * 1.5);
+				// Scope lens
+				g.fillStyle(0x112211, 1);
+				g.fillCircle(cx + s * 2, cy - s * 7, s * 2.5);
+				g.lineStyle(s * 0.8, type.glowColor, 0.6 * a);
+				g.strokeCircle(cx + s * 2, cy - s * 7, s * 2.5);
+				// Crosshair inside lens
+				g.lineStyle(s * 0.7, 0xffffff, 0.45 * a);
+				g.beginPath();
+				g.moveTo(cx + s * 2, cy - s * 9.5);
+				g.lineTo(cx + s * 2, cy - s * 4.5);
+				g.strokePath();
+				g.beginPath();
+				g.moveTo(cx - s * 0.5, cy - s * 7);
+				g.lineTo(cx + s * 4.5, cy - s * 7);
+				g.strokePath();
+				// Casing shine
+				g.fillStyle(0xffffff, 0.18 * a);
+				g.fillRect(cx - s * 11, cy + s * 1.5, s * 13, s * 1.5);
+				// Scope-to-body mounting rail
+				g.fillStyle(shade(c, 0.4), a);
+				g.fillRect(cx - s * 1, cy - s * 4, s * 3, s * 4.5);
+				break;
+			}
+		}
 	}
 
 	private updatePowerBar(power: number) {

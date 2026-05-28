@@ -2,9 +2,6 @@ import PreloadScene from './scenes/preloadScene';
 import GameScene from './scenes/gameScene';
 import { AUTO, Scale, Game, type Types } from 'phaser';
 
-// const DEFAULT_WIDTH = 1280;
-// const DEFAULT_HEIGHT = 720;
-
 const DEFAULT_WIDTH = 1920;
 const DEFAULT_HEIGHT = 1080;
 
