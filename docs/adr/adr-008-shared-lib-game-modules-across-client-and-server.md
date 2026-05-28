@@ -9,7 +9,7 @@
 ## Context
 
 The Colyseus integration commit includes a structural cleanup that renamed server-related areas and kept shared game logic as a distinct concern.
-The current tree shows a deliberate split between `src/lib/game/client`, `src/lib/game/phaser`, `src/lib/game/colyseus`, `src/lib/game/shared`, and `server/rooms`.
+The current tree shows a deliberate split between `src/lib/game/client`, `src/lib/game/phaser`, `src/lib/game/colyseus`, and `src/lib/game/shared`. All Colyseus server-side code (room definitions, schemas) lives under `src/lib/game/colyseus/` — there is no separate `server/` folder.
 
 ## Decision
 
@@ -35,7 +35,7 @@ We decided to keep game domain code in shared modules under `src/lib/game`, with
 
 ## Links
 
-| Type   | Reference                                                       |
-| ------ | --------------------------------------------------------------- |
-| Commit | `8e328b2 task(game): plug colysseus`                            |
-| Docs   | `src/lib/game/{client,colyseus,phaser,shared}`, `server/rooms/` |
+| Type   | Reference                                      |
+| ------ | ---------------------------------------------- |
+| Commit | `8e328b2 task(game): plug colysseus`           |
+| Docs   | `src/lib/game/{client,colyseus,phaser,shared}` |

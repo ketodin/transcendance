@@ -1,23 +1,12 @@
-import { Room, Client } from 'colyseus';
-import { GameRoomState } from '../../src/lib/game/colyseus/schema/GameRoomState.js';
-import {
-	generateTerrain,
-	getHeightAt,
-	applyCrater
-} from '../../src/lib/game/shared/logic/terrain.js';
-import {
-	createProjectile,
-	stepProjectile,
-	getTurretTip
-} from '../../src/lib/game/shared/logic/physics.js';
-import {
-	PROJECTILE_TYPES,
-	AIRSTRIKE_TYPE_INDEX
-} from '../../src/lib/game/shared/projectileTypes.js';
-import type { GameState } from '../../src/lib/game/shared/state/GameState.js';
-import type { TankState } from '../../src/lib/game/shared/state/TankState.js';
+import { Room, type Client } from 'colyseus';
+import { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
+import { generateTerrain, getHeightAt, applyCrater } from '$lib/game/shared/logic/terrain';
+import { createProjectile, stepProjectile, getTurretTip } from '$lib/game/shared/logic/physics';
+import { PROJECTILE_TYPES, AIRSTRIKE_TYPE_INDEX } from '$lib/game/shared/projectileTypes';
+import type { GameState } from '$lib/game/shared/state/GameState';
+import type { TankState } from '$lib/game/shared/state/TankState';
 // import chat handler
-import { registerChatHandler } from '../../src/lib/game/colyseus/handlers/chatHandler.ts';
+import { registerChatHandler } from '$lib/game/colyseus/handlers/chatHandler';
 
 const SCENE_WIDTH = 1920;
 const SCENE_HEIGHT = 1080;

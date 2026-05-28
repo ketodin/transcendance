@@ -20,8 +20,8 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 RUN pnpm install --prod --frozen-lockfile
 COPY --from=build /app/build/ ./build/
 COPY ./prisma/ ./prisma/
-COPY ./entrypoint.sh ./
+COPY ./entrypoint.sh index.ts ./
 
 EXPOSE 3000
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["node", "build"]
+CMD ["pnpm", "run", "start"]
