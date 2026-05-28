@@ -71,6 +71,7 @@ export default class GameScene extends Scene {
 	private fragmentViews: ProjectileView[] = [];
 	private fragmentTrails: Array<Array<{ x: number; y: number }>> = [];
 	private selectableWeaponIndices: number[] = [];
+	private weaponZones: GameObjects.Zone[] = [];
 	private weaponCooldowns: [boolean[], boolean[]] = [[], []];
 
 	private lastInput: InputSnapshot = {
@@ -245,7 +246,6 @@ export default class GameScene extends Scene {
 		this.powerFill = this.add.graphics().setDepth(10);
 		this.powerFill.setVisible(false);
 
-
 		this.fuelBg = this.add.graphics().setDepth(10);
 		this.fuelBg.fillStyle(COLORS.navy, 0.92);
 		this.fuelBg.fillRect(
@@ -303,6 +303,26 @@ export default class GameScene extends Scene {
 		this.selectableWeaponIndices = PROJECTILE_TYPES.map((t, i) =>
 			t.selectable !== false ? i : -1
 		).filter((i) => i !== -1);
+
+		const iSize = this.sw(42);
+		const iGap = this.sw(8);
+		const n = this.selectableWeaponIndices.length;
+		const startX = (this.scale.width - (n * iSize + (n - 1) * iGap)) / 2;
+		const iconY = this.scale.height - this.sh(66) + 6;
+		this.weaponZones = this.selectableWeaponIndices.map((typeIdx, si) => {
+			const cx = startX + si * (iSize + iGap) + iSize / 2;
+			const zone = this.add
+				.zone(cx, iconY, iSize, iSize)
+				.setDepth(11)
+				.setInteractive({ useHandCursor: true });
+			zone.on('pointerdown', () => {
+				if (this.localCurrentPlayer !== this.myPlayerIndex) return;
+				if (this.localPhase !== 'AIMING') return;
+				this.room?.send('select_weapon', { index: typeIdx });
+			});
+			return zone;
+		});
+
 		this.weaponUiGfx = this.add.graphics().setDepth(10).setVisible(false);
 		this.weaponNameLabel = this.add
 			.text(0, 0, '', {
@@ -795,9 +815,21 @@ export default class GameScene extends Scene {
 			// Outer glow for active icon
 			if (active && !onCooldown) {
 				this.weaponUiGfx.lineStyle(this.sw(6), type.glowColor, 0.12);
-				this.weaponUiGfx.strokeRoundedRect(cx - half - this.sw(3), cy - half - this.sw(3), iSize + this.sw(6), iSize + this.sw(6), r + this.sw(2));
+				this.weaponUiGfx.strokeRoundedRect(
+					cx - half - this.sw(3),
+					cy - half - this.sw(3),
+					iSize + this.sw(6),
+					iSize + this.sw(6),
+					r + this.sw(2)
+				);
 				this.weaponUiGfx.lineStyle(this.sw(2), type.glowColor, 0.3);
-				this.weaponUiGfx.strokeRoundedRect(cx - half - this.sw(1), cy - half - this.sw(1), iSize + this.sw(2), iSize + this.sw(2), r + this.sw(1));
+				this.weaponUiGfx.strokeRoundedRect(
+					cx - half - this.sw(1),
+					cy - half - this.sw(1),
+					iSize + this.sw(2),
+					iSize + this.sw(2),
+					r + this.sw(1)
+				);
 			}
 
 			// Background
@@ -808,7 +840,11 @@ export default class GameScene extends Scene {
 			this.weaponUiGfx.fillRect(cx - half, cy - half, iSize, half);
 
 			// Border
-			this.weaponUiGfx.lineStyle(active ? this.sw(1.5) : this.sw(1), onCooldown ? 0x1a2028 : (active ? type.color : 0x2a3a4a), active && !onCooldown ? 1 : 0.8);
+			this.weaponUiGfx.lineStyle(
+				active ? this.sw(1.5) : this.sw(1),
+				onCooldown ? 0x1a2028 : active ? type.color : 0x2a3a4a,
+				active && !onCooldown ? 1 : 0.8
+			);
 			this.weaponUiGfx.strokeRoundedRect(cx - half, cy - half, iSize, iSize, r);
 			// Metallic top-edge bevel
 			this.weaponUiGfx.lineStyle(this.sw(1), 0xffffff, active ? 0.18 : 0.06);
@@ -860,81 +896,95 @@ export default class GameScene extends Scene {
 			case 'Shell': {
 				// Tail fins
 				g.fillStyle(shade(c, 0.5), a);
-				g.fillTriangle(cx - s*10, cy - s*4.5, cx - s*13, cy - s*9, cx - s*6, cy - s*4.5);
-				g.fillTriangle(cx - s*10, cy + s*4.5, cx - s*13, cy + s*9, cx - s*6, cy + s*4.5);
+				g.fillTriangle(
+					cx - s * 10,
+					cy - s * 4.5,
+					cx - s * 13,
+					cy - s * 9,
+					cx - s * 6,
+					cy - s * 4.5
+				);
+				g.fillTriangle(
+					cx - s * 10,
+					cy + s * 4.5,
+					cx - s * 13,
+					cy + s * 9,
+					cx - s * 6,
+					cy + s * 4.5
+				);
 				// Body
 				g.fillStyle(c, a);
-				g.fillRoundedRect(cx - s*11, cy - s*4.5, s*19, s*9, s*2.5);
+				g.fillRoundedRect(cx - s * 11, cy - s * 4.5, s * 19, s * 9, s * 2.5);
 				// Nose cone
 				g.beginPath();
-				g.moveTo(cx + s*8, cy - s*4.5);
-				g.lineTo(cx + s*8, cy + s*4.5);
-				g.lineTo(cx + s*15, cy);
+				g.moveTo(cx + s * 8, cy - s * 4.5);
+				g.lineTo(cx + s * 8, cy + s * 4.5);
+				g.lineTo(cx + s * 15, cy);
 				g.closePath();
 				g.fillPath();
 				// Rotating band
 				g.fillStyle(shade(c, 0.5), a);
-				g.fillRect(cx + s*1, cy - s*4.5, s*2.5, s*9);
+				g.fillRect(cx + s * 1, cy - s * 4.5, s * 2.5, s * 9);
 				// Top highlight
 				g.fillStyle(0xffffff, 0.22 * a);
-				g.fillRect(cx - s*9, cy - s*3.5, s*17, s*1.5);
+				g.fillRect(cx - s * 9, cy - s * 3.5, s * 17, s * 1.5);
 				// Nose tip glint
 				g.fillStyle(0xffffff, 0.15 * a);
-				g.fillTriangle(cx + s*8, cy - s*4.5, cx + s*15, cy, cx + s*11, cy - s*2.5);
+				g.fillTriangle(cx + s * 8, cy - s * 4.5, cx + s * 15, cy, cx + s * 11, cy - s * 2.5);
 				break;
 			}
 			case 'Heavy': {
 				// Tail fins (bigger)
 				g.fillStyle(shade(c, 0.45), a);
-				g.fillTriangle(cx - s*11, cy - s*5, cx - s*15, cy - s*11, cx - s*5, cy - s*5);
-				g.fillTriangle(cx - s*11, cy + s*5, cx - s*15, cy + s*11, cx - s*5, cy + s*5);
+				g.fillTriangle(cx - s * 11, cy - s * 5, cx - s * 15, cy - s * 11, cx - s * 5, cy - s * 5);
+				g.fillTriangle(cx - s * 11, cy + s * 5, cx - s * 15, cy + s * 11, cx - s * 5, cy + s * 5);
 				// Thick body
 				g.fillStyle(c, a);
-				g.fillRoundedRect(cx - s*12, cy - s*6, s*23, s*12, s*4);
+				g.fillRoundedRect(cx - s * 12, cy - s * 6, s * 23, s * 12, s * 4);
 				// Nose cone
 				g.beginPath();
-				g.moveTo(cx + s*11, cy - s*6);
-				g.lineTo(cx + s*11, cy + s*6);
-				g.lineTo(cx + s*18, cy);
+				g.moveTo(cx + s * 11, cy - s * 6);
+				g.lineTo(cx + s * 11, cy + s * 6);
+				g.lineTo(cx + s * 18, cy);
 				g.closePath();
 				g.fillPath();
 				// Double body bands
 				g.fillStyle(shade(c, 0.45), a);
-				g.fillRect(cx - s*2, cy - s*6, s*3, s*12);
-				g.fillRect(cx + s*3.5, cy - s*6, s*2, s*12);
+				g.fillRect(cx - s * 2, cy - s * 6, s * 3, s * 12);
+				g.fillRect(cx + s * 3.5, cy - s * 6, s * 2, s * 12);
 				// Warning stripe (yellow)
 				g.fillStyle(0xffcc00, 0.55 * a);
-				g.fillRect(cx - s*8, cy - s*2, s*11, s*1.5);
+				g.fillRect(cx - s * 8, cy - s * 2, s * 11, s * 1.5);
 				// Top highlight
 				g.fillStyle(0xffffff, 0.2 * a);
-				g.fillRect(cx - s*10, cy - s*5, s*20, s*2);
+				g.fillRect(cx - s * 10, cy - s * 5, s * 20, s * 2);
 				break;
 			}
 			case 'Bouncer': {
 				// Outer energy ring
-				g.lineStyle(s*1.5, type.glowColor, 0.45 * a);
-				g.strokeCircle(cx, cy - s*2, s*11);
+				g.lineStyle(s * 1.5, type.glowColor, 0.45 * a);
+				g.strokeCircle(cx, cy - s * 2, s * 11);
 				// Ball
 				g.fillStyle(c, a);
-				g.fillCircle(cx, cy - s*2, s*8);
+				g.fillCircle(cx, cy - s * 2, s * 8);
 				// Sheen
 				g.fillStyle(0xffffff, 0.35 * a);
-				g.fillEllipse(cx - s*2, cy - s*6, s*7, s*4);
+				g.fillEllipse(cx - s * 2, cy - s * 6, s * 7, s * 4);
 				g.fillStyle(0xffffff, 0.12 * a);
-				g.fillEllipse(cx - s*1, cy - s*4.5, s*4, s*2.5);
+				g.fillEllipse(cx - s * 1, cy - s * 4.5, s * 4, s * 2.5);
 				// Bounce zigzag below ball
-				g.lineStyle(s*1.5, type.glowColor, 0.7 * a);
+				g.lineStyle(s * 1.5, type.glowColor, 0.7 * a);
 				g.beginPath();
-				g.moveTo(cx - s*11, cy + s*11);
-				g.lineTo(cx - s*6,  cy + s*7);
-				g.lineTo(cx - s*1,  cy + s*11);
-				g.lineTo(cx + s*4,  cy + s*7);
-				g.lineTo(cx + s*9,  cy + s*11);
+				g.moveTo(cx - s * 11, cy + s * 11);
+				g.lineTo(cx - s * 6, cy + s * 7);
+				g.lineTo(cx - s * 1, cy + s * 11);
+				g.lineTo(cx + s * 4, cy + s * 7);
+				g.lineTo(cx + s * 9, cy + s * 11);
 				g.strokePath();
 				// Impact dots on zigzag peaks
 				g.fillStyle(type.glowColor, 0.5 * a);
-				g.fillCircle(cx - s*6, cy + s*7, s*1.5);
-				g.fillCircle(cx + s*4, cy + s*7, s*1.5);
+				g.fillCircle(cx - s * 6, cy + s * 7, s * 1.5);
+				g.fillCircle(cx + s * 4, cy + s * 7, s * 1.5);
 				break;
 			}
 			case 'Split': {
@@ -942,90 +992,99 @@ export default class GameScene extends Scene {
 				const subAngles = [-38, 0, 38];
 				for (const deg of subAngles) {
 					const rad = (deg * Math.PI) / 180;
-					const ex = cx + Math.cos(rad) * s*11;
-					const ey = cy + Math.sin(rad) * s*11;
+					const ex = cx + Math.cos(rad) * s * 11;
+					const ey = cy + Math.sin(rad) * s * 11;
 					// Trail
-					g.lineStyle(s*1.5, shade(c, 0.55), 0.45 * a);
-					g.beginPath(); g.moveTo(cx, cy); g.lineTo(ex, ey); g.strokePath();
+					g.lineStyle(s * 1.5, shade(c, 0.55), 0.45 * a);
+					g.beginPath();
+					g.moveTo(cx, cy);
+					g.lineTo(ex, ey);
+					g.strokePath();
 					// Sub-projectile
 					g.fillStyle(c, a);
-					g.fillCircle(ex, ey, s*3.5);
+					g.fillCircle(ex, ey, s * 3.5);
 					// Shine
 					g.fillStyle(0xffffff, 0.3 * a);
-					g.fillCircle(ex - s*1, ey - s*1, s*1.5);
+					g.fillCircle(ex - s * 1, ey - s * 1, s * 1.5);
 				}
 				// Central burst
 				g.fillStyle(type.glowColor, 0.9 * a);
-				g.fillCircle(cx, cy, s*4.5);
+				g.fillCircle(cx, cy, s * 4.5);
 				g.fillStyle(0xffffff, 0.5 * a);
-				g.fillCircle(cx, cy, s*2);
+				g.fillCircle(cx, cy, s * 2);
 				break;
 			}
 			case 'Airstrike': {
 				// Swept wings
 				g.fillStyle(shade(c, 0.72), a);
-				g.fillTriangle(cx, cy - s*2, cx - s*4, cy - s*14, cx - s*11, cy - s*2);
-				g.fillTriangle(cx, cy + s*2, cx - s*4, cy + s*14, cx - s*11, cy + s*2);
+				g.fillTriangle(cx, cy - s * 2, cx - s * 4, cy - s * 14, cx - s * 11, cy - s * 2);
+				g.fillTriangle(cx, cy + s * 2, cx - s * 4, cy + s * 14, cx - s * 11, cy + s * 2);
 				// Fuselage
 				g.fillStyle(c, a);
 				g.beginPath();
-				g.moveTo(cx + s*14, cy);
-				g.lineTo(cx + s*8,  cy - s*2);
-				g.lineTo(cx - s*11, cy - s*1.5);
-				g.lineTo(cx - s*14, cy);
-				g.lineTo(cx - s*11, cy + s*1.5);
-				g.lineTo(cx + s*8,  cy + s*2);
+				g.moveTo(cx + s * 14, cy);
+				g.lineTo(cx + s * 8, cy - s * 2);
+				g.lineTo(cx - s * 11, cy - s * 1.5);
+				g.lineTo(cx - s * 14, cy);
+				g.lineTo(cx - s * 11, cy + s * 1.5);
+				g.lineTo(cx + s * 8, cy + s * 2);
 				g.closePath();
 				g.fillPath();
 				// Tail fins
 				g.fillStyle(shade(c, 0.55), a);
-				g.fillTriangle(cx - s*9, cy - s*1.5, cx - s*7, cy - s*6, cx - s*13, cy - s*1.5);
-				g.fillTriangle(cx - s*9, cy + s*1.5, cx - s*7, cy + s*6, cx - s*13, cy + s*1.5);
+				g.fillTriangle(cx - s * 9, cy - s * 1.5, cx - s * 7, cy - s * 6, cx - s * 13, cy - s * 1.5);
+				g.fillTriangle(cx - s * 9, cy + s * 1.5, cx - s * 7, cy + s * 6, cx - s * 13, cy + s * 1.5);
 				// Cockpit
 				g.fillStyle(0x88ccff, 0.85 * a);
-				g.fillEllipse(cx + s*9, cy, s*6, s*3);
+				g.fillEllipse(cx + s * 9, cy, s * 6, s * 3);
 				// Afterburner flame
 				g.fillStyle(0xff6600, 0.75 * a);
-				g.fillTriangle(cx - s*14, cy - s*1, cx - s*14, cy + s*1, cx - s*19, cy);
+				g.fillTriangle(cx - s * 14, cy - s * 1, cx - s * 14, cy + s * 1, cx - s * 19, cy);
 				g.fillStyle(0xffdd00, 0.55 * a);
-				g.fillTriangle(cx - s*14, cy - s*0.5, cx - s*14, cy + s*0.5, cx - s*17, cy);
+				g.fillTriangle(cx - s * 14, cy - s * 0.5, cx - s * 14, cy + s * 0.5, cx - s * 17, cy);
 				break;
 			}
 			case 'Sniper': {
 				// Casing
 				g.fillStyle(shade(c, 0.6), a);
-				g.fillRoundedRect(cx - s*13, cy + s*0.5, s*16, s*7, s*2);
+				g.fillRoundedRect(cx - s * 13, cy + s * 0.5, s * 16, s * 7, s * 2);
 				// Bullet head
 				g.fillStyle(c, a);
 				g.beginPath();
-				g.moveTo(cx + s*3, cy + s*0.5);
-				g.lineTo(cx + s*3, cy + s*7.5);
-				g.lineTo(cx + s*14, cy + s*4);
+				g.moveTo(cx + s * 3, cy + s * 0.5);
+				g.lineTo(cx + s * 3, cy + s * 7.5);
+				g.lineTo(cx + s * 14, cy + s * 4);
 				g.closePath();
 				g.fillPath();
 				// Tip glint
 				g.fillStyle(0xffffff, 0.28 * a);
-				g.fillTriangle(cx + s*3, cy + s*0.5, cx + s*14, cy + s*4, cx + s*8, cy + s*1.5);
+				g.fillTriangle(cx + s * 3, cy + s * 0.5, cx + s * 14, cy + s * 4, cx + s * 8, cy + s * 1.5);
 				// Scope body
 				g.fillStyle(0x111a11, 0.95);
-				g.fillRoundedRect(cx - s*4, cy - s*10, s*12, s*6, s*1.5);
+				g.fillRoundedRect(cx - s * 4, cy - s * 10, s * 12, s * 6, s * 1.5);
 				g.lineStyle(s, type.glowColor, 0.8 * a);
-				g.strokeRoundedRect(cx - s*4, cy - s*10, s*12, s*6, s*1.5);
+				g.strokeRoundedRect(cx - s * 4, cy - s * 10, s * 12, s * 6, s * 1.5);
 				// Scope lens
 				g.fillStyle(0x112211, 1);
-				g.fillCircle(cx + s*2, cy - s*7, s*2.5);
-				g.lineStyle(s*0.8, type.glowColor, 0.6 * a);
-				g.strokeCircle(cx + s*2, cy - s*7, s*2.5);
+				g.fillCircle(cx + s * 2, cy - s * 7, s * 2.5);
+				g.lineStyle(s * 0.8, type.glowColor, 0.6 * a);
+				g.strokeCircle(cx + s * 2, cy - s * 7, s * 2.5);
 				// Crosshair inside lens
-				g.lineStyle(s*0.7, 0xffffff, 0.45 * a);
-				g.beginPath(); g.moveTo(cx + s*2, cy - s*9.5); g.lineTo(cx + s*2, cy - s*4.5); g.strokePath();
-				g.beginPath(); g.moveTo(cx - s*0.5, cy - s*7); g.lineTo(cx + s*4.5, cy - s*7); g.strokePath();
+				g.lineStyle(s * 0.7, 0xffffff, 0.45 * a);
+				g.beginPath();
+				g.moveTo(cx + s * 2, cy - s * 9.5);
+				g.lineTo(cx + s * 2, cy - s * 4.5);
+				g.strokePath();
+				g.beginPath();
+				g.moveTo(cx - s * 0.5, cy - s * 7);
+				g.lineTo(cx + s * 4.5, cy - s * 7);
+				g.strokePath();
 				// Casing shine
 				g.fillStyle(0xffffff, 0.18 * a);
-				g.fillRect(cx - s*11, cy + s*1.5, s*13, s*1.5);
+				g.fillRect(cx - s * 11, cy + s * 1.5, s * 13, s * 1.5);
 				// Scope-to-body mounting rail
 				g.fillStyle(shade(c, 0.4), a);
-				g.fillRect(cx - s*1, cy - s*4, s*3, s*4.5);
+				g.fillRect(cx - s * 1, cy - s * 4, s * 3, s * 4.5);
 				break;
 			}
 		}

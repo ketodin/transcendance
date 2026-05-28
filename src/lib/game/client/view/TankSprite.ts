@@ -225,8 +225,10 @@ export class TankSprite {
 
 	private drawHealth(hx: number, hy: number, health: number): void {
 		this.healthGfx.clear();
-		const w = 44, h = 5;
-		const bx = hx - w / 2, by = hy - 22;
+		const w = 44,
+			h = 5;
+		const bx = hx - w / 2,
+			by = hy - 22;
 		this.healthGfx.fillStyle(COLORS.black, 0.6);
 		this.healthGfx.fillRect(bx - 1, by - 1, w + 2, h + 2);
 		const pct = health / 100;

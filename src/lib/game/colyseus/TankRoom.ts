@@ -64,6 +64,17 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			this.fireProjectile();
 		});
 
+		this.onMessage('select_weapon', (client, data: { index: number }) => {
+			if (!this.isCurrentPlayer(client)) return;
+			if (this.physicsState?.phase !== 'AIMING') return;
+			const p = this.physicsState.currentPlayer;
+			const type = PROJECTILE_TYPES[data.index];
+			if (!type || type.selectable === false) return;
+			if (this.physicsState.weaponCooldowns[p][data.index]) return;
+			this.physicsState.weaponIndex = data.index;
+			this.state.weaponIndex = data.index;
+		});
+
 		this.onMessage('cycle_weapon', (client) => {
 			if (!this.isCurrentPlayer(client)) return;
 			if (this.physicsState?.phase !== 'AIMING') return;
@@ -127,7 +138,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			name: `Player ${index + 1}`,
 			facing: index === 0 ? 1 : -1
 		});
-		const selectableCount = PROJECTILE_TYPES.filter((t) => t.selectable !== false).length;
+		const emptyCooldowns = (): boolean[] => new Array<boolean>(PROJECTILE_TYPES.length).fill(false);
 		this.physicsState = {
 			terrain,
 			tanks: [makeTank(0), makeTank(1)],
@@ -140,10 +151,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			weaponIndex: 0,
 			fuel: 100,
 			turnTimeLeft: 30,
-			weaponCooldowns: [
-				new Array(PROJECTILE_TYPES.length).fill(false),
-				new Array(PROJECTILE_TYPES.length).fill(false)
-			]
+			weaponCooldowns: [emptyCooldowns(), emptyCooldowns()]
 		};
 		this.syncTank(0);
 		this.syncTank(1);
@@ -317,10 +325,14 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 
 		// Mark weapon as used for this player
 		this.physicsState.weaponCooldowns[p][wi] = true;
-		const selectable = PROJECTILE_TYPES.map((t, i) => (t.selectable !== false ? i : -1)).filter((i) => i !== -1);
+		const selectable = PROJECTILE_TYPES.map((t, i) => (t.selectable !== false ? i : -1)).filter(
+			(i) => i !== -1
+		);
 		const allUsed = selectable.every((i) => this.physicsState.weaponCooldowns[p][i]);
 		if (allUsed) {
-			this.physicsState.weaponCooldowns[p] = new Array(PROJECTILE_TYPES.length).fill(false);
+			this.physicsState.weaponCooldowns[p] = new Array<boolean>(PROJECTILE_TYPES.length).fill(
+				false
+			);
 		}
 
 		this.physicsState.phase = 'FLYING';
@@ -443,9 +455,14 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 
 		// Ensure the current weapon is available for the new active player
 		const p = this.physicsState.currentPlayer;
-		const selectable = PROJECTILE_TYPES.map((t, i) => (t.selectable !== false ? i : -1)).filter((i) => i !== -1);
+		const selectable = PROJECTILE_TYPES.map((t, i) => (t.selectable !== false ? i : -1)).filter(
+			(i) => i !== -1
+		);
 		const available = selectable.filter((i) => !this.physicsState.weaponCooldowns[p][i]);
-		if (available.length > 0 && this.physicsState.weaponCooldowns[p][this.physicsState.weaponIndex]) {
+		if (
+			available.length > 0 &&
+			this.physicsState.weaponCooldowns[p][this.physicsState.weaponIndex]
+		) {
 			this.physicsState.weaponIndex = available[0];
 			this.state.weaponIndex = available[0];
 		}
