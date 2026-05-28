@@ -23,24 +23,38 @@
 		disableForm: SuperValidated<Infer<DisableSchema>>;
 	}
 
-	let { user, enableForm: enableFormData, verifyForm: verifyFormData, disableForm: disableFormData }: Props = $props();
+	let {
+		user,
+		enableForm: enableFormData,
+		verifyForm: verifyFormData,
+		disableForm: disableFormData
+	}: Props = $props();
 
-	const enableSF = superForm(untrack(() => enableFormData), {
-		id: 'enable',
-		validators: zod4Client(enableSchema)
-	});
+	const enableSF = superForm(
+		untrack(() => enableFormData),
+		{
+			id: 'enable',
+			validators: zod4Client(enableSchema)
+		}
+	);
 	const { message: enableMsg } = enableSF;
 
-	const verifySF = superForm(untrack(() => verifyFormData), {
-		id: 'verify',
-		validators: zod4Client(verifySchema)
-	});
+	const verifySF = superForm(
+		untrack(() => verifyFormData),
+		{
+			id: 'verify',
+			validators: zod4Client(verifySchema)
+		}
+	);
 	const { message: verifyMsg } = verifySF;
 
-	const disableSF = superForm(untrack(() => disableFormData), {
-		id: 'disable',
-		validators: zod4Client(disableSchema)
-	});
+	const disableSF = superForm(
+		untrack(() => disableFormData),
+		{
+			id: 'disable',
+			validators: zod4Client(disableSchema)
+		}
+	);
 
 	type EnableMsg = { totpUri: string; backupCodes: string[] } | null;
 	const totpUri = $derived(($enableMsg as EnableMsg)?.totpUri ?? '');
@@ -49,7 +63,7 @@
 	let manualStep = $state<'idle' | null>(null);
 	const step = $derived(
 		manualStep ?? ($verifyMsg === 'done' ? 'done' : totpUri ? 'scan' : 'idle')
-	) as 'idle' | 'scan' | 'done';
+	);
 </script>
 
 {#if step === 'done'}
