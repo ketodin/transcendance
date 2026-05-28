@@ -1,8 +1,10 @@
+packages:
+  - 'docusaurus'
 allowBuilds:
   '@prisma/engines': true
+  '@swc/core': true
   better-sqlite3: true
+  core-js: true
   esbuild: true
   msgpackr-extract: true
   prisma: true
-packages:
-  - 'docusaurus'

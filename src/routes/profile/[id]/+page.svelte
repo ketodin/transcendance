@@ -1,15 +1,12 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
-	const { data }: PageProps = $props();
+	import { resolve } from '$app/paths';
 	import { m } from '$lib/paraglide/messages';
 	import { Button } from '$lib/components/ui/button';
 	import { Settings } from '@lucide/svelte';
+	import * as friends from '$lib/friends.remote';
 
-	let userType = 2;
-	// 0 : Self
-	// 1 : Friend
-	// 2 : Someone
-	// todo: enum clean
+	const { data }: PageProps = $props();
 </script>
 
 <div class="glass w-full h-full p-6">
@@ -29,17 +26,18 @@
 			<p class="botinfo">Inscription le {new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(data.user.createdAt))}</p>
 		</div>
 		<div class="action">
-			{#if userType === 0}
+			{#if data.userType === 'self'}
 				<Button
-					href="/settings"
+					href={resolve("/settings")}
 					class="glassbutton"
 					variant="outline">
-					<p> settings </p> 
+					settings
 					<!-- TODO: i18n -->
 					<Settings size={20} />
 				</Button>
-			{:else if userType === 1}
+			{:else if data.userType === 'friend'}
 				<Button
+					onclick={() => friends.remove(data.user.id)}
 					class="glassbutton"
 					variant="outline">
 					<p> {m.remove_friend()} </p>
@@ -47,13 +45,14 @@
 				<Button
 					class="glassbutton"
 					variant="outline">
-					<p> {m.invite_play()} </p>
+					{m.invite_play()}
 				</Button>
-			{:else}
+			{:else if data.userType === 'someone'}
 				<Button
+					onclick={() => friends.accept(data.user.id)}
 					class="glassbutton"
 					variant="outline">
-					<p> add friend </p>
+					add friend
 					<!-- TODO: i18n -->
 				</Button>
 			{/if}

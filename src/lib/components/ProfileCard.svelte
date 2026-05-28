@@ -1,18 +1,20 @@
 <script lang="ts">
 	import { useSession } from '$lib/auth-client';
 	import { Settings } from '@lucide/svelte';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	const session = useSession();
 
 	function handleCardClick(e: MouseEvent) {
 		const target = e.target as HTMLElement;
 		if (target.closest('.settings-link')) return;
-		window.location.href = '/profile';
+		void goto(resolve('/profile/[id]', { id: $session.data!.user.id }))
 	}
 
 	function handleCardKeydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' || e.key === ' ') {
-			window.location.href = '/profile';
+		void goto(resolve('/profile/[id]', { id: $session.data!.user.id }))
 		}
 	}
 </script>
@@ -26,7 +28,7 @@
 		onclick={handleCardClick}
 		onkeydown={handleCardKeydown}
 	>
-		<a href="/settings" class="settings-link" onclick={(e) => e.stopPropagation()}>
+		<a href={resolve("/settings")} class="settings-link" onclick={(e) => e.stopPropagation()}>
 			<Settings size={20} />
 		</a>
 		<span class="name">{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}</span>
