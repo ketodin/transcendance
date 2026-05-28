@@ -4,7 +4,7 @@ import db from '$lib/server/db';
 
 type UserType = 'self' | 'friend' | 'someone';
 
-async function isFriend(meId: string, otherId: string): bool {
+async function isFriend(meId: string, otherId: string): Promise<boolean> {
 	const friendship1 = await db.friendRequest.findUnique({
 		where: {
 			senderId_receiverId: {

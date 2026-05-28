@@ -4,6 +4,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as friends from '$lib/friends.remote';
+	import { resolve } from '$app/paths';
 
 	type Props = { friend: friends.Friend; online: boolean };
 	let { friend, online }: Props = $props();
@@ -11,7 +12,7 @@
 	const initial = $derived(friend.name.charAt(0).toUpperCase());
 </script>
 
-<a href={`/profile/${friend.id}`} class="glassdeep user">
+<a href={resolve(`/profile/${friend.id}`)} class="glassdeep user">
 	<div class="avatar">{initial}</div>
 
 	<div class="info">
