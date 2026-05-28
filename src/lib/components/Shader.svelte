@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	type Theme = 'dark' | 'light';
+	let { base = 1, error = 0 } = $props<{ base?: number; error?: number }>();
 
-	let { theme = 'dark' } = $props<{ theme?: Theme }>();
 	let canvas: HTMLCanvasElement;
 	let animId: number;
 
@@ -20,7 +19,8 @@ precision highp float;
 uniform float u_time;
 uniform float u_seed;
 uniform vec2 u_res;
-uniform float u_mix;
+uniform float u_base;
+uniform float u_error;
 
 float hash(vec2 p) {
 	p = fract(p * vec2(123.34, 456.21));
@@ -87,10 +87,30 @@ void main() {
 	lightCol += n * 0.22;
 	lightCol *= 2.5;
 
-	vec3 color = mix(lightCol, darkCol, u_mix);
+	vec3 color = mix(lightCol, darkCol, u_base);
 
 	float vignette = smoothstep(1.3, 0.2, length(uv - 0.5));
 	color *= vignette;
+
+if (u_error > 0.0) {
+
+	float lum = dot(color, vec3(0.299, 0.587, 0.114));
+
+	vec3 emberDark = vec3(0.08, 0.02, 0.01);
+	vec3 emberMid  = vec3(0.55, 0.12, 0.05);
+	vec3 emberHot  = vec3(1.0, 0.35, 0.1);
+
+	float heat = smoothstep(0.2, 0.85, n * 1.2 + lum * 0.3);
+
+	vec3 ember = mix(emberDark, emberMid, heat);
+	ember = mix(ember, emberHot, heat * heat);
+
+	float depth = 1.0 - lum;
+
+	color = mix(color, ember, u_error * (0.35 + 0.35 * depth));
+
+	color += ember * u_error * 0.08 * depth;
+}
 
 	gl_FragColor = vec4(color, 1.0);
 }
@@ -98,15 +118,20 @@ void main() {
 
 	let running = true;
 
-	let currentMix = 0;
-	let targetMix = 0;
+	let currentBase = 1;
+	let targetBase = 1;
+
+	let currentError = 0;
+	let targetError = 0;
 
 	$effect(() => {
-		targetMix = theme === 'dark' ? 1 : 0;
+		targetBase = base;
+		targetError = error;
 	});
 
-	function animateMix() {
-		currentMix += (targetMix - currentMix) * 0.08;
+	function animate() {
+		currentBase += (targetBase - currentBase) * 0.08;
+		currentError += (targetError - currentError) * 0.08;
 	}
 
 	onMount(() => {
@@ -117,7 +142,7 @@ void main() {
 
 		function compile(type: number, src: string) {
 			const shader = ctx.createShader(type);
-			if (!shader) throw new Error('Failed to create shader');
+			if (!shader) throw new Error('shader error');
 
 			ctx.shaderSource(shader, src);
 			ctx.compileShader(shader);
@@ -134,8 +159,6 @@ void main() {
 		ctx.useProgram(prog);
 
 		const buf = ctx.createBuffer();
-		if (!buf) return;
-
 		ctx.bindBuffer(ctx.ARRAY_BUFFER, buf);
 		ctx.bufferData(
 			ctx.ARRAY_BUFFER,
@@ -150,7 +173,8 @@ void main() {
 		const uTime = ctx.getUniformLocation(prog, 'u_time');
 		const uSeed = ctx.getUniformLocation(prog, 'u_seed');
 		const uRes = ctx.getUniformLocation(prog, 'u_res');
-		const uMix = ctx.getUniformLocation(prog, 'u_mix');
+		const uBase = ctx.getUniformLocation(prog, 'u_base');
+		const uError = ctx.getUniformLocation(prog, 'u_error');
 
 		const seed = Math.random() * 100;
 
@@ -166,12 +190,13 @@ void main() {
 		const draw = (t: number) => {
 			if (!running) return;
 
-			animateMix();
+			animate();
 
 			if (uTime) ctx.uniform1f(uTime, t / 1000);
 			if (uSeed) ctx.uniform1f(uSeed, seed);
 			if (uRes) ctx.uniform2f(uRes, canvas.width, canvas.height);
-			if (uMix) ctx.uniform1f(uMix, currentMix);
+			if (uBase) ctx.uniform1f(uBase, currentBase);
+			if (uError) ctx.uniform1f(uError, currentError);
 
 			ctx.drawArrays(ctx.TRIANGLE_STRIP, 0, 4);
 
