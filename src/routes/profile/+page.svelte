@@ -5,10 +5,11 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Settings } from '@lucide/svelte';
 
-	let userType = 0;
+	let userType = 2;
 	// 0 : Self
 	// 1 : Friend
 	// 2 : Someone
+	// todo: enum clean
 </script>
 
 <div class="glass w-full h-full p-6">
