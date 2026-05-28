@@ -24,6 +24,9 @@
 	"invalid_repeat": "Les mots de passe ne correspondent pas",
 	"already_email": "E-mail déjà utilisé",
 	"pending": "En attente",
+	"settings": "Paramètres",
+	"add_friend": "Ajouter un ami",
+	"joined_on": "Inscription le {date}",
 
 	"name_place_holder": "Stephane",
 	"mail_place_holder": "stephane.travail@gmail.com",
@@ -46,7 +49,7 @@
 	"backup_codes_description": "Sauvegardez ces codes de secours — ils ne seront plus affichés après avoir quitté cette page.",
 	"copy_all": "Tout copier",
 	"copied": "Copié",
-	"back_to_settings": "Retour aux paramètres",
+	"close_backup_code": "Fermer",
 	"disable_2fa_title": "Désactiver la 2FA",
 	"disable": "Désactiver",
 	"error_invalid_password": "Mot de passe incorrect.",

@@ -4,6 +4,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as friends from '$lib/friends.remote';
+	import { resolve } from '$app/paths';
 
 	type Props = { friend: friends.Friend; online: boolean };
 	let { friend, online }: Props = $props();
@@ -11,7 +12,7 @@
 	const initial = $derived(friend.name.charAt(0).toUpperCase());
 </script>
 
-<div class="glass user">
+<a href={resolve(`/profile/${friend.id}`)} class="glassdeep user">
 	<div class="avatar">{initial}</div>
 
 	<div class="info">
@@ -30,14 +31,7 @@
 	</div>
 
 	<div class="actions">
-		{#if friend.friendStatus == 'ACCEPTED'}
-			<Button
-				class="glass text-red-400"
-				variant="outline"
-				size="icon-sm"
-				onclick={() => friends.remove(friend.id)}><X /></Button
-			>
-		{:else if friend.friendStatus == 'RECEIVED'}
+		{#if friend.friendStatus == 'RECEIVED'}
 			<Button
 				class="glass"
 				variant="outline"
@@ -53,7 +47,7 @@
 			>
 		{/if}
 	</div>
-</div>
+</a>
 
 <style>
 	.user {
@@ -82,7 +76,7 @@
 
 	.avatar {
 		width: 2.5rem;
-		height: 2.5rem;
+		aspect-ratio: 1 / 1;
 		border-radius: 50%;
 
 		display: flex;
@@ -93,6 +87,7 @@
 
 		background: rgba(255, 255, 255, 0.1);
 		border: 1px solid rgba(255, 255, 255, 0.08);
+		font-size: 1vw;
 	}
 
 	.info {

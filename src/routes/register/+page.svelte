@@ -104,7 +104,7 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-				<Form.Button class="glass h-11 w-full text-base font-medium">
+				<Form.Button class="glassbutton h-11 w-full text-base font-medium">
 					{m.register()}
 				</Form.Button>
 				<p class="text-muted-foreground text-center text-sm">
