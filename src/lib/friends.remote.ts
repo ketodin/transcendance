@@ -4,7 +4,7 @@ import { query, command, form, getRequestEvent } from '$app/server';
 import { z } from 'zod';
 import db from '$lib/server/db';
 import { getFriendList } from './friends';
-
+import { statusHub } from '$lib/game/colyseus/statusHub';
 
 async function sendOrAccept(meId: string, otherId: string) {
 	/// check for reverse request, accepted or not, and set it accepted if found
@@ -14,6 +14,7 @@ async function sendOrAccept(meId: string, otherId: string) {
 	});
 	/// if found any reverse request, stop
 	if (updates.count > 0) {
+		statusHub.friendAccepted(meId, otherId);
 		return;
 	}
 	/// create a pending request if not already friend
@@ -39,6 +40,7 @@ async function dismissOrRemove(meId: string, otherId: string) {
 			]
 		}
 	});
+	statusHub.friendRemoved(meId, otherId);
 }
 
 export const list = query(async () => {

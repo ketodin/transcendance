@@ -1,4 +1,4 @@
-import { StatusRoom } from './StatusRoom';
+import { StatusRoom } from '$lib/game/colyseus/StatusRoom';
 import { FriendStatus } from '$lib/game/colyseus/schema/StatusRoomState';
 import { getFriendList } from '$lib/friends'
 

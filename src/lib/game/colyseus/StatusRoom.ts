@@ -1,7 +1,7 @@
 import { Room, type Client } from 'colyseus';
 import { StatusState, FriendStatus } from './schema/StatusRoomState';
 import { getFriendList } from '$lib/friends'
-import { statusHub } from './statusHub';
+import { statusHub } from '$lib/game/colyseus/statusHub';
 
 export class StatusRoom extends Room<{ state: StatusState }> {
 	state = new StatusState();
@@ -12,9 +12,7 @@ export class StatusRoom extends Room<{ state: StatusState }> {
 		this.userId = options.userId;
 
 		console.log("onJoin", this.userId);
-
 		statusHub.bind(this.userId, this);
-
 
 		const friends = await getFriendList(this.userId);// need to use this instead of non realtime sveltekit `query`
 
