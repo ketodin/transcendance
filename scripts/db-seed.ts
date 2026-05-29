@@ -7,7 +7,7 @@ import 'dotenv/config';
 
 const DEFAULT_PASSWORD = 'abcdef12';
 
-let users: {
+const users: {
 	key: string;
 	email: string;
 	name: string;
@@ -108,13 +108,13 @@ async function ensureFriendship(
 }
 
 async function main() {
-	let userIds: Map<string, string> = new Map<string, string>();
+	const userIds = new Map<string, string>();
 
-	for (let user of users) {
+	for (const user of users) {
 		userIds.set(user.key, await ensureUser(user));
 	}
 
-	for (let friendship of friendships) {
+	for (const friendship of friendships) {
 		await ensureFriendship(userIds, friendship);
 	}
 }
