@@ -5,15 +5,26 @@ import { twoFactor } from 'better-auth/plugins';
 import { betterAuth } from 'better-auth';
 import 'dotenv/config';
 
-const DEFAULT_PASSWORD = 'abcdef12';
-
-const users: {
+type User = {
 	key: string;
 	email: string;
 	name: string;
 	password?: string;
-}[] = [
+};
+
+type Friendship = {
+	sender: string;
+	receiver: string;
+	status: 'ACCEPTED' | 'PENDING';
+};
+
+const DEFAULT_PASSWORD = 'abcdef12';
+
+const users: User[] = [
 	{ key: 'abc', email: 'abc@def.com', name: 'abc' },
+	{ key: 'aaa', email: 'aaa@gmail.com', name: 'aaa', password: '00000000' },
+	{ key: 'bbb', email: 'bbb@gmail.com', name: 'bbb', password: '00000000' },
+	{ key: 'ccc', email: 'ccc@gmail.com', name: 'ccc', password: '00000000' },
 	{ key: 'test', email: 'test@test.test', name: 'Test' },
 	{ key: 'emporio', email: 'emporio@gmail.com', name: 'Emporio' },
 	{ key: 'daclino', email: 'timeo@daclino.fr', name: 'TimeoDaclino' },
@@ -31,24 +42,26 @@ const users: {
 	}
 ];
 
-const friendships: {
-	sender: string;
-	receiver: string;
-	status: 'ACCEPTED' | 'PENDING';
-}[] = [
-	{ sender: 'daclino', receiver: 'abc', status: 'ACCEPTED' },
-	{ sender: 'emporio', receiver: 'abc', status: 'ACCEPTED' },
-	{ sender: 'abc', receiver: 'ketodin', status: 'ACCEPTED' },
-	{ sender: 'adrilava', receiver: 'abc', status: 'PENDING' },
-	{ sender: 'ledon', receiver: 'abc', status: 'PENDING' },
-	{ sender: 'abc', receiver: 'revoli', status: 'PENDING' },
-	{ sender: 'daclino', receiver: 'test', status: 'ACCEPTED' },
-	{ sender: 'emporio', receiver: 'test', status: 'ACCEPTED' },
-	{ sender: 'test', receiver: 'ketodin', status: 'ACCEPTED' },
-	{ sender: 'adrilava', receiver: 'test', status: 'PENDING' },
-	{ sender: 'ledon', receiver: 'test', status: 'PENDING' },
-	{ sender: 'test', receiver: 'revoli', status: 'PENDING' }
+const friendships: Friendship[] = [
+	...defaultFriends('abc'),
+	...defaultFriends('test'),
+	...defaultFriends('aaa'),
+	...defaultFriends('bbb'),
+	...defaultFriends('ccc')
 ];
+
+function defaultFriends(user: string): Friendship[] {
+	return [
+		{ sender: 'daclino', receiver: user, status: 'ACCEPTED' },
+		{ sender: 'emporio', receiver: user, status: 'ACCEPTED' },
+		{ sender: user, receiver: 'ketodin', status: 'ACCEPTED' },
+		{ sender: 'lespenel', receiver: user, status: 'PENDING' },
+		{ sender: 'adrilava', receiver: user, status: 'PENDING' },
+		{ sender: 'charly', receiver: user, status: 'PENDING' },
+		{ sender: 'ledon', receiver: user, status: 'PENDING' },
+		{ sender: user, receiver: 'revoli', status: 'PENDING' }
+	];
+}
 
 const url = process.env.DATABASE_URL ?? 'file:./dev.db';
 const adapter = new PrismaBetterSqlite3({ url });
