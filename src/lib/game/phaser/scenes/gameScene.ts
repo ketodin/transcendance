@@ -91,6 +91,7 @@ export default class GameScene extends Scene {
 	private fireBtnCy = 0;
 	private fireBtnW = 0;
 	private fireBtnH = 0;
+	private fireBtnHovered = false;
 	private fuelBg!: GameObjects.Graphics;
 	private fuelFill!: GameObjects.Graphics;
 	private fuelIcon!: GameObjects.Text;
@@ -343,8 +344,8 @@ export default class GameScene extends Scene {
 			.setDepth(12)
 			.setInteractive({ useHandCursor: true });
 
-		fireBtnZone.on('pointerover', () => this.drawFireButton(true));
-		fireBtnZone.on('pointerout', () => this.drawFireButton(false));
+		fireBtnZone.on('pointerover', () => { this.fireBtnHovered = true; });
+		fireBtnZone.on('pointerout', () => { this.fireBtnHovered = false; });
 		fireBtnZone.on('pointerdown', () => {
 			if (this.localPhase !== 'AIMING' || this.localCurrentPlayer !== this.myPlayerIndex) return;
 			this.room?.send('fire_direct', { angle: this.localTurretAngle, power: this.localPower });
@@ -550,7 +551,6 @@ export default class GameScene extends Scene {
 		this.controlsText.setVisible(true);
 		this.fireBtn.setVisible(true);
 		this.fireBtnLabel.setVisible(true);
-		this.drawFireButton(false);
 	}
 
 	update() {
@@ -652,7 +652,7 @@ export default class GameScene extends Scene {
 		this.updateHealthBar(data.tanks[this.myPlayerIndex].health);
 		const isMyTurn = currentPlayer === this.myPlayerIndex && phase === 'AIMING';
 		this.updateWeaponUI(data.weaponIndex, isMyTurn);
-		this.drawFireButton(false, !isMyTurn);
+		this.drawFireButton(this.fireBtnHovered && isMyTurn, !isMyTurn);
 
 
 		// Trajectory preview — only visible to the active player, never to the opponent
