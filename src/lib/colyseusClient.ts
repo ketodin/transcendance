@@ -5,6 +5,4 @@ const COLYSEUS_URL = browser
 	? `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}`
 	: null;
 
-export const colyseusClient = COLYSEUS_URL
-	? new Client(COLYSEUS_URL)
-	: null;
+export const colyseusClient = COLYSEUS_URL ? new Client(COLYSEUS_URL) : null;

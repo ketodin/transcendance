@@ -15,10 +15,9 @@ import { EventBus } from '../EventBus';
 import { SpeechBubble } from '../../client/view/speechBubble';
 import { ChatInput } from '../../client/view/ChatInput';
 import { CHAT_BUBBLE_DURATION } from '$lib/game/shared/chatConfig';
-import { colyseusClient } from '$lib/colyseusClient'
+import { colyseusClient } from '$lib/colyseusClient';
 
 const PLAYER_NAMES = ['Player 1', 'Player 2'];
-
 
 type InputSnapshot = {
 	moveLeft: boolean;
@@ -374,7 +373,7 @@ export default class GameScene extends Scene {
 		this.localWinner = -1;
 
 		try {
-			const room = (await colyseusClient.joinOrCreate('tank_room')) as unknown as Room<GameRoomState>;
+			const room = await colyseusClient!.joinOrCreate<GameRoomState>('tank_room');
 			this.room = room;
 
 			room.onMessage(

@@ -1,6 +1,6 @@
 import { StatusRoom } from '$lib/game/colyseus/StatusRoom';
 import { FriendStatus } from '$lib/game/colyseus/schema/StatusRoomState';
-import { getFriendList } from '$lib/friends'
+import { getFriendList } from '$lib/friends';
 
 const rooms = new Map<string, StatusRoom>();
 

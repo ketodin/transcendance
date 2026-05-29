@@ -6,13 +6,15 @@
 	import * as friends from '$lib/friends.remote';
 	import type { FriendRequestStatus } from '$lib/friends';
 	import { Input } from '$lib/components/ui/input';
-	import { presenceById, connectStatusRoom } from '$lib/status-client'
+	import { presenceById, connectStatusRoom } from '$lib/status-client';
 
 	const friendList = $derived(await friends.list());
 
 	const statusOrder: Record<FriendRequestStatus, number> = { RECEIVED: 3, ACCEPTED: 2, SENT: 1 };
 	let sortedFriends = $derived(
-		[...friendList].sort((a, b) => statusOrder[b.friendRequestStatus] - statusOrder[a.friendRequestStatus])
+		[...friendList].sort(
+			(a, b) => statusOrder[b.friendRequestStatus] - statusOrder[a.friendRequestStatus]
+		)
 	);
 
 	let { userId }: { userId: string } = $props();

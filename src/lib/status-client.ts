@@ -1,6 +1,6 @@
 import { Callbacks } from '@colyseus/sdk';
 import { writable } from 'svelte/store';
-import { colyseusClient } from '$lib/colyseusClient'
+import { colyseusClient } from '$lib/colyseusClient';
 import type { FriendStatus, StatusState } from './game/colyseus/schema/StatusRoomState';
 import { browser } from '$app/environment';
 

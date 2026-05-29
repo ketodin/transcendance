@@ -14,7 +14,7 @@
 	const initial = $derived(friend.name.charAt(0).toUpperCase());
 </script>
 
-<a href={resolve('/profile/[id]', {id: friend.id})} class="glassdeep user">
+<a href={resolve('/profile/[id]', { id: friend.id })} class="glassdeep user">
 	<div class="avatar">{initial}</div>
 
 	<div class="info">
