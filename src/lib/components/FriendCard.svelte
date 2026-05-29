@@ -16,7 +16,7 @@
 
 	<div class="info">
 		<div class="name">{friend.name}</div>
-		{#if friend.friendStatus == 'SENT' || friend.friendStatus == 'RECEIVED'}
+		{#if friend.friendRequestStatus == 'SENT' || friend.friendRequestStatus == 'RECEIVED'}
 			<Badge variant="destructive" class="status offline">
 				{m.pending()}
 			</Badge>
@@ -30,14 +30,14 @@
 	</div>
 
 	<div class="actions">
-		{#if friend.friendStatus == 'ACCEPTED'}
+		{#if friend.friendRequestStatus == 'ACCEPTED'}
 			<Button
 				class="glass text-red-400"
 				variant="outline"
 				size="icon-sm"
 				onclick={() => friends.remove(friend.id)}><X /></Button
 			>
-		{:else if friend.friendStatus == 'RECEIVED'}
+		{:else if friend.friendRequestStatus == 'RECEIVED'}
 			<Button
 				class="glass"
 				variant="outline"

@@ -1,27 +1,10 @@
-import { type User, Prisma } from '$lib/server/prisma/client';
+import { Prisma } from '$lib/server/prisma/client';
 import { redirect, error, invalid } from '@sveltejs/kit';
 import { query, command, form, getRequestEvent } from '$app/server';
 import { z } from 'zod';
 import db from '$lib/server/db';
+import { getFriendList } from './friends';
 
-export type FriendRequestStatus = 'ACCEPTED' | 'RECEIVED' | 'SENT';
-export type Friend = User & { friendStatus: FriendRequestStatus };
-
-async function getFriendList(meId: string): Promise<Friend[]> {
-	const rawFriends = await db.friendRequest.findMany({
-		where: { OR: [{ senderId: meId }, { receiverId: meId }] },
-		include: { sender: true, receiver: true }
-	});
-
-	const friends: Friend[] = [];
-	for (const raw of rawFriends) {
-		const status: FriendRequestStatus =
-			raw.status == 'ACCEPTED' ? 'ACCEPTED' : raw.senderId == meId ? 'SENT' : 'RECEIVED';
-		const user = raw.senderId == meId ? raw.receiver : raw.sender;
-		friends.push({ ...user, friendStatus: status });
-	}
-	return friends;
-}
 
 async function sendOrAccept(meId: string, otherId: string) {
 	/// check for reverse request, accepted or not, and set it accepted if found

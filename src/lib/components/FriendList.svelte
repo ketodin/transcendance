@@ -10,7 +10,7 @@
 
 	const statusOrder: Record<friends.FriendRequestStatus, number> = { RECEIVED: 3, ACCEPTED: 2, SENT: 1 };
 	let sortedFriends = $derived(
-		[...friendList].sort((a, b) => statusOrder[b.friendStatus] - statusOrder[a.friendStatus])
+		[...friendList].sort((a, b) => statusOrder[b.friendRequestStatus] - statusOrder[a.friendRequestStatus])
 	);
 	let showAddFriend = $state(false);
 </script>
