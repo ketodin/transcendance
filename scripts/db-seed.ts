@@ -21,7 +21,7 @@ type Friendship = {
 const DEFAULT_PASSWORD = 'abcdef12';
 
 const users: User[] = [
-	{ key: 'abc', email: 'abc@def.com', name: 'abc' },
+	{ key: 'abc', email: 'abc@gmail.com', name: 'abc' },
 	{ key: 'aaa', email: 'aaa@gmail.com', name: 'aaa', password: '00000000' },
 	{ key: 'bbb', email: 'bbb@gmail.com', name: 'bbb', password: '00000000' },
 	{ key: 'ccc', email: 'ccc@gmail.com', name: 'ccc', password: '00000000' },
