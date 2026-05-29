@@ -23,6 +23,7 @@ export const COLORS = {
 	fuelLow: 0xff0000,
 	white: 0xffffff,
 	black: 0x000000,
+	aiming: 0xffffff,
 
 	// ─── Game-inherent — hardcoded, never affected by theme ──────────────
 	craterOuter: 0xff6600,
@@ -66,6 +67,7 @@ export const COLOR_STRINGS = {
 export function syncFromCSS(): void {
 	// Only theme-linked — game-inherent stay hardcoded above
 	COLORS.navy = cssHex('--game-navy');
+	COLORS.aiming = cssHex('--game-bg');
 	COLORS.terrain = cssHex('--game-terrain');
 	COLORS.terrainDark = cssHex('--game-terrain-dark');
 	COLORS.terrainBase = cssHex('--game-terrain-base');

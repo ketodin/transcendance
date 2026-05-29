@@ -11,7 +11,6 @@ import { registerChatHandler } from '$lib/game/colyseus/handlers/chatHandler';
 const SCENE_WIDTH = 1920;
 const SCENE_HEIGHT = 1080;
 const MOVE_SPEED = 100;
-const AIM_SPEED = 55;
 const POWER_RATE = 55;
 const MAX_SLOPE_ANGLE = 80;
 const MAX_FUEL_DISTANCE = 200;
@@ -20,8 +19,6 @@ const TANK_X: [number, number] = [180, 1740];
 type InputState = {
 	moveLeft: boolean;
 	moveRight: boolean;
-	aimUp: boolean;
-	aimDown: boolean;
 };
 
 export class TankRoom extends Room<{ state: GameRoomState }> {
@@ -62,6 +59,28 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			const p = this.physicsState.currentPlayer;
 			if (this.physicsState.weaponCooldowns[p][this.physicsState.weaponIndex]) return;
 			this.fireProjectile();
+		});
+
+		this.onMessage('fire_direct', (client, data: { angle: number; power: number }) => {
+			if (!this.isCurrentPlayer(client)) return;
+			if (this.physicsState?.phase !== 'AIMING') return;
+			const p = this.physicsState.currentPlayer;
+			if (this.physicsState.weaponCooldowns[p][this.physicsState.weaponIndex]) return;
+			const tank = this.physicsState.tanks[p];
+			tank.turretAngle = data.angle;
+			this.clampTurretAngle(p);
+			this.physicsState.power = Math.max(0, Math.min(100, data.power));
+			this.fireProjectile();
+		});
+
+		this.onMessage('set_turret_angle', (client, data: { angle: number }) => {
+			if (!this.isCurrentPlayer(client)) return;
+			if (this.physicsState?.phase !== 'AIMING') return;
+			const p = this.physicsState.currentPlayer;
+			const tank = this.physicsState.tanks[p];
+			tank.turretAngle = data.angle;
+			this.clampTurretAngle(p);
+			this.syncTank(p);
 		});
 
 		this.onMessage('select_weapon', (client, data: { index: number }) => {
@@ -216,17 +235,29 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 				if (slope <= Math.tan((MAX_SLOPE_ANGLE * Math.PI) / 180)) {
 					this.physicsState.fuel -= (Math.abs(nx - tank.x) / MAX_FUEL_DISTANCE) * 100;
 					this.physicsState.fuel = Math.max(0, this.physicsState.fuel);
+
+					// Check if cannon was at lowest position (parallel to terrain) before moving
+					const oldLy = getHeightAt(this.physicsState.terrain, tank.x - 15);
+					const oldRy = getHeightAt(this.physicsState.terrain, tank.x + 15);
+					const oldMinAngle = -Math.atan2(oldRy - oldLy, 30) * (180 / Math.PI);
+					const wasAtMin = Math.abs(tank.turretAngle - oldMinAngle) < 0.5;
+
 					tank.x = nx;
 					tank.y = newY;
 					this.clampTurretAngle(p);
+
+					// If cannon was at lowest, keep it pinned to the new terrain-parallel angle
+					if (wasAtMin) {
+						const newLy = getHeightAt(this.physicsState.terrain, tank.x - 15);
+						const newRy = getHeightAt(this.physicsState.terrain, tank.x + 15);
+						tank.turretAngle = -Math.atan2(newRy - newLy, 30) * (180 / Math.PI);
+					}
+
 					this.syncTank(p);
 					this.state.fuel = this.physicsState.fuel;
 				}
 			}
 
-			const aimDelta = (AIM_SPEED * dt) / 1000;
-			if (input.aimUp) this.rotateTurret(p, aimDelta);
-			if (input.aimDown) this.rotateTurret(p, -aimDelta);
 		}
 
 		if (phase === 'CHARGING') {
@@ -313,7 +344,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	private fireProjectile() {
 		const p = this.physicsState.currentPlayer;
 		const tank = this.physicsState.tanks[p];
-		const tip = getTurretTip(tank);
+		const tip = getTurretTip(tank, this.physicsState.terrain);
 		const wi = this.physicsState.weaponIndex;
 		this.physicsState.projectile = createProjectile(
 			tip.x,
@@ -507,13 +538,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		const ry = getHeightAt(this.physicsState.terrain, tank.x + 15);
 		const slopeDeg = Math.atan2(ry - ly, 30) * (180 / Math.PI);
 		tank.turretAngle = Math.max(-slopeDeg, Math.min(180 - slopeDeg, tank.turretAngle));
-	}
-
-	private rotateTurret(playerIndex: 0 | 1, delta: number) {
-		const tank = this.physicsState.tanks[playerIndex];
-		tank.turretAngle += delta * tank.facing;
-		this.clampTurretAngle(playerIndex);
-		this.syncTank(playerIndex);
 	}
 
 	private syncTank(idx: 0 | 1) {

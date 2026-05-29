@@ -24,8 +24,6 @@ const COLYSEUS_URL = `${COLYSEUS_PROTOCOL}://${window.location.host}`;
 type InputSnapshot = {
 	moveLeft: boolean;
 	moveRight: boolean;
-	aimUp: boolean;
-	aimDown: boolean;
 };
 
 type ProjectileSnapshot = {
@@ -74,12 +72,16 @@ export default class GameScene extends Scene {
 	private weaponZones: GameObjects.Zone[] = [];
 	private weaponCooldowns: [boolean[], boolean[]] = [[], []];
 
-	private lastInput: InputSnapshot = {
-		moveLeft: false,
-		moveRight: false,
-		aimUp: false,
-		aimDown: false
-	};
+	private lastInput: InputSnapshot = { moveLeft: false, moveRight: false };
+	private localTurretAngle = 90;
+	private lastSentAngle = 90;
+	private localPower = 0;
+	private isGrabbing = false;
+	private grabTurretAngle = 0;
+	private aimPrevMouseAngle = 0;
+	private aimAccum = 0;
+	private grabDist = 0;
+	private grabPower = 0;
 
 	private turnText!: GameObjects.Text;
 	private timerText!: GameObjects.Text;
@@ -152,8 +154,6 @@ export default class GameScene extends Scene {
 	private keys!: {
 		left: Input.Keyboard.Key;
 		right: Input.Keyboard.Key;
-		aimUp: Input.Keyboard.Key;
-		aimDown: Input.Keyboard.Key;
 		shoot: Input.Keyboard.Key;
 		weaponKey: Input.Keyboard.Key;
 	};
@@ -172,6 +172,20 @@ export default class GameScene extends Scene {
 		this.setupKeys();
 		void this.connectToServer();
 		EventBus.on('theme-changed', this.onThemeChanged);
+
+		this.input.on('pointerdown', () => {
+			if (this.localPhase === 'AIMING' && this.localCurrentPlayer === this.myPlayerIndex) {
+				this.isGrabbing = true;
+				this.grabTurretAngle = this.localTurretAngle;
+				this.aimPrevMouseAngle = NaN;
+				this.aimAccum = 0;
+				this.grabDist = NaN;
+				this.grabPower = this.localPower;
+			}
+		});
+		this.input.on('pointerup', () => {
+			this.isGrabbing = false;
+		});
 	}
 
 	shutdown() {
@@ -196,8 +210,6 @@ export default class GameScene extends Scene {
 		this.keys = {
 			right: kb.addKey(Input.Keyboard.KeyCodes.RIGHT),
 			left: kb.addKey(Input.Keyboard.KeyCodes.LEFT),
-			aimUp: kb.addKey(Input.Keyboard.KeyCodes.UP),
-			aimDown: kb.addKey(Input.Keyboard.KeyCodes.DOWN),
 			shoot: kb.addKey(Input.Keyboard.KeyCodes.SPACE),
 			weaponKey: kb.addKey(Input.Keyboard.KeyCodes.Q)
 		};
@@ -398,6 +410,8 @@ export default class GameScene extends Scene {
 					this.localPhase = 'AIMING';
 					this.localTerrain = data.terrain;
 					if (data.weaponCooldowns) this.weaponCooldowns = data.weaponCooldowns;
+					this.localTurretAngle = data.tanks[this.myPlayerIndex].turretAngle;
+					this.lastSentAngle = this.localTurretAngle;
 					this.localGameData = {
 						tanks: data.tanks,
 						projectile: { active: false, x: 0, y: 0, typeIndex: 0, bouncesLeft: 0 },
@@ -424,6 +438,7 @@ export default class GameScene extends Scene {
 				(data: { phase: string; currentPlayer: number; winner?: number }) => {
 					this.localPhase = data.phase;
 					this.localCurrentPlayer = data.currentPlayer;
+					if (data.phase === 'AIMING') { this.isGrabbing = false; }
 					if (data.winner !== undefined) this.localWinner = data.winner;
 					if (data.phase === 'OVER') this.showGameOver(this.localWinner as 0 | 1);
 				}
@@ -513,9 +528,9 @@ export default class GameScene extends Scene {
 		this.weaponNameLabel.setVisible(true);
 		this.controlsText.setText(
 			`${'← / →'.padEnd(7)}  Move\n` +
-				`${'↑ / ↓'.padEnd(7)}  Aim\n` +
+				`${'Mouse'.padEnd(7)}  Aim + Power\n` +
 				`Q        Switch weapon\n` +
-				`${'SPACE'.padEnd(7)}  Charge / Fire`
+				`${'SPACE'.padEnd(7)}  Fire`
 		);
 		this.controlsBg.setVisible(true);
 		this.controlsText.setVisible(true);
@@ -528,9 +543,17 @@ export default class GameScene extends Scene {
 		const phase = this.localPhase;
 		const currentPlayer = this.localCurrentPlayer;
 
-		// Sync tank sprites
-		this.tankSprites[0].sync(data.tanks[0], this.localTerrain);
-		this.tankSprites[1].sync(data.tanks[1], this.localTerrain);
+		// Sync local angle from server whenever not actively grabbing
+		// This ensures slope changes during movement are reflected immediately
+		if (!this.isGrabbing) {
+			this.localTurretAngle = data.tanks[this.myPlayerIndex].turretAngle;
+		}
+
+		// Sync tank sprites — use local angle for instant visual on own tank
+		const tank0State = this.myPlayerIndex === 0 ? { ...data.tanks[0], turretAngle: this.localTurretAngle } : data.tanks[0];
+		const tank1State = this.myPlayerIndex === 1 ? { ...data.tanks[1], turretAngle: this.localTurretAngle } : data.tanks[1];
+		this.tankSprites[0].sync(tank0State, this.localTerrain);
+		this.tankSprites[1].sync(tank1State, this.localTerrain);
 		// Bubble chat
 		this.speechBubbles[0].sync(data.tanks[0]);
 		this.speechBubbles[1].sync(data.tanks[1]);
@@ -612,18 +635,19 @@ export default class GameScene extends Scene {
 		this.updateHealthBar(data.tanks[this.myPlayerIndex].health);
 		this.updateWeaponUI(data.weaponIndex);
 
-		if (phase === 'CHARGING') {
+		if (phase === 'AIMING' && this.localPower > 0 && currentPlayer === this.myPlayerIndex) {
 			this.powerBg.setVisible(true);
 			this.powerFill.setVisible(true);
-			this.updatePowerBar(data.power);
+			this.updatePowerBar(this.localPower);
 		} else {
 			this.powerBg.setVisible(false);
 			this.powerFill.setVisible(false);
 		}
 
-		// Trajectory preview
-		if (phase === 'AIMING' || phase === 'CHARGING') {
-			this.drawTrajectory(data.tanks[currentPlayer], data.weaponIndex, data.power, phase);
+		// Trajectory preview — only visible to the active player, never to the opponent
+		if (phase === 'AIMING' && currentPlayer === this.myPlayerIndex) {
+			const tankForTraj = { ...data.tanks[currentPlayer], turretAngle: this.localTurretAngle };
+			this.drawTrajectory(tankForTraj, data.weaponIndex, this.localPower);
 		} else {
 			this.trajectoryGfx.clear();
 		}
@@ -639,21 +663,57 @@ export default class GameScene extends Scene {
 	private handleInput(phase: string) {
 		const shootKey = this.keys.shoot;
 
-		// Continuous input: send only when state changes
+		// Movement input — send only when state changes
 		const snap: InputSnapshot = {
 			moveLeft: this.keys.left.isDown,
-			moveRight: this.keys.right.isDown,
-			aimUp: this.keys.aimUp.isDown,
-			aimDown: this.keys.aimDown.isDown
+			moveRight: this.keys.right.isDown
 		};
-		if (
-			snap.moveLeft !== this.lastInput.moveLeft ||
-			snap.moveRight !== this.lastInput.moveRight ||
-			snap.aimUp !== this.lastInput.aimUp ||
-			snap.aimDown !== this.lastInput.aimDown
-		) {
+		if (snap.moveLeft !== this.lastInput.moveLeft || snap.moveRight !== this.lastInput.moveRight) {
 			this.lastInput = snap;
 			this.room!.send('input', snap);
+		}
+
+		// Mouse aiming — only while left button is held, delta-based to avoid snapping on re-grab
+		if (phase === 'AIMING' && this.isGrabbing && this.localTerrain && this.localGameData) {
+			const tank = this.localGameData.tanks[this.myPlayerIndex];
+			const terrain = this.localTerrain;
+			const ly = getHeightAt(terrain, tank.x - 15);
+			const ry = getHeightAt(terrain, tank.x + 15);
+			const slope = Math.atan2(ry - ly, 30);
+			const pivotX = tank.x + 17 * Math.sin(slope);
+			const pivotY = tank.y - 17 * Math.cos(slope) - 7;
+
+			const mx = this.input.activePointer.worldX;
+			const my = this.input.activePointer.worldY;
+			const mouseAngle = Math.atan2(-(my - pivotY), mx - pivotX) * (180 / Math.PI);
+
+			// Frame-delta unwrapping — avoids ±180° snap by accumulating small per-frame deltas
+			if (isNaN(this.aimPrevMouseAngle)) {
+				this.aimPrevMouseAngle = mouseAngle;
+				this.aimAccum = 0;
+			} else {
+				let frameDelta = mouseAngle - this.aimPrevMouseAngle;
+				if (frameDelta > 180) frameDelta -= 360;
+				if (frameDelta < -180) frameDelta += 360;
+				this.aimAccum += frameDelta;
+				this.aimPrevMouseAngle = mouseAngle;
+			}
+
+			const slopeDeg = slope * (180 / Math.PI);
+			const clamped = Math.max(-slopeDeg, Math.min(180 - slopeDeg, this.grabTurretAngle + this.aimAccum));
+
+			this.localTurretAngle = clamped;
+			if (Math.abs(clamped - this.lastSentAngle) > 0.3) {
+				this.lastSentAngle = clamped;
+				this.room!.send('set_turret_angle', { angle: clamped });
+			}
+
+			// Power — project mouse onto barrel axis so all drag directions feel direct
+			const barrelRad = (this.localTurretAngle * Math.PI) / 180;
+			const proj = (mx - pivotX) * Math.cos(barrelRad) - (my - pivotY) * Math.sin(barrelRad);
+			if (isNaN(this.grabDist)) this.grabDist = proj;
+			const projDelta = proj - this.grabDist;
+			this.localPower = Math.min(100, Math.max(0, this.grabPower + (projDelta / 235) * 100));
 		}
 
 		if (phase === 'AIMING') {
@@ -661,47 +721,55 @@ export default class GameScene extends Scene {
 				this.room!.send('cycle_weapon');
 			}
 			if (Input.Keyboard.JustDown(shootKey)) {
-				this.room!.send('charge_start');
+				this.room!.send('fire_direct', { angle: this.localTurretAngle, power: this.localPower });
 			}
-		}
-
-		if (phase === 'CHARGING' && Input.Keyboard.JustUp(shootKey)) {
-			this.room!.send('fire');
 		}
 	}
 
-	private drawTrajectory(tank: TankState, weaponIndex: number, power: number, phase: string) {
+	private drawTrajectory(tank: TankState, _weaponIndex: number, power: number) {
 		this.trajectoryGfx.clear();
-		if (!this.localTerrain) return;
-		const tip = getTurretTip(tank);
-		const previewPower = phase === 'CHARGING' ? power : 50;
-		if (previewPower < 1) return;
-
-		const weapon = PROJECTILE_TYPES[weaponIndex];
+		const tip = getTurretTip(tank, this.localTerrain ?? undefined);
 		const rad = (tank.turretAngle * Math.PI) / 180;
-		const speed = previewPower * weapon.speedFactor;
-		const vx = Math.cos(rad) * speed;
-		let vy = -Math.sin(rad) * speed;
-		let x = tip.x;
-		let y = tip.y;
-		const dt = 0.05;
-		const MAX_DOTS = 5;
-		const DOT_INTERVAL = 5;
-		let dotsDrawn = 0;
 
-		for (let i = 0; dotsDrawn < MAX_DOTS; i++) {
-			vy += weapon.gravity * dt;
-			x += vx * dt;
-			y += vy * dt;
-			if (x < 0 || x > this.scale.width || y > this.scale.height) break;
-			if (y >= getHeightAt(this.localTerrain, x)) break;
-			if (i % DOT_INTERVAL === DOT_INTERVAL - 1) {
-				const alpha = 0.8 * (1 - dotsDrawn / MAX_DOTS);
-				this.trajectoryGfx.fillStyle(COLORS.white, alpha);
-				this.trajectoryGfx.fillCircle(x, y, 2.5);
-				dotsDrawn++;
-			}
-		}
+		const maxLength = (80 + 100 * 2.33) * 0.75;
+		const length = (80 + power * 2.33) * 0.75;
+		const halfAngle = 5 * (Math.PI / 180);
+
+		const tx = tip.x;
+		const ty = tip.y;
+
+		// Barrel pivot (40px back from tip along barrel direction)
+		const pivotX = tx - Math.cos(rad) * 40;
+		const pivotY = ty + Math.sin(rad) * 40;
+
+		// Range disk centered on barrel pivot, radius = maxLength + barrel length
+		// so the cone tip at max power exactly touches the disk edge
+		this.trajectoryGfx.fillStyle(COLORS.aiming, 0.06);
+		this.trajectoryGfx.fillCircle(pivotX, pivotY, maxLength + 40);
+
+		// Outer cone
+		const lx = tx + Math.cos(rad + halfAngle) * length;
+		const ly = ty - Math.sin(rad + halfAngle) * length;
+		const rx = tx + Math.cos(rad - halfAngle) * length;
+		const ry = ty - Math.sin(rad - halfAngle) * length;
+		this.trajectoryGfx.fillStyle(COLORS.aiming, 0.07);
+		this.trajectoryGfx.fillTriangle(tx, ty, lx, ly, rx, ry);
+
+		// Inner cone highlight
+		const innerHalf = halfAngle * 0.35;
+		const ilx = tx + Math.cos(rad + innerHalf) * length;
+		const ily = ty - Math.sin(rad + innerHalf) * length;
+		const irx = tx + Math.cos(rad - innerHalf) * length;
+		const iry = ty - Math.sin(rad - innerHalf) * length;
+		this.trajectoryGfx.fillStyle(COLORS.aiming, 0.18);
+		this.trajectoryGfx.fillTriangle(tx, ty, ilx, ily, irx, iry);
+
+		// Center axis line
+		this.trajectoryGfx.lineStyle(1, COLORS.aiming, 0.22);
+		this.trajectoryGfx.beginPath();
+		this.trajectoryGfx.moveTo(tx, ty);
+		this.trajectoryGfx.lineTo(tx + Math.cos(rad) * length, ty - Math.sin(rad) * length);
+		this.trajectoryGfx.strokePath();
 	}
 
 	private showAirstrikeZone(x: number) {
