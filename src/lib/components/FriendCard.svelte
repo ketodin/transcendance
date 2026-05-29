@@ -5,7 +5,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as friends from '$lib/friends.remote';
 	import { resolve } from '$app/paths';
-	import { toast } from "svelte-sonner";
+	import { toast } from 'svelte-sonner';
 
 	type Props = { friend: friends.Friend; online: boolean };
 	let { friend, online }: Props = $props();
@@ -37,30 +37,26 @@
 				class="glass"
 				variant="outline"
 				size="icon-sm"
-				onclick={() => {
-					friends.accept(friend.id);
+				onclick={async () => {
+					await friends.accept(friend.id);
 					toast.success(m.accept_friend(), {
 						unstyled: true,
-						class:
-						"glass flex px-4 py-3 gap-4",
-					})
-				}}
-				><Check /></Button
+						class: 'glass flex px-4 py-3 gap-4'
+					});
+				}}><Check /></Button
 			>
 			<div class="separator"></div>
 			<Button
 				class="glass text-red-400"
 				variant="outline"
 				size="icon-sm"
-				onclick={() => {
-					friends.remove(friend.id);
+				onclick={async () => {
+					await friends.remove(friend.id);
 					toast.success(m.declined_friend(), {
 						unstyled: true,
-						class:
-						"glass flex px-4 py-3 gap-4",
-					})
-				}}
-				><X /></Button
+						class: 'glass flex px-4 py-3 gap-4'
+					});
+				}}><X /></Button
 			>
 		{/if}
 	</div>

@@ -5,7 +5,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Settings } from '@lucide/svelte';
 	import * as friends from '$lib/friends.remote';
-	import { toast } from "svelte-sonner";
+	import { toast } from 'svelte-sonner';
 
 	const { data }: PageProps = $props();
 	import { getLocale } from '$lib/paraglide/runtime';
@@ -42,39 +42,42 @@
 					<Settings size={20} />
 				</Button>
 			{:else if data.userType === 'friend'}
-				<Button onclick={() => {
-					friends.remove(data.user.id);
-					toast.success(m.removed_friend(), {
-						unstyled: true,
-						class:
-						"glass flex px-4 py-3 gap-4",
-					})
-				}} class="glassbutton" variant="outline">
+				<Button
+					onclick={async () => {
+						await friends.remove(data.user.id);
+						toast.success(m.removed_friend(), {
+							unstyled: true,
+							class: 'glass flex px-4 py-3 gap-4'
+						});
+					}}
+					class="glassbutton"
+					variant="outline"
+				>
 					<p>{m.remove_friend()}</p>
 				</Button>
-				<Button 
-					onclick={() => 
+				<Button
+					onclick={() =>
 						toast.success(m.invited_play(), {
 							unstyled: true,
-							class:
-							"glass flex px-4 py-3 gap-4",
-						})
-					}
-					class="glassbutton" variant="outline">
+							class: 'glass flex px-4 py-3 gap-4'
+						})}
+					class="glassbutton"
+					variant="outline"
+				>
 					{m.invite_play()}
 				</Button>
 			{:else if data.userType === 'someone'}
 				<Button
-					onclick={() => {
-						friends.accept(data.user.id);
+					onclick={async () => {
+						await friends.accept(data.user.id);
 						toast.success(m.sent_friend_request(), {
 							unstyled: true,
-							class:
-							"glass flex px-4 py-3 gap-4",
-						})
+							class: 'glass flex px-4 py-3 gap-4'
+						});
 					}}
 					class="glassbutton"
-					variant="outline">
+					variant="outline"
+				>
 					{m.add_friend()}
 				</Button>
 			{/if}
