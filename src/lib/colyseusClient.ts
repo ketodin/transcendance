@@ -1,4 +1,4 @@
-import { Client, Room } from '@colyseus/sdk';
+import { Client } from '@colyseus/sdk';
 
 const COLYSEUS_PROTOCOL = window.location.protocol === 'https:' ? 'wss' : 'ws';
 const COLYSEUS_URL = `${COLYSEUS_PROTOCOL}://${window.location.host}`;

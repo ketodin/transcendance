@@ -4,8 +4,8 @@ import { query, command, form, getRequestEvent } from '$app/server';
 import { z } from 'zod';
 import db from '$lib/server/db';
 
-export type FriendStatus = 'ACCEPTED' | 'RECEIVED' | 'SENT';
-export type Friend = User & { friendStatus: FriendStatus };
+export type FriendRequestStatus = 'ACCEPTED' | 'RECEIVED' | 'SENT';
+export type Friend = User & { friendStatus: FriendRequestStatus };
 
 async function getFriendList(meId: string): Promise<Friend[]> {
 	const rawFriends = await db.friendRequest.findMany({
@@ -15,7 +15,7 @@ async function getFriendList(meId: string): Promise<Friend[]> {
 
 	const friends: Friend[] = [];
 	for (const raw of rawFriends) {
-		const status: FriendStatus =
+		const status: FriendRequestStatus =
 			raw.status == 'ACCEPTED' ? 'ACCEPTED' : raw.senderId == meId ? 'SENT' : 'RECEIVED';
 		const user = raw.senderId == meId ? raw.receiver : raw.sender;
 		friends.push({ ...user, friendStatus: status });

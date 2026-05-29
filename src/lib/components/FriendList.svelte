@@ -8,7 +8,7 @@
 
 	const friendList = $derived(await friends.list());
 
-	const statusOrder: Record<friends.FriendStatus, number> = { RECEIVED: 3, ACCEPTED: 2, SENT: 1 };
+	const statusOrder: Record<friends.FriendRequestStatus, number> = { RECEIVED: 3, ACCEPTED: 2, SENT: 1 };
 	let sortedFriends = $derived(
 		[...friendList].sort((a, b) => statusOrder[b.friendStatus] - statusOrder[a.friendStatus])
 	);
