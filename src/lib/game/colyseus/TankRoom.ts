@@ -257,7 +257,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 					this.state.fuel = this.physicsState.fuel;
 				}
 			}
-
 		}
 
 		if (phase === 'CHARGING') {
