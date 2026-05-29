@@ -5,6 +5,7 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import FriendList from '$lib/components/FriendList.svelte';
 	import '../app.css';
+	import { Toaster } from 'svelte-sonner';
 
 	import { page } from '$app/stores';
 	import type { Snippet } from 'svelte';
@@ -24,6 +25,7 @@
 </script>
 
 <ModeWatcher />
+<Toaster />
 
 <Shader base={baseTheme} error={errorTheme} />
 
