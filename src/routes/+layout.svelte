@@ -15,11 +15,17 @@
 	const isAuthRoute = $derived(
 		$page.url.pathname.startsWith('/login') || $page.url.pathname.startsWith('/register')
 	);
+
+	const is404 = $derived($page.status === 404);
+
+	const baseTheme = $derived($shaderTheme === 'dark' ? 1 : 0);
+
+	const errorTheme = $derived(is404 ? 1 : 0);
 </script>
 
 <ModeWatcher />
 
-<Shader theme={$shaderTheme} />
+<Shader base={baseTheme} error={errorTheme} />
 
 {#if !isAuthRoute}
 	<div class="app">

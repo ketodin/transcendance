@@ -27,6 +27,8 @@
 	"settings": "Paramètres",
 	"add_friend": "Ajouter un ami",
 	"joined_on": "Inscription le {date}",
+	"home_page": "Page d’accueil",
+	"no_user": "Utilisateur introuvable",
 
 	"name_place_holder": "Stephane",
 	"mail_place_holder": "stephane.travail@gmail.com",

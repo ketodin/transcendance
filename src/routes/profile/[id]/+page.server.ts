@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { redirect, error } from '@sveltejs/kit';
 import db from '$lib/server/db';
+import { m } from '$lib/paraglide/messages';
 
 type UserType = 'self' | 'friend' | 'someone';
 
@@ -36,7 +37,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	const user = await db.user.findUnique({
 		where: { id: params.id }
 	});
-	if (!user) return error(404, 'User not found'); // maybe redirect instead
+	if (!user) return error(404, m.no_user());
 
 	const userType: UserType =
 		locals.user.id === user.id

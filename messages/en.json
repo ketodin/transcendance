@@ -27,6 +27,8 @@
 	"settings": "Settings",
 	"add_friend": "Add friend",
 	"joined_on": "Joined on {date}",
+	"home_page": "Home page",
+	"no_user": "User not found",
 
 	"name_place_holder": "Steve",
 	"mail_place_holder": "steve.jobs@gmail.com",
