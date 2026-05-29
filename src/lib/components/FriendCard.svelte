@@ -5,6 +5,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import { type Friend } from '$lib/friends';
 	import * as friends from '$lib/friends.remote';
+	import { resolve } from '$app/paths';
+	import { toast } from 'svelte-sonner';
 
 	type Props = { friend: Friend; online: boolean };
 	let { friend, online }: Props = $props();
@@ -12,7 +14,7 @@
 	const initial = $derived(friend.name.charAt(0).toUpperCase());
 </script>
 
-<div class="glass user">
+<a href={resolve('/profile/[id]', {id: friend.id})} class="glassdeep user">
 	<div class="avatar">{initial}</div>
 
 	<div class="info">
@@ -31,30 +33,35 @@
 	</div>
 
 	<div class="actions">
-		{#if friend.friendRequestStatus == 'ACCEPTED'}
-			<Button
-				class="glass text-red-400"
-				variant="outline"
-				size="icon-sm"
-				onclick={() => friends.remove(friend.id)}><X /></Button
-			>
-		{:else if friend.friendRequestStatus == 'RECEIVED'}
+		{#if friend.friendRequestStatus == 'RECEIVED'}
 			<Button
 				class="glass"
 				variant="outline"
 				size="icon-sm"
-				onclick={() => friends.accept(friend.id)}><Check /></Button
+				onclick={async () => {
+					await friends.accept(friend.id);
+					toast.success(m.accept_friend(), {
+						unstyled: true,
+						class: 'glass flex px-4 py-3 gap-4'
+					});
+				}}><Check /></Button
 			>
 			<div class="separator"></div>
 			<Button
 				class="glass text-red-400"
 				variant="outline"
 				size="icon-sm"
-				onclick={() => friends.remove(friend.id)}><X /></Button
+				onclick={async () => {
+					await friends.remove(friend.id);
+					toast.success(m.declined_friend(), {
+						unstyled: true,
+						class: 'glass flex px-4 py-3 gap-4'
+					});
+				}}><X /></Button
 			>
 		{/if}
 	</div>
-</div>
+</a>
 
 <style>
 	.user {
@@ -83,7 +90,7 @@
 
 	.avatar {
 		width: 2.5rem;
-		height: 2.5rem;
+		aspect-ratio: 1 / 1;
 		border-radius: 50%;
 
 		display: flex;
@@ -94,6 +101,7 @@
 
 		background: rgba(255, 255, 255, 0.1);
 		border: 1px solid rgba(255, 255, 255, 0.08);
+		font-size: 1vw;
 	}
 
 	.info {

@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import { superValidate, setError, message, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth } from '$lib/server/auth';
-import { enableSchema, verifySchema, disableSchema } from './schema';
+import { enableSchema, verifySchema, disableSchema } from '$lib/components/totp/schema';
 import { m } from '$lib/paraglide/messages';
 import type { Actions, PageServerLoad } from './$types';
 

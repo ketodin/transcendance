@@ -68,7 +68,7 @@
 	.sidebar {
 		position: fixed;
 		left: 1%;
-		top: calc(var(--header-height) + var(--layout-gap) + 1%);
+		top: calc(var(--header-height) + var(--layout-gap) + 1rem);
 		width: 20%;
 		height: calc(100vh - var(--header-height) - var(--layout-gap) - 2% - 4rem);
 		display: flex;

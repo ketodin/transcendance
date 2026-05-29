@@ -59,17 +59,33 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		this.onMessage('fire', (client) => {
 			if (!this.isCurrentPlayer(client)) return;
 			if (this.physicsState?.phase !== 'CHARGING') return;
+			const p = this.physicsState.currentPlayer;
+			if (this.physicsState.weaponCooldowns[p][this.physicsState.weaponIndex]) return;
 			this.fireProjectile();
+		});
+
+		this.onMessage('select_weapon', (client, data: { index: number }) => {
+			if (!this.isCurrentPlayer(client)) return;
+			if (this.physicsState?.phase !== 'AIMING') return;
+			const p = this.physicsState.currentPlayer;
+			const type = PROJECTILE_TYPES[data.index];
+			if (!type || type.selectable === false) return;
+			if (this.physicsState.weaponCooldowns[p][data.index]) return;
+			this.physicsState.weaponIndex = data.index;
+			this.state.weaponIndex = data.index;
 		});
 
 		this.onMessage('cycle_weapon', (client) => {
 			if (!this.isCurrentPlayer(client)) return;
 			if (this.physicsState?.phase !== 'AIMING') return;
+			const p = this.physicsState.currentPlayer;
 			const selectable = PROJECTILE_TYPES.map((t, i) => (t.selectable !== false ? i : -1)).filter(
 				(i) => i !== -1
 			);
-			const cur = selectable.indexOf(this.physicsState.weaponIndex);
-			this.physicsState.weaponIndex = selectable[(cur + 1) % selectable.length];
+			const available = selectable.filter((i) => !this.physicsState.weaponCooldowns[p][i]);
+			if (available.length === 0) return;
+			const cur = available.indexOf(this.physicsState.weaponIndex);
+			this.physicsState.weaponIndex = available[(cur + 1) % available.length];
 			this.state.weaponIndex = this.physicsState.weaponIndex;
 		});
 
@@ -118,10 +134,11 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			y: getHeightAt(terrain, TANK_X[index]),
 			turretAngle: index === 0 ? 60 : 120,
 			health: 100,
-			color: 0xd4b832,
+			color: index === 0 ? 0xcc2222 : 0x2255cc,
 			name: `Player ${index + 1}`,
 			facing: index === 0 ? 1 : -1
 		});
+		const emptyCooldowns = (): boolean[] => new Array<boolean>(PROJECTILE_TYPES.length).fill(false);
 		this.physicsState = {
 			terrain,
 			tanks: [makeTank(0), makeTank(1)],
@@ -133,7 +150,8 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			powerIncreasing: true,
 			weaponIndex: 0,
 			fuel: 100,
-			turnTimeLeft: 30
+			turnTimeLeft: 30,
+			weaponCooldowns: [emptyCooldowns(), emptyCooldowns()]
 		};
 		this.syncTank(0);
 		this.syncTank(1);
@@ -162,7 +180,8 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			fuel: 100,
 			weaponIndex: 0,
 			turnTimeLeft: 30,
-			power: 0
+			power: 0,
+			weaponCooldowns: this.physicsState.weaponCooldowns
 		});
 	}
 
@@ -199,6 +218,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 					this.physicsState.fuel = Math.max(0, this.physicsState.fuel);
 					tank.x = nx;
 					tank.y = newY;
+					this.clampTurretAngle(p);
 					this.syncTank(p);
 					this.state.fuel = this.physicsState.fuel;
 				}
@@ -294,13 +314,27 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		const p = this.physicsState.currentPlayer;
 		const tank = this.physicsState.tanks[p];
 		const tip = getTurretTip(tank);
+		const wi = this.physicsState.weaponIndex;
 		this.physicsState.projectile = createProjectile(
 			tip.x,
 			tip.y,
 			tank.turretAngle,
 			this.physicsState.power,
-			this.physicsState.weaponIndex
+			wi
 		);
+
+		// Mark weapon as used for this player
+		this.physicsState.weaponCooldowns[p][wi] = true;
+		const selectable = PROJECTILE_TYPES.map((t, i) => (t.selectable !== false ? i : -1)).filter(
+			(i) => i !== -1
+		);
+		const allUsed = selectable.every((i) => this.physicsState.weaponCooldowns[p][i]);
+		if (allUsed) {
+			this.physicsState.weaponCooldowns[p] = new Array<boolean>(PROJECTILE_TYPES.length).fill(
+				false
+			);
+		}
+
 		this.physicsState.phase = 'FLYING';
 		this.state.phase = 'FLYING';
 		this.syncProjectile();
@@ -418,6 +452,21 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		this.physicsState.fragments = [];
 		this.physicsState.fuel = 100;
 		this.physicsState.turnTimeLeft = 30;
+
+		// Ensure the current weapon is available for the new active player
+		const p = this.physicsState.currentPlayer;
+		const selectable = PROJECTILE_TYPES.map((t, i) => (t.selectable !== false ? i : -1)).filter(
+			(i) => i !== -1
+		);
+		const available = selectable.filter((i) => !this.physicsState.weaponCooldowns[p][i]);
+		if (
+			available.length > 0 &&
+			this.physicsState.weaponCooldowns[p][this.physicsState.weaponIndex]
+		) {
+			this.physicsState.weaponIndex = available[0];
+			this.state.weaponIndex = available[0];
+		}
+
 		this.state.currentPlayer = this.physicsState.currentPlayer;
 		this.state.phase = 'AIMING';
 		this.state.fuel = 100;
@@ -447,13 +496,23 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			power: ps.power,
 			powerIncreasing: ps.powerIncreasing,
 			fuel: ps.fuel,
-			weaponIndex: ps.weaponIndex
+			weaponIndex: ps.weaponIndex,
+			weaponCooldowns: ps.weaponCooldowns
 		});
+	}
+
+	private clampTurretAngle(playerIndex: 0 | 1) {
+		const tank = this.physicsState.tanks[playerIndex];
+		const ly = getHeightAt(this.physicsState.terrain, tank.x - 15);
+		const ry = getHeightAt(this.physicsState.terrain, tank.x + 15);
+		const slopeDeg = Math.atan2(ry - ly, 30) * (180 / Math.PI);
+		tank.turretAngle = Math.max(-slopeDeg, Math.min(180 - slopeDeg, tank.turretAngle));
 	}
 
 	private rotateTurret(playerIndex: 0 | 1, delta: number) {
 		const tank = this.physicsState.tanks[playerIndex];
-		tank.turretAngle = Math.max(5, Math.min(175, tank.turretAngle + delta * tank.facing));
+		tank.turretAngle += delta * tank.facing;
+		this.clampTurretAngle(playerIndex);
 		this.syncTank(playerIndex);
 	}
 

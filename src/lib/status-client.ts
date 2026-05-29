@@ -18,7 +18,6 @@ export async function connectStatusRoom(userId: string) {
 	const stops = new Map<string, () => void>();
 
 	cb.onAdd('friends', (friend: FriendStatus, id: string) => {
-		console.log("friend: ", friend, id);
 		presenceById.update((v) => ({ ...v, [id]: friend.online }));
 
 		const stop = cb.listen(friend, 'online', (online) => {

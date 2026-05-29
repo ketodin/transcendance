@@ -5,4 +5,5 @@ export const load: PageServerLoad = ({ locals }) => {
 	if (!locals.user) {
 		return redirect(303, '/login');
 	}
+	return { user: locals.user };
 };

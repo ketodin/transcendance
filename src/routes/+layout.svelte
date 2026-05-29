@@ -5,6 +5,7 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import FriendList from '$lib/components/FriendList.svelte';
 	import '../app.css';
+	import { Toaster } from 'svelte-sonner';
 
 	import { page } from '$app/stores';
 	import type { Snippet } from 'svelte';
@@ -19,11 +20,17 @@
 
 	const session = useSession();
 
+	const is404 = $derived($page.status === 404);
+
+	const baseTheme = $derived($shaderTheme === 'dark' ? 1 : 0);
+
+	const errorTheme = $derived(is404 ? 1 : 0);
 </script>
 
 <ModeWatcher />
+<Toaster />
 
-<Shader theme={$shaderTheme} />
+<Shader base={baseTheme} error={errorTheme} />
 
 {#if !isAuthRoute && $session.data !== null}
 	<div class="app">
