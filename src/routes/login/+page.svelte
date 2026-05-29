@@ -79,6 +79,9 @@
 		error = '';
 		useBackup = false;
 	}
+	async function signInWithGoogle() {
+		await authClient.signIn.social({ provider: 'google', callbackURL: '/' });
+	}
 </script>
 
 <div class="bg-muted/30 flex min-h-screen items-center justify-center px-4">
@@ -139,7 +142,9 @@
 					<button type="submit" class="glass h-11 w-full text-base font-medium">
 						{m.login()}
 					</button>
-
+					<button type="button" onclick={() => void signInWithGoogle()}>
+						Continuer avec Google
+					</button>
 					<p class="text-muted-foreground text-center text-sm">
 						{m.no_account()}
 						<a href={resolve('/register')} class="underline">{m.register()}</a>
