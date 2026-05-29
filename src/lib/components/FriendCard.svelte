@@ -3,9 +3,10 @@
 	import { Check, X } from '@lucide/svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
+	import { type Friend } from '$lib/friends';
 	import * as friends from '$lib/friends.remote';
 
-	type Props = { friend: friends.Friend; online: boolean };
+	type Props = { friend: Friend; online: boolean };
 	let { friend, online }: Props = $props();
 
 	const initial = $derived(friend.name.charAt(0).toUpperCase());

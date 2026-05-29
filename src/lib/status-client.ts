@@ -1,0 +1,51 @@
+import { Callbacks } from '@colyseus/sdk';
+import { writable } from 'svelte/store';
+import { colyseusClient } from '$lib/colyseusClient'
+import type { FriendStatus, StatusState } from './game/colyseus/schema/StatusRoomState';
+import { browser } from '$app/environment';
+
+export const presenceById = writable<Record<string, boolean>>({});
+
+let roomLeave: (() => Promise<void> | void) | null = null;
+
+export async function connectStatusRoom(userId: string) {
+	if (!browser) return () => {};
+
+	if (roomLeave) return roomLeave;
+
+	const room = await colyseusClient!.joinOrCreate<StatusState>('status', { userId });
+	const cb = Callbacks.get(room);
+	const stops = new Map<string, () => void>();
+
+	cb.onAdd('friends', (friend: FriendStatus, id: string) => {
+		console.log("friend: ", friend, id);
+		presenceById.update((v) => ({ ...v, [id]: friend.online }));
+
+		const stop = cb.listen(friend, 'online', (online) => {
+			presenceById.update((v) => ({ ...v, [id]: online }));
+		});
+
+		stops.set(id, stop);
+	});
+
+	cb.onRemove('friends', (_friend: FriendStatus, id: string) => {
+		stops.get(id)?.();
+		stops.delete(id);
+
+		presenceById.update((v) => {
+			const copy = { ...v };
+			delete copy[id];
+			return copy;
+		});
+	});
+
+	roomLeave = async () => {
+		for (const stop of stops.values()) stop();
+		stops.clear();
+		presenceById.set({});
+		await room.leave();
+		roomLeave = null;
+	};
+
+	return roomLeave;
+}

@@ -10,8 +10,6 @@ export class StatusRoom extends Room<{ state: StatusState }> {
 
 	async onJoin(client: Client, options: { userId: string }) {
 		this.userId = options.userId;
-
-		console.log("onJoin", this.userId);
 		statusHub.bind(this.userId, this);
 
 		const friends = await getFriendList(this.userId);// need to use this instead of non realtime sveltekit `query`
@@ -29,12 +27,11 @@ export class StatusRoom extends Room<{ state: StatusState }> {
 	}
 
 	async onDrop(client: Client, code: number) {
-		console.log("onDrop", this.userId);
 		await statusHub.setOnline(this.userId, false);
+		statusHub.unbind(this.userId);
 	}
 
 	async onReconnect(client: Client) {
-		console.log("onReconnect", this.userId);
 		await statusHub.setOnline(this.userId, true);
 	}
 }

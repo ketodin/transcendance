@@ -9,22 +9,26 @@
 	import { page } from '$app/stores';
 	import type { Snippet } from 'svelte';
 	import { shaderTheme } from '$lib/shader-theme';
+	import { useSession } from '$lib/auth-client';
 
 	let { children }: { children: Snippet } = $props();
 
 	const isAuthRoute = $derived(
 		$page.url.pathname.startsWith('/login') || $page.url.pathname.startsWith('/register')
 	);
+
+	const session = useSession();
+
 </script>
 
 <ModeWatcher />
 
 <Shader theme={$shaderTheme} />
 
-{#if !isAuthRoute}
+{#if !isAuthRoute && $session.data !== null}
 	<div class="app">
 		<Header />
-		<FriendList />
+		<FriendList userId={$session.data.user.id} />
 		<Footer />
 
 		<main class="game-container">
