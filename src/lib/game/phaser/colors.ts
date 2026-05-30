@@ -1,6 +1,9 @@
 function cssHex(varName: string): number {
 	const val = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
-	return parseInt(val.replace('#', ''), 16);
+	const hex = val.replace('#', '').trim();
+	// Production CSS minifies #ffffff → #fff; expand shorthand before parsing
+	const full = hex.length === 3 ? hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2] : hex;
+	return parseInt(full, 16);
 }
 
 function cssStr(varName: string): string {
