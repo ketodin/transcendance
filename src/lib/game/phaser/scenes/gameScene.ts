@@ -81,11 +81,6 @@ export default class GameScene extends Scene {
 	private lastSentAngle = 90;
 	private localPower = 0;
 	private isGrabbing = false;
-	private grabTurretAngle = 0;
-	private aimPrevMouseAngle = 0;
-	private aimAccum = 0;
-	private grabDist = 0;
-	private grabPower = 0;
 
 	private turnText!: GameObjects.Text;
 	private timerText!: GameObjects.Text;
@@ -182,11 +177,6 @@ export default class GameScene extends Scene {
 			if (hitObjects.length > 0) return; // click landed on a UI button — don't start grab
 			if (this.localPhase === 'AIMING' && this.localCurrentPlayer === this.myPlayerIndex) {
 				this.isGrabbing = true;
-				this.grabTurretAngle = this.localTurretAngle;
-				this.aimPrevMouseAngle = NaN;
-				this.aimAccum = 0;
-				this.grabDist = NaN;
-				this.grabPower = this.localPower;
 			}
 		});
 		this.input.on('pointerup', () => {
@@ -644,8 +634,6 @@ export default class GameScene extends Scene {
 		const phase = this.localPhase;
 		const currentPlayer = this.localCurrentPlayer;
 
-		// Sync local angle from server whenever not actively grabbing
-		// This ensures slope changes during movement are reflected immediately
 		if (!this.isGrabbing) {
 			this.localTurretAngle = data.tanks[this.myPlayerIndex].turretAngle;
 		}
@@ -783,7 +771,7 @@ export default class GameScene extends Scene {
 			this.room!.send('input', snap);
 		}
 
-		// Mouse aiming — only while left button is held, delta-based to avoid snapping on re-grab
+		// Mouse aiming — only while left button is held
 		if (phase === 'AIMING' && this.isGrabbing && this.localTerrain && this.localGameData) {
 			const tank = this.localGameData.tanks[this.myPlayerIndex];
 			const terrain = this.localTerrain;
@@ -795,38 +783,20 @@ export default class GameScene extends Scene {
 
 			const mx = this.input.activePointer.worldX;
 			const my = this.input.activePointer.worldY;
-			const mouseAngle = Math.atan2(-(my - pivotY), mx - pivotX) * (180 / Math.PI);
 
-			// Frame-delta unwrapping — avoids ±180° snap by accumulating small per-frame deltas
-			if (isNaN(this.aimPrevMouseAngle)) {
-				this.aimPrevMouseAngle = mouseAngle;
-				this.aimAccum = 0;
-			} else {
-				let frameDelta = mouseAngle - this.aimPrevMouseAngle;
-				if (frameDelta > 180) frameDelta -= 360;
-				if (frameDelta < -180) frameDelta += 360;
-				this.aimAccum += frameDelta;
-				this.aimPrevMouseAngle = mouseAngle;
+			// Direct aiming — turret angle follows the cursor position immediately
+			const directAngle = Math.atan2(-(my - pivotY), mx - pivotX) * (180 / Math.PI);
+			this.localTurretAngle = directAngle;
+			if (Math.abs(directAngle - this.lastSentAngle) > 0.3) {
+				this.lastSentAngle = directAngle;
+				this.room!.send('set_turret_angle', { angle: directAngle });
 			}
 
-			const slopeDeg = slope * (180 / Math.PI);
-			const clamped = Math.max(
-				-slopeDeg,
-				Math.min(180 - slopeDeg, this.grabTurretAngle + this.aimAccum)
-			);
-
-			this.localTurretAngle = clamped;
-			if (Math.abs(clamped - this.lastSentAngle) > 0.3) {
-				this.lastSentAngle = clamped;
-				this.room!.send('set_turret_angle', { angle: clamped });
-			}
-
-			// Power — project mouse onto barrel axis so all drag directions feel direct
-			const barrelRad = (this.localTurretAngle * Math.PI) / 180;
-			const proj = (mx - pivotX) * Math.cos(barrelRad) - (my - pivotY) * Math.sin(barrelRad);
-			if (isNaN(this.grabDist)) this.grabDist = proj;
-			const projDelta = proj - this.grabDist;
-			this.localPower = Math.min(100, Math.max(0, this.grabPower + (projDelta / 235) * 100));
+			// Power — invert the drawTrajectory formula so the cone tip lands exactly on the cursor.
+			// drawTrajectory: length = (80 + power * 2.33) * 0.75, measured from barrel tip (40px from pivot).
+			const dist = Math.sqrt((mx - pivotX) ** 2 + (my - pivotY) ** 2);
+			const coneLength = dist - 40;
+			this.localPower = Math.min(100, Math.max(0, (coneLength / 0.75 - 80) / 2.33));
 		}
 	}
 

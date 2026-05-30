@@ -236,22 +236,9 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 					this.physicsState.fuel -= (Math.abs(nx - tank.x) / MAX_FUEL_DISTANCE) * 100;
 					this.physicsState.fuel = Math.max(0, this.physicsState.fuel);
 
-					// Check if cannon was at lowest position (parallel to terrain) before moving
-					const oldLy = getHeightAt(this.physicsState.terrain, tank.x - 15);
-					const oldRy = getHeightAt(this.physicsState.terrain, tank.x + 15);
-					const oldMinAngle = -Math.atan2(oldRy - oldLy, 30) * (180 / Math.PI);
-					const wasAtMin = Math.abs(tank.turretAngle - oldMinAngle) < 0.5;
-
 					tank.x = nx;
 					tank.y = newY;
 					this.clampTurretAngle(p);
-
-					// If cannon was at lowest, keep it pinned to the new terrain-parallel angle
-					if (wasAtMin) {
-						const newLy = getHeightAt(this.physicsState.terrain, tank.x - 15);
-						const newRy = getHeightAt(this.physicsState.terrain, tank.x + 15);
-						tank.turretAngle = -Math.atan2(newRy - newLy, 30) * (180 / Math.PI);
-					}
 
 					this.syncTank(p);
 					this.state.fuel = this.physicsState.fuel;
@@ -533,10 +520,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 
 	private clampTurretAngle(playerIndex: 0 | 1) {
 		const tank = this.physicsState.tanks[playerIndex];
-		const ly = getHeightAt(this.physicsState.terrain, tank.x - 15);
-		const ry = getHeightAt(this.physicsState.terrain, tank.x + 15);
-		const slopeDeg = Math.atan2(ry - ly, 30) * (180 / Math.PI);
-		tank.turretAngle = Math.max(-slopeDeg, Math.min(180 - slopeDeg, tank.turretAngle));
+		tank.turretAngle = Math.max(-180, Math.min(180, tank.turretAngle));
 	}
 
 	private syncTank(idx: 0 | 1) {
