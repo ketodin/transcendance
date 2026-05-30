@@ -173,9 +173,21 @@ export default class GameScene extends Scene {
 		void this.connectToServer();
 		EventBus.on('theme-changed', this.onThemeChanged);
 
-		this.input.on('pointerdown', (_ptr: Input.Pointer, hitObjects: GameObjects.GameObject[]) => {
-			if (hitObjects.length > 0) return; // click landed on a UI button — don't start grab
+		this.input.on('pointerdown', (ptr: Input.Pointer, hitObjects: GameObjects.GameObject[]) => {
+			if (hitObjects.length > 0) return;
 			if (this.localPhase === 'AIMING' && this.localCurrentPlayer === this.myPlayerIndex) {
+				const tank = this.localGameData?.tanks[this.myPlayerIndex];
+				const terrain = this.localTerrain;
+				if (!tank || !terrain) return;
+				const ly = getHeightAt(terrain, tank.x - 15);
+				const ry = getHeightAt(terrain, tank.x + 15);
+				const slope = Math.atan2(ry - ly, 30);
+				const pivotX = tank.x + 17 * Math.sin(slope);
+				const pivotY = tank.y - 17 * Math.cos(slope) - 7;
+				const maxRadius = (80 + 100 * 2.33) * 0.75 + 40;
+				const dx = ptr.worldX - pivotX;
+				const dy = ptr.worldY - pivotY;
+				if (dx * dx + dy * dy > maxRadius * maxRadius) return;
 				this.isGrabbing = true;
 			}
 		});

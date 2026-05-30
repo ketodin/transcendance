@@ -75,6 +75,7 @@
 	--game-red: var(--destructive); /* timer critical (≤5s) */
 	--game-hint: var(--200); /* controls hint text */
 	--game-weapon-inactive: var(--600); /* inactive weapon name */
+	--game-aiming: #000000; /* aiming cone + range disk */
 }
 
 .dark {
@@ -118,6 +119,7 @@
 	--game-red: var(--destructive); /* timer critical (≤5s) */
 	--game-hint: var(--200); /* controls hint text */
 	--game-weapon-inactive: var(--600); /* inactive weapon name */
+	--game-aiming: #ffffff; /* aiming cone + range disk */
 }
 
 @theme inline {

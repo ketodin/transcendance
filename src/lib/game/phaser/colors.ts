@@ -67,7 +67,7 @@ export const COLOR_STRINGS = {
 export function syncFromCSS(): void {
 	// Only theme-linked — game-inherent stay hardcoded above
 	COLORS.navy = cssHex('--game-navy');
-	COLORS.aiming = cssHex('--game-bg');
+	COLORS.aiming = cssHex('--game-aiming');
 	COLORS.terrain = cssHex('--game-terrain');
 	COLORS.terrainDark = cssHex('--game-terrain-dark');
 	COLORS.terrainBase = cssHex('--game-terrain-base');
