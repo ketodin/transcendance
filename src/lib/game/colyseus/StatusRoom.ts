@@ -33,6 +33,15 @@ export class StatusRoom extends Room<{ state: StatusState }> {
 		statusHub.unbind(this.userId);
 	}
 
+	async onLeave(_client: Client, _code: number) {
+		void _client;
+		void _code;
+		//if (code == 4000) {
+		await statusHub.setOnline(this.userId, false);
+		statusHub.unbind(this.userId);
+		//}
+	}
+
 	async onReconnect(_client: Client) {
 		void _client;
 		await statusHub.setOnline(this.userId, true);

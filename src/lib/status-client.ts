@@ -7,10 +7,11 @@ import { browser } from '$app/environment';
 export const presenceById = writable<Record<string, boolean>>({});
 
 let roomLeave: (() => Promise<void> | void) | null = null;
+let disconnecting = false;
 
 export async function connectStatusRoom(userId: string) {
 	if (!browser) return () => {};
-
+	if (disconnecting) return () => {};
 	if (roomLeave) return roomLeave;
 
 	const room = await colyseusClient!.joinOrCreate<StatusState>('status', { userId });
@@ -47,4 +48,9 @@ export async function connectStatusRoom(userId: string) {
 	};
 
 	return roomLeave;
+}
+
+export function disconnectStatusRoom() {
+	disconnecting = true;
+	return roomLeave?.();
 }
