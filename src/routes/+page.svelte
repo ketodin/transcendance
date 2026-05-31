@@ -1,10 +1,18 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 </script>
 
 <div class="flex flex-col items-center justify-center gap-8">
-    <h1 class="text-8xl font-extrabold">Transcendence</h1>
-    <a href="/game" class="group relative w-[70vw] h-[40vh] text-4xl font-bold overflow-hidden rounded-md">
-        <img src="/image.png" alt="" class="absolute inset-0 w-full h-full object-cover transition-[filter] duration-300 blur-xs group-hover:blur-0" />
-        <span class="relative z-10 flex items-center justify-center w-full h-full">PLAY</span>
-    </a>
+	<h1 class="text-8xl font-extrabold">Transcendence</h1>
+	<a
+		href={resolve('/game')}
+		class="group relative h-[40vh] w-[70vw] overflow-hidden rounded-md text-4xl font-bold"
+	>
+		<img
+			src="/image.png"
+			alt=""
+			class="group-hover:blur-0 absolute inset-0 h-full w-full object-cover blur-xs transition-[filter] duration-300"
+		/>
+		<span class="relative z-10 flex h-full w-full items-center justify-center">PLAY</span>
+	</a>
 </div>
