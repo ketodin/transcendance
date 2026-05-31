@@ -192,8 +192,10 @@
 
 .glass {
 	background: rgba(var(--color-background), 0.15);
-	backdrop-filter: blur(24px);
+	/* autoprefixer: off */
 	-webkit-backdrop-filter: blur(24px);
+	backdrop-filter: blur(24px);
+	/* autoprefixer: on */
 	border-radius: var(--radius-xl);
 	box-shadow:
 		0 4px 16px rgba(0, 0, 0, 0.25),
@@ -202,25 +204,32 @@
 
 .glassbutton {
 	background: rgba(var(--color-background), 0.15);
-	backdrop-filter: blur(64px);
+	/* autoprefixer: off */
 	-webkit-backdrop-filter: blur(64px);
+	backdrop-filter: blur(64px);
+	/* autoprefixer: on */
 	border-radius: var(--radius-xl);
 	box-shadow:
 		0 4px 16px rgba(0, 0, 0, 0.25),
 		inset 0 1px 0 rgba(255, 255, 255, 0.12);
-	transition: transform 0.2s ease;
+	transition:
+		transform 0.2s ease,
+		backdrop-filter 0.4s ease;
 	cursor: pointer;
 }
 
 .glassbutton:hover {
 	/* background: rgba(var(--color-background), 0.35); */
 	transform: translateY(-2px);
+	backdrop-filter: blur(16px);
 }
 
 .glassdeep {
 	background: rgba(var(--color-background), 0.15);
-	backdrop-filter: blur(64px);
+	/* autoprefixer: off */
 	-webkit-backdrop-filter: blur(64px);
+	backdrop-filter: blur(64px);
+	/* autoprefixer: on */
 	border-radius: var(--radius-xl);
 	box-shadow:
 		0 4px 16px rgba(0, 0, 0, 0.25),
