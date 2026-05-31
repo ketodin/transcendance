@@ -3,7 +3,7 @@ import { toast as _toast } from 'svelte-sonner';
 const defaults = {
 	unstyled: true,
 	classes: {
-		toast: 'class flex px-4 py-3 gap-4'
+		toast: 'glass flex px-4 py-3 gap-4'
 	}
 };
 
