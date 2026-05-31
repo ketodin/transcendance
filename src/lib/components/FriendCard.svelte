@@ -6,7 +6,7 @@
 	import { type Friend } from '$lib/friends';
 	import * as friends from '$lib/friends.remote';
 	import { resolve } from '$app/paths';
-	import { toast } from 'svelte-sonner';
+	import { toast } from '$lib/components/toast';
 
 	type Props = { friend: Friend; online: boolean };
 	let { friend, online }: Props = $props();
@@ -40,10 +40,7 @@
 				size="icon-sm"
 				onclick={async () => {
 					await friends.accept(friend.id);
-					toast.success(m.accept_friend(), {
-						unstyled: true,
-						class: 'glass flex px-4 py-3 gap-4'
-					});
+					toast.success(m.accept_friend());
 				}}><Check /></Button
 			>
 			<div class="separator"></div>
@@ -53,10 +50,7 @@
 				size="icon-sm"
 				onclick={async () => {
 					await friends.remove(friend.id);
-					toast.success(m.declined_friend(), {
-						unstyled: true,
-						class: 'glass flex px-4 py-3 gap-4'
-					});
+					toast.success(m.declined_friend());
 				}}><X /></Button
 			>
 		{/if}
