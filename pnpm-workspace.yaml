@@ -12,3 +12,5 @@ allowBuilds:
 engineStrict: true
 publicHoistPattern:
   - '@colyseus/*'
+patchedDependencies:
+  '@colyseus/tools@0.17.19': patches/@colyseus__tools@0.17.19.patch

@@ -4,6 +4,7 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm --activate
 
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY ./patches ./patches
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm run generate && pnpm run build
@@ -17,6 +18,7 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm --activate
 
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY ./patches ./patches
 RUN pnpm install --prod --frozen-lockfile
 COPY --from=build /app/build/ ./build/
 COPY ./prisma/ ./prisma/

@@ -4,6 +4,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { m } from '$lib/paraglide/messages';
 	import type { PageProps } from './$types';
+	import { disconnectStatusRoom } from '$lib/status-client';
 
 	let { data }: PageProps = $props();
 </script>
@@ -17,7 +18,9 @@
 		<Button
 			class="glass"
 			onclick={async () => {
+				await disconnectStatusRoom();
 				await signOut();
+				//window.location.href = '/login';
 			}}>Logout</Button
 		>
 	</div>

@@ -15,7 +15,6 @@ async function isFriend(meId: string, otherId: string): Promise<boolean> {
 			status: 'ACCEPTED'
 		}
 	});
-	console.log('fr1');
 	if (friendship1) return true;
 	const friendship2 = await db.friendRequest.findUnique({
 		where: {
@@ -26,9 +25,7 @@ async function isFriend(meId: string, otherId: string): Promise<boolean> {
 			status: 'ACCEPTED'
 		}
 	});
-	console.log('fr2');
 	if (friendship2) return true;
-	console.log('fr3');
 	return false;
 }
 

@@ -7,7 +7,7 @@ import { TankSprite } from '../../client/view/TankSprite';
 import { TerrainView } from '../../client/view/TerrainView';
 import { ProjectileView } from '../../client/view/ProjectileView';
 import { Scene, GameObjects, Input } from 'phaser';
-import { Client, Room } from '@colyseus/sdk';
+import { Room } from '@colyseus/sdk';
 import type { GameRoomState } from '../../colyseus/schema/GameRoomState';
 import { COLORS, COLOR_STRINGS } from '../colors';
 import { EventBus } from '../EventBus';
@@ -15,11 +15,9 @@ import { EventBus } from '../EventBus';
 import { SpeechBubble } from '../../client/view/speechBubble';
 import { ChatInput } from '../../client/view/ChatInput';
 import { CHAT_BUBBLE_DURATION } from '$lib/game/shared/chatConfig';
+import { colyseusClient } from '$lib/colyseusClient';
 
 const PLAYER_NAMES = ['Player 1', 'Player 2'];
-
-const COLYSEUS_PROTOCOL = window.location.protocol === 'https:' ? 'wss' : 'ws';
-const COLYSEUS_URL = `${COLYSEUS_PROTOCOL}://${window.location.host}`;
 
 type InputSnapshot = {
 	moveLeft: boolean;
@@ -480,8 +478,7 @@ export default class GameScene extends Scene {
 		this.localWinner = -1;
 
 		try {
-			const client = new Client(COLYSEUS_URL);
-			const room = (await client.joinOrCreate('tank_room')) as unknown as Room<GameRoomState>;
+			const room = await colyseusClient!.joinOrCreate<GameRoomState>('tank_room');
 			this.room = room;
 
 			room.onMessage(

@@ -1,27 +1,10 @@
-import { type User, Prisma } from '$lib/server/prisma/client';
+import { Prisma } from '$lib/server/prisma/client';
 import { redirect, error, invalid } from '@sveltejs/kit';
 import { query, command, form, getRequestEvent } from '$app/server';
 import { z } from 'zod';
 import db from '$lib/server/db';
-
-export type FriendStatus = 'ACCEPTED' | 'RECEIVED' | 'SENT';
-export type Friend = User & { friendStatus: FriendStatus };
-
-async function getFriendList(meId: string): Promise<Friend[]> {
-	const rawFriends = await db.friendRequest.findMany({
-		where: { OR: [{ senderId: meId }, { receiverId: meId }] },
-		include: { sender: true, receiver: true }
-	});
-
-	const friends: Friend[] = [];
-	for (const raw of rawFriends) {
-		const status: FriendStatus =
-			raw.status == 'ACCEPTED' ? 'ACCEPTED' : raw.senderId == meId ? 'SENT' : 'RECEIVED';
-		const user = raw.senderId == meId ? raw.receiver : raw.sender;
-		friends.push({ ...user, friendStatus: status });
-	}
-	return friends;
-}
+import { getFriendList } from './friends';
+import { statusHub } from '$lib/game/colyseus/statusHub';
 
 async function sendOrAccept(meId: string, otherId: string) {
 	/// check for reverse request, accepted or not, and set it accepted if found
@@ -31,6 +14,7 @@ async function sendOrAccept(meId: string, otherId: string) {
 	});
 	/// if found any reverse request, stop
 	if (updates.count > 0) {
+		statusHub.friendAccepted(meId, otherId);
 		return;
 	}
 	/// create a pending request if not already friend
@@ -56,6 +40,7 @@ async function dismissOrRemove(meId: string, otherId: string) {
 			]
 		}
 	});
+	statusHub.friendRemoved(meId, otherId);
 }
 
 export const list = query(async () => {

@@ -8,6 +8,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import type { User } from '$lib/server/prisma/browser';
 import { type Server as ColyseusServer, matchMaker } from 'colyseus';
 import { TankRoom } from '$lib/game/colyseus/TankRoom';
+import { StatusRoom } from '$lib/game/colyseus/StatusRoom';
 
 let gameServer: ColyseusServer | null = null;
 
@@ -41,6 +42,7 @@ export const handleColyseus: Handle = async ({ event, resolve }) => {
 	if (!gameServer) {
 		gameServer = globalThis.gameServer;
 		matchMaker.defineRoomType('tank_room', TankRoom);
+		matchMaker.defineRoomType('status', StatusRoom);
 	}
 	return resolve(event, {});
 };

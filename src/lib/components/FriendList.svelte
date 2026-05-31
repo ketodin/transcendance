@@ -1,18 +1,38 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { Plus, X } from '@lucide/svelte';
 	import FriendCard from './FriendCard.svelte';
 	import * as friends from '$lib/friends.remote';
-	import { send as sendFriendRequest } from '$lib/friends.remote';
+	import type { FriendRequestStatus } from '$lib/friends';
 	import { Input } from '$lib/components/ui/input';
+	import { presenceById, connectStatusRoom } from '$lib/status-client';
 
 	const friendList = $derived(await friends.list());
 
-	const statusOrder: Record<friends.FriendStatus, number> = { RECEIVED: 3, ACCEPTED: 2, SENT: 1 };
+	const statusOrder: Record<FriendRequestStatus, number> = { RECEIVED: 3, ACCEPTED: 2, SENT: 1 };
 	let sortedFriends = $derived(
-		[...friendList].sort((a, b) => statusOrder[b.friendStatus] - statusOrder[a.friendStatus])
+		[...friendList].sort(
+			(a, b) => statusOrder[b.friendRequestStatus] - statusOrder[a.friendRequestStatus]
+		)
 	);
+
+	let { userId }: { userId: string } = $props();
 	let showAddFriend = $state(false);
+
+	let disconnect = () => {};
+	onMount(() => {
+		connectStatusRoom(userId)
+			.then((fn) => {
+				disconnect = fn;
+			})
+			.catch((e) => {
+				console.error(e);
+			});
+		return () => {
+			disconnect();
+		};
+	});
 </script>
 
 <div class="glass sidebar">
@@ -28,16 +48,16 @@
 	</div>
 
 	{#if showAddFriend}
-		<form class="add-friend-form glass" {...sendFriendRequest}>
-			<Input {...sendFriendRequest.fields.email.as('text')} placeholder={m.mail_place_holder()} />
-			{#each sendFriendRequest.fields.email.issues() as issue (issue.message)}
+		<form class="add-friend-form glass" {...friends.send}>
+			<Input {...friends.send.fields.email.as('text')} placeholder={m.mail_place_holder()} />
+			{#each friends.send.fields.email.issues() as issue (issue.message)}
 				<p class="error">{issue.message}</p>
 			{/each}
 		</form>
 	{/if}
 
 	{#each sortedFriends as friend (friend.id)}
-		<FriendCard {friend} online={true} />
+		<FriendCard {friend} online={$presenceById[friend.id] ?? false} />
 	{/each}
 </div>
 

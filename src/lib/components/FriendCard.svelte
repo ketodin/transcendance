@@ -3,22 +3,23 @@
 	import { Check, X } from '@lucide/svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
+	import { type Friend } from '$lib/friends';
 	import * as friends from '$lib/friends.remote';
 	import { resolve } from '$app/paths';
 	import { toast } from 'svelte-sonner';
 
-	type Props = { friend: friends.Friend; online: boolean };
+	type Props = { friend: Friend; online: boolean };
 	let { friend, online }: Props = $props();
 
 	const initial = $derived(friend.name.charAt(0).toUpperCase());
 </script>
 
-<a href={resolve(`/profile/${friend.id}`)} class="glassdeep user">
+<a href={resolve('/profile/[id]', { id: friend.id })} class="glassdeep user">
 	<div class="avatar">{initial}</div>
 
 	<div class="info">
 		<div class="name">{friend.name}</div>
-		{#if friend.friendStatus == 'SENT' || friend.friendStatus == 'RECEIVED'}
+		{#if friend.friendRequestStatus == 'SENT' || friend.friendRequestStatus == 'RECEIVED'}
 			<Badge variant="destructive" class="status offline">
 				{m.pending()}
 			</Badge>
@@ -32,7 +33,7 @@
 	</div>
 
 	<div class="actions">
-		{#if friend.friendStatus == 'RECEIVED'}
+		{#if friend.friendRequestStatus == 'RECEIVED'}
 			<Button
 				class="glass"
 				variant="outline"
