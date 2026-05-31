@@ -1,8 +1,10 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
 </script>
 
 <div class="flex flex-col items-center justify-center gap-8">
-	<h1 class="text-4xl font-bold">Bienvenue sur tank game</h1>
-	<Button href="/game" class="h-auto px-12 py-6 text-2xl font-bold">PLAY</Button>
+    <h1 class="text-8xl font-extrabold">Transcendence</h1>
+    <a href="/game" class="group relative w-[70vw] h-[40vh] text-4xl font-bold overflow-hidden rounded-md">
+        <img src="/image.png" alt="" class="absolute inset-0 w-full h-full object-cover transition-[filter] duration-300 blur-xs group-hover:blur-0" />
+        <span class="relative z-10 flex items-center justify-center w-full h-full">PLAY</span>
+    </a>
 </div>
