@@ -39,8 +39,7 @@
 				variant="outline"
 				size="icon-sm"
 				onclick={async () => {
-					await friends.accept(friend.id);
-					toast.success(m.accept_friend());
+					await friends.accept(friend.id).then(() => toast.success(m.friend_request_accept()));
 				}}><Check /></Button
 			>
 			<div class="separator"></div>
@@ -49,8 +48,7 @@
 				variant="outline"
 				size="icon-sm"
 				onclick={async () => {
-					await friends.remove(friend.id);
-					toast.success(m.declined_friend());
+					await friends.remove(friend.id).then(() => toast.success(m.friend_request_deny()));
 				}}><X /></Button
 			>
 		{/if}
