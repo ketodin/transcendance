@@ -54,7 +54,7 @@
 	--radius: 0.625rem;
 
 	/* Game colors — dark mode (night time) */
-	--game-bg: var(--700); /* canvas background */
+	--game-bg: var(--1000); /* canvas background */
 	--game-sky-top: var(--950);
 	--game-navy: var(--800); /* HUD panel bg + text stroke */
 	--game-terrain: var(--950);
@@ -75,6 +75,7 @@
 	--game-red: var(--destructive); /* timer critical (≤5s) */
 	--game-hint: var(--200); /* controls hint text */
 	--game-weapon-inactive: var(--600); /* inactive weapon name */
+	--game-aiming: #000000; /* aiming cone + range disk */
 }
 
 .dark {
@@ -97,7 +98,7 @@
 	--chart-5: #27272a;
 
 	/* Game colors — dark mode (night time) */
-	--game-bg: var(--700); /* canvas background */
+	--game-bg: var(--0); /* canvas background */
 	--game-sky-top: var(--950);
 	--game-navy: var(--800); /* HUD panel bg + text stroke */
 	--game-terrain: var(--950);
@@ -118,6 +119,7 @@
 	--game-red: var(--destructive); /* timer critical (≤5s) */
 	--game-hint: var(--200); /* controls hint text */
 	--game-weapon-inactive: var(--600); /* inactive weapon name */
+	--game-aiming: #ffffff; /* aiming cone + range disk */
 }
 
 @theme inline {

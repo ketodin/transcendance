@@ -24,8 +24,6 @@ const COLYSEUS_URL = `${COLYSEUS_PROTOCOL}://${window.location.host}`;
 type InputSnapshot = {
 	moveLeft: boolean;
 	moveRight: boolean;
-	aimUp: boolean;
-	aimDown: boolean;
 };
 
 type ProjectileSnapshot = {
@@ -68,23 +66,31 @@ export default class GameScene extends Scene {
 	private clientTrail: Array<{ x: number; y: number }> = [];
 	private lastProjActive = false;
 	private lastProjX = -Infinity;
+	private lastShotTrail: Array<{ x: number; y: number }> = [];
+	private lastShotGfx!: GameObjects.Graphics;
+	private flyingProjectileIsMine = false;
+	private fullFlightTrail: Array<{ x: number; y: number }> = [];
 	private fragmentViews: ProjectileView[] = [];
 	private fragmentTrails: Array<Array<{ x: number; y: number }>> = [];
 	private selectableWeaponIndices: number[] = [];
-	private weaponZones: GameObjects.Zone[] = [];
 	private weaponCooldowns: [boolean[], boolean[]] = [[], []];
+	private hoveredWeaponTypeIdx = -1;
 
-	private lastInput: InputSnapshot = {
-		moveLeft: false,
-		moveRight: false,
-		aimUp: false,
-		aimDown: false
-	};
+	private lastInput: InputSnapshot = { moveLeft: false, moveRight: false };
+	private localTurretAngle = 90;
+	private lastSentAngle = 90;
+	private localPower = 0;
+	private isGrabbing = false;
 
 	private turnText!: GameObjects.Text;
 	private timerText!: GameObjects.Text;
-	private powerBg!: GameObjects.Graphics;
-	private powerFill!: GameObjects.Graphics;
+	private fireBtn!: GameObjects.Graphics;
+	private fireBtnLabel!: GameObjects.Text;
+	private fireBtnCx = 0;
+	private fireBtnCy = 0;
+	private fireBtnW = 0;
+	private fireBtnH = 0;
+	private fireBtnHovered = false;
 	private fuelBg!: GameObjects.Graphics;
 	private fuelFill!: GameObjects.Graphics;
 	private fuelIcon!: GameObjects.Text;
@@ -105,12 +111,6 @@ export default class GameScene extends Scene {
 		return (n * this.scale.width) / 1280;
 	}
 
-	private get barW() {
-		return this.sw(400);
-	}
-	private get barH() {
-		return this.sh(18);
-	}
 	private get fuelBarX() {
 		return this.sw(35);
 	}
@@ -121,12 +121,6 @@ export default class GameScene extends Scene {
 		return this.sh(18);
 	}
 
-	private get barX() {
-		return this.scale.width / 2 - this.barW / 2;
-	}
-	private get barY() {
-		return this.scale.height - this.sh(24);
-	}
 	private get fuelBarY() {
 		return this.scale.height - this.sh(42);
 	}
@@ -152,11 +146,17 @@ export default class GameScene extends Scene {
 	private keys!: {
 		left: Input.Keyboard.Key;
 		right: Input.Keyboard.Key;
-		aimUp: Input.Keyboard.Key;
-		aimDown: Input.Keyboard.Key;
-		shoot: Input.Keyboard.Key;
-		weaponKey: Input.Keyboard.Key;
 	};
+	private moveLBtnDown = false;
+	private moveRBtnDown = false;
+	private moveLeftBtn!: GameObjects.Graphics;
+	private moveRightBtn!: GameObjects.Graphics;
+	private moveLeftBtnHovered = false;
+	private moveRightBtnHovered = false;
+	private moveBtnCx: [number, number] = [0, 0];
+	private moveBtnCy = 0;
+	private moveBtnW = 0;
+	private moveBtnH = 0;
 
 	constructor() {
 		super({ key: 'GameScene' });
@@ -172,6 +172,28 @@ export default class GameScene extends Scene {
 		this.setupKeys();
 		void this.connectToServer();
 		EventBus.on('theme-changed', this.onThemeChanged);
+
+		this.input.on('pointerdown', (ptr: Input.Pointer, hitObjects: GameObjects.GameObject[]) => {
+			if (hitObjects.length > 0) return;
+			if (this.localPhase === 'AIMING' && this.localCurrentPlayer === this.myPlayerIndex) {
+				const tank = this.localGameData?.tanks[this.myPlayerIndex];
+				const terrain = this.localTerrain;
+				if (!tank || !terrain) return;
+				const ly = getHeightAt(terrain, tank.x - 15);
+				const ry = getHeightAt(terrain, tank.x + 15);
+				const slope = Math.atan2(ry - ly, 30);
+				const pivotX = tank.x + 17 * Math.sin(slope);
+				const pivotY = tank.y - 17 * Math.cos(slope) - 7;
+				const maxRadius = (80 + 100 * 2.33) * 0.75 + 40;
+				const dx = ptr.worldX - pivotX;
+				const dy = ptr.worldY - pivotY;
+				if (dx * dx + dy * dy > maxRadius * maxRadius) return;
+				this.isGrabbing = true;
+			}
+		});
+		this.input.on('pointerup', () => {
+			this.isGrabbing = false;
+		});
 	}
 
 	shutdown() {
@@ -195,11 +217,7 @@ export default class GameScene extends Scene {
 		const kb = this.input.keyboard!;
 		this.keys = {
 			right: kb.addKey(Input.Keyboard.KeyCodes.RIGHT),
-			left: kb.addKey(Input.Keyboard.KeyCodes.LEFT),
-			aimUp: kb.addKey(Input.Keyboard.KeyCodes.UP),
-			aimDown: kb.addKey(Input.Keyboard.KeyCodes.DOWN),
-			shoot: kb.addKey(Input.Keyboard.KeyCodes.SPACE),
-			weaponKey: kb.addKey(Input.Keyboard.KeyCodes.Q)
+			left: kb.addKey(Input.Keyboard.KeyCodes.LEFT)
 		};
 		//Chat key
 		this.chatKey = kb.addKey(Input.Keyboard.KeyCodes.T);
@@ -237,14 +255,6 @@ export default class GameScene extends Scene {
 			.setOrigin(0.5, 0)
 			.setDepth(10)
 			.setVisible(false);
-
-		this.powerBg = this.add.graphics().setDepth(10);
-		this.powerBg.fillStyle(COLORS.navy, 0.92);
-		this.powerBg.fillRect(this.barX - 1, this.barY - 1, this.barW + 2, this.barH + 2);
-		this.powerBg.setVisible(false);
-
-		this.powerFill = this.add.graphics().setDepth(10);
-		this.powerFill.setVisible(false);
 
 		this.fuelBg = this.add.graphics().setDepth(10);
 		this.fuelBg.fillStyle(COLORS.navy, 0.92);
@@ -309,18 +319,113 @@ export default class GameScene extends Scene {
 		const n = this.selectableWeaponIndices.length;
 		const startX = (this.scale.width - (n * iSize + (n - 1) * iGap)) / 2;
 		const iconY = this.scale.height - this.sh(66) + 6;
-		this.weaponZones = this.selectableWeaponIndices.map((typeIdx, si) => {
+		this.selectableWeaponIndices.forEach((typeIdx, si) => {
 			const cx = startX + si * (iSize + iGap) + iSize / 2;
 			const zone = this.add
 				.zone(cx, iconY, iSize, iSize)
 				.setDepth(11)
 				.setInteractive({ useHandCursor: true });
+			zone.on('pointerover', () => {
+				this.hoveredWeaponTypeIdx = typeIdx;
+			});
+			zone.on('pointerout', () => {
+				this.hoveredWeaponTypeIdx = -1;
+			});
 			zone.on('pointerdown', () => {
 				if (this.localCurrentPlayer !== this.myPlayerIndex) return;
 				if (this.localPhase !== 'AIMING') return;
 				this.room?.send('select_weapon', { index: typeIdx });
 			});
-			return zone;
+		});
+
+		// Move buttons — placed to the left of the weapon icon cluster
+		const moveBtnW = this.sw(52);
+		const moveBtnH = this.sw(42);
+		const moveBtnGap = this.sw(6);
+		const moveBtnY = iconY;
+		const rightCx = startX - this.sw(80) - moveBtnGap - moveBtnW / 2;
+		const leftCx = rightCx - moveBtnGap - moveBtnW;
+
+		this.moveLeftBtn = this.add.graphics().setDepth(11).setVisible(false);
+		this.moveRightBtn = this.add.graphics().setDepth(11).setVisible(false);
+
+		this.moveBtnCx = [leftCx, rightCx];
+		this.moveBtnCy = moveBtnY;
+		this.moveBtnW = moveBtnW;
+		this.moveBtnH = moveBtnH;
+
+		const leftZone = this.add
+			.zone(leftCx, moveBtnY, moveBtnW, moveBtnH)
+			.setDepth(12)
+			.setInteractive({ useHandCursor: true });
+		leftZone.on('pointerover', () => {
+			this.moveLeftBtnHovered = true;
+		});
+		leftZone.on('pointerout', () => {
+			this.moveLeftBtnHovered = false;
+			this.moveLBtnDown = false;
+		});
+		leftZone.on('pointerdown', () => {
+			if (this.localCurrentPlayer === this.myPlayerIndex && this.localPhase === 'AIMING')
+				this.moveLBtnDown = true;
+		});
+		leftZone.on('pointerup', () => {
+			this.moveLBtnDown = false;
+		});
+
+		const rightZone = this.add
+			.zone(rightCx, moveBtnY, moveBtnW, moveBtnH)
+			.setDepth(12)
+			.setInteractive({ useHandCursor: true });
+		rightZone.on('pointerover', () => {
+			this.moveRightBtnHovered = true;
+		});
+		rightZone.on('pointerout', () => {
+			this.moveRightBtnHovered = false;
+			this.moveRBtnDown = false;
+		});
+		rightZone.on('pointerdown', () => {
+			if (this.localCurrentPlayer === this.myPlayerIndex && this.localPhase === 'AIMING')
+				this.moveRBtnDown = true;
+		});
+		rightZone.on('pointerup', () => {
+			this.moveRBtnDown = false;
+		});
+
+		// Fire button — placed to the right of the weapon icon cluster
+		this.fireBtnW = this.sw(80);
+		this.fireBtnH = this.sw(42);
+		const iconsEndX = (this.scale.width + (n * iSize + (n - 1) * iGap)) / 2;
+		this.fireBtnCx = iconsEndX + this.sw(20) + this.fireBtnW / 2;
+		this.fireBtnCy = iconY;
+
+		this.fireBtn = this.add.graphics().setDepth(11).setVisible(false);
+		this.fireBtnLabel = this.add
+			.text(this.fireBtnCx, this.fireBtnCy, 'FIRE', {
+				fontSize: `${Math.round(this.sh(14))}px`,
+				color: '#ffffff',
+				fontStyle: 'bold',
+				stroke: '#000000',
+				strokeThickness: 2
+			})
+			.setOrigin(0.5)
+			.setDepth(12)
+			.setVisible(false);
+
+		const fireBtnZone = this.add
+			.zone(this.fireBtnCx, this.fireBtnCy, this.fireBtnW, this.fireBtnH)
+			.setDepth(12)
+			.setInteractive({ useHandCursor: true });
+
+		fireBtnZone.on('pointerover', () => {
+			this.fireBtnHovered = true;
+		});
+		fireBtnZone.on('pointerout', () => {
+			this.fireBtnHovered = false;
+		});
+		fireBtnZone.on('pointerdown', () => {
+			if (this.localPhase !== 'AIMING' || this.localCurrentPlayer !== this.myPlayerIndex) return;
+			this.room?.send('fire_direct', { angle: this.localTurretAngle, power: this.localPower });
 		});
 
 		this.weaponUiGfx = this.add.graphics().setDepth(10).setVisible(false);
@@ -398,6 +503,8 @@ export default class GameScene extends Scene {
 					this.localPhase = 'AIMING';
 					this.localTerrain = data.terrain;
 					if (data.weaponCooldowns) this.weaponCooldowns = data.weaponCooldowns;
+					this.localTurretAngle = data.tanks[this.myPlayerIndex].turretAngle;
+					this.lastSentAngle = this.localTurretAngle;
 					this.localGameData = {
 						tanks: data.tanks,
 						projectile: { active: false, x: 0, y: 0, typeIndex: 0, bouncesLeft: 0 },
@@ -424,6 +531,17 @@ export default class GameScene extends Scene {
 				(data: { phase: string; currentPlayer: number; winner?: number }) => {
 					this.localPhase = data.phase;
 					this.localCurrentPlayer = data.currentPlayer;
+					if (data.phase === 'AIMING') {
+						this.isGrabbing = false;
+					}
+					if (data.phase === 'FLYING') {
+						this.flyingProjectileIsMine = data.currentPlayer === this.myPlayerIndex;
+						if (this.flyingProjectileIsMine) {
+							this.fullFlightTrail = [];
+							this.lastShotTrail = [];
+							this.lastShotGfx?.clear();
+						}
+					}
 					if (data.winner !== undefined) this.localWinner = data.winner;
 					if (data.phase === 'OVER') this.showGameOver(this.localWinner as 0 | 1);
 				}
@@ -500,6 +618,7 @@ export default class GameScene extends Scene {
 			this.chatInput.block(CHAT_BUBBLE_DURATION);
 		});
 		this.projView = new ProjectileView(this);
+		this.lastShotGfx = this.add.graphics().setDepth(7);
 	}
 
 	private showGameUI() {
@@ -511,14 +630,13 @@ export default class GameScene extends Scene {
 		this.healthIcon.setVisible(true);
 		this.weaponUiGfx.setVisible(true);
 		this.weaponNameLabel.setVisible(true);
-		this.controlsText.setText(
-			`${'← / →'.padEnd(7)}  Move\n` +
-				`${'↑ / ↓'.padEnd(7)}  Aim\n` +
-				`Q        Switch weapon\n` +
-				`${'SPACE'.padEnd(7)}  Charge / Fire`
-		);
+		this.controlsText.setText(`${'← / →'.padEnd(7)}  Move\n` + `${'Mouse'.padEnd(7)}  Aim + Power`);
 		this.controlsBg.setVisible(true);
 		this.controlsText.setVisible(true);
+		this.fireBtn.setVisible(true);
+		this.fireBtnLabel.setVisible(true);
+		this.moveLeftBtn.setVisible(true);
+		this.moveRightBtn.setVisible(true);
 	}
 
 	update() {
@@ -528,9 +646,21 @@ export default class GameScene extends Scene {
 		const phase = this.localPhase;
 		const currentPlayer = this.localCurrentPlayer;
 
-		// Sync tank sprites
-		this.tankSprites[0].sync(data.tanks[0], this.localTerrain);
-		this.tankSprites[1].sync(data.tanks[1], this.localTerrain);
+		if (!this.isGrabbing) {
+			this.localTurretAngle = data.tanks[this.myPlayerIndex].turretAngle;
+		}
+
+		// Sync tank sprites — use local angle for instant visual on own tank
+		const tank0State =
+			this.myPlayerIndex === 0
+				? { ...data.tanks[0], turretAngle: this.localTurretAngle }
+				: data.tanks[0];
+		const tank1State =
+			this.myPlayerIndex === 1
+				? { ...data.tanks[1], turretAngle: this.localTurretAngle }
+				: data.tanks[1];
+		this.tankSprites[0].sync(tank0State, this.localTerrain);
+		this.tankSprites[1].sync(tank1State, this.localTerrain);
 		// Bubble chat
 		this.speechBubbles[0].sync(data.tanks[0]);
 		this.speechBubbles[1].sync(data.tanks[1]);
@@ -549,6 +679,9 @@ export default class GameScene extends Scene {
 				this.lastProjX = proj.x;
 				this.clientTrail.push({ x: proj.x, y: proj.y });
 				if (this.clientTrail.length > 35) this.clientTrail.shift();
+				if (this.flyingProjectileIsMine) {
+					this.fullFlightTrail.push({ x: proj.x, y: proj.y });
+				}
 			}
 			this.projView!.sync({
 				x: proj.x,
@@ -563,6 +696,10 @@ export default class GameScene extends Scene {
 			});
 		} else if (this.lastProjActive) {
 			this.lastProjActive = false;
+			if (this.flyingProjectileIsMine && this.fullFlightTrail.length > 0) {
+				this.lastShotTrail = [...this.fullFlightTrail];
+				this.fullFlightTrail = [];
+			}
 			this.clientTrail = [];
 			this.projView!.sync(undefined);
 		}
@@ -599,6 +736,9 @@ export default class GameScene extends Scene {
 			});
 		}
 
+		// Last shot dotted trail (only visible to the player who fired)
+		this.drawLastShotTrail();
+
 		// UI updates
 		if (phase === 'AIMING' || phase === 'CHARGING') {
 			const secs = Math.ceil(data.turnTimeLeft);
@@ -610,20 +750,16 @@ export default class GameScene extends Scene {
 
 		this.updateFuelBar(data.fuel);
 		this.updateHealthBar(data.tanks[this.myPlayerIndex].health);
-		this.updateWeaponUI(data.weaponIndex);
+		const isMyTurn = currentPlayer === this.myPlayerIndex && phase === 'AIMING';
+		this.updateWeaponUI(data.weaponIndex, isMyTurn);
+		this.drawFireButton(this.fireBtnHovered && isMyTurn, !isMyTurn);
+		this.drawMoveButton(0, this.moveLeftBtnHovered && isMyTurn, !isMyTurn);
+		this.drawMoveButton(1, this.moveRightBtnHovered && isMyTurn, !isMyTurn);
 
-		if (phase === 'CHARGING') {
-			this.powerBg.setVisible(true);
-			this.powerFill.setVisible(true);
-			this.updatePowerBar(data.power);
-		} else {
-			this.powerBg.setVisible(false);
-			this.powerFill.setVisible(false);
-		}
-
-		// Trajectory preview
-		if (phase === 'AIMING' || phase === 'CHARGING') {
-			this.drawTrajectory(data.tanks[currentPlayer], data.weaponIndex, data.power, phase);
+		// Trajectory preview — only visible to the active player, never to the opponent
+		if (phase === 'AIMING' && currentPlayer === this.myPlayerIndex) {
+			const tankForTraj = { ...data.tanks[currentPlayer], turretAngle: this.localTurretAngle };
+			this.drawTrajectory(tankForTraj, data.weaponIndex, this.localPower);
 		} else {
 			this.trajectoryGfx.clear();
 		}
@@ -637,71 +773,216 @@ export default class GameScene extends Scene {
 	}
 
 	private handleInput(phase: string) {
-		const shootKey = this.keys.shoot;
-
-		// Continuous input: send only when state changes
+		// Movement input — send only when state changes (keys or on-screen buttons)
 		const snap: InputSnapshot = {
-			moveLeft: this.keys.left.isDown,
-			moveRight: this.keys.right.isDown,
-			aimUp: this.keys.aimUp.isDown,
-			aimDown: this.keys.aimDown.isDown
+			moveLeft: this.keys.left.isDown || this.moveLBtnDown,
+			moveRight: this.keys.right.isDown || this.moveRBtnDown
 		};
-		if (
-			snap.moveLeft !== this.lastInput.moveLeft ||
-			snap.moveRight !== this.lastInput.moveRight ||
-			snap.aimUp !== this.lastInput.aimUp ||
-			snap.aimDown !== this.lastInput.aimDown
-		) {
+		if (snap.moveLeft !== this.lastInput.moveLeft || snap.moveRight !== this.lastInput.moveRight) {
 			this.lastInput = snap;
 			this.room!.send('input', snap);
 		}
 
-		if (phase === 'AIMING') {
-			if (Input.Keyboard.JustDown(this.keys.weaponKey)) {
-				this.room!.send('cycle_weapon');
-			}
-			if (Input.Keyboard.JustDown(shootKey)) {
-				this.room!.send('charge_start');
-			}
-		}
+		// Mouse aiming — only while left button is held
+		if (phase === 'AIMING' && this.isGrabbing && this.localTerrain && this.localGameData) {
+			const tank = this.localGameData.tanks[this.myPlayerIndex];
+			const terrain = this.localTerrain;
+			const ly = getHeightAt(terrain, tank.x - 15);
+			const ry = getHeightAt(terrain, tank.x + 15);
+			const slope = Math.atan2(ry - ly, 30);
+			const pivotX = tank.x + 17 * Math.sin(slope);
+			const pivotY = tank.y - 17 * Math.cos(slope) - 7;
 
-		if (phase === 'CHARGING' && Input.Keyboard.JustUp(shootKey)) {
-			this.room!.send('fire');
+			const mx = this.input.activePointer.worldX;
+			const my = this.input.activePointer.worldY;
+
+			// Direct aiming — turret angle follows the cursor position immediately
+			const directAngle = Math.atan2(-(my - pivotY), mx - pivotX) * (180 / Math.PI);
+			this.localTurretAngle = directAngle;
+			if (Math.abs(directAngle - this.lastSentAngle) > 0.3) {
+				this.lastSentAngle = directAngle;
+				this.room!.send('set_turret_angle', { angle: directAngle });
+			}
+
+			// Power — invert the drawTrajectory formula so the cone tip lands exactly on the cursor.
+			// drawTrajectory: length = (80 + power * 2.33) * 0.75, measured from barrel tip (40px from pivot).
+			const dist = Math.sqrt((mx - pivotX) ** 2 + (my - pivotY) ** 2);
+			const coneLength = dist - 40;
+			this.localPower = Math.min(100, Math.max(0, (coneLength / 0.75 - 80) / 2.33));
 		}
 	}
 
-	private drawTrajectory(tank: TankState, weaponIndex: number, power: number, phase: string) {
-		this.trajectoryGfx.clear();
-		if (!this.localTerrain) return;
-		const tip = getTurretTip(tank);
-		const previewPower = phase === 'CHARGING' ? power : 50;
-		if (previewPower < 1) return;
+	private drawFireButton(hovered: boolean, disabled = false) {
+		const g = this.fireBtn;
+		g.clear();
+		const cx = this.fireBtnCx;
+		const cy = this.fireBtnCy;
+		const w = this.fireBtnW;
+		const h = this.fireBtnH;
+		const r = this.sw(6);
 
-		const weapon = PROJECTILE_TYPES[weaponIndex];
-		const rad = (tank.turretAngle * Math.PI) / 180;
-		const speed = previewPower * weapon.speedFactor;
-		const vx = Math.cos(rad) * speed;
-		let vy = -Math.sin(rad) * speed;
-		let x = tip.x;
-		let y = tip.y;
-		const dt = 0.05;
-		const MAX_DOTS = 5;
-		const DOT_INTERVAL = 5;
-		let dotsDrawn = 0;
-
-		for (let i = 0; dotsDrawn < MAX_DOTS; i++) {
-			vy += weapon.gravity * dt;
-			x += vx * dt;
-			y += vy * dt;
-			if (x < 0 || x > this.scale.width || y > this.scale.height) break;
-			if (y >= getHeightAt(this.localTerrain, x)) break;
-			if (i % DOT_INTERVAL === DOT_INTERVAL - 1) {
-				const alpha = 0.8 * (1 - dotsDrawn / MAX_DOTS);
-				this.trajectoryGfx.fillStyle(COLORS.white, alpha);
-				this.trajectoryGfx.fillCircle(x, y, 2.5);
-				dotsDrawn++;
-			}
+		if (disabled) {
+			g.fillStyle(0x0a0a0a, 1);
+			g.fillRoundedRect(cx - w / 2, cy - h / 2, w, h, r);
+			g.lineStyle(this.sw(1), 0x2a1a1a, 1);
+			g.strokeRoundedRect(cx - w / 2, cy - h / 2, w, h, r);
+			this.fireBtnLabel.setAlpha(0.25);
+			return;
 		}
+
+		this.fireBtnLabel.setAlpha(1);
+
+		// Outer glow on hover
+		if (hovered) {
+			g.lineStyle(this.sw(5), 0xff3322, 0.18);
+			g.strokeRoundedRect(
+				cx - w / 2 - this.sw(3),
+				cy - h / 2 - this.sw(3),
+				w + this.sw(6),
+				h + this.sw(6),
+				r + this.sw(2)
+			);
+		}
+
+		// Background
+		g.fillStyle(hovered ? 0x3a0a05 : 0x200505, 1);
+		g.fillRoundedRect(cx - w / 2, cy - h / 2, w, h, r);
+
+		// Border
+		g.lineStyle(this.sw(1.5), hovered ? 0xff4433 : 0xaa2211, 1);
+		g.strokeRoundedRect(cx - w / 2, cy - h / 2, w, h, r);
+
+		// Top bevel
+		g.lineStyle(this.sw(1), 0xffffff, hovered ? 0.15 : 0.06);
+		g.beginPath();
+		g.moveTo(cx - w / 2 + r, cy - h / 2);
+		g.lineTo(cx + w / 2 - r, cy - h / 2);
+		g.strokePath();
+	}
+
+	private drawMoveButton(side: 0 | 1, hovered: boolean, disabled: boolean) {
+		const g = side === 0 ? this.moveLeftBtn : this.moveRightBtn;
+		g.clear();
+		const cx = this.moveBtnCx[side];
+		const cy = this.moveBtnCy;
+		const w = this.moveBtnW;
+		const h = this.moveBtnH;
+		const r = this.sw(6);
+
+		const bgColor = disabled ? 0x080808 : hovered ? 0x1c1c1c : 0x0e0e0e;
+		const borderColor = disabled ? 0x1a1a1a : hovered ? 0xffffff : 0x2a3a4a;
+		const borderAlpha = disabled ? 1 : hovered ? 0.5 : 0.7;
+		const arrowColor = disabled ? 0x2a2a2a : hovered ? 0xffffff : 0x8899aa;
+		const arrowAlpha = disabled ? 0.3 : 1;
+
+		// Outer glow on hover
+		if (hovered) {
+			g.lineStyle(this.sw(5), 0xffffff, 0.1);
+			g.strokeRoundedRect(
+				cx - w / 2 - this.sw(3),
+				cy - h / 2 - this.sw(3),
+				w + this.sw(6),
+				h + this.sw(6),
+				r + this.sw(2)
+			);
+		}
+
+		// Background
+		g.fillStyle(bgColor, 1);
+		g.fillRoundedRect(cx - w / 2, cy - h / 2, w, h, r);
+
+		// Border
+		g.lineStyle(this.sw(1.5), borderColor, borderAlpha);
+		g.strokeRoundedRect(cx - w / 2, cy - h / 2, w, h, r);
+
+		// Top bevel
+		g.lineStyle(this.sw(1), 0xffffff, hovered ? 0.2 : 0.06);
+		g.beginPath();
+		g.moveTo(cx - w / 2 + r, cy - h / 2);
+		g.lineTo(cx + w / 2 - r, cy - h / 2);
+		g.strokePath();
+
+		// Arrow shape
+		const dir = side === 0 ? -1 : 1;
+		const aw = this.sw(14); // arrowhead half-width (along movement axis)
+		const ah = this.sw(11); // arrowhead half-height
+		const sw2 = this.sw(5); // shaft half-thickness
+		const sl = this.sw(8); // shaft length
+
+		// Arrow tip x
+		const tipX = cx + dir * (aw + sl * 0.5);
+		// Arrowhead base x
+		const baseX = cx + dir * sl * 0.5;
+		// Shaft back end x
+		const shaftEndX = cx - dir * (sl * 0.5 + this.sw(1));
+
+		g.fillStyle(arrowColor, arrowAlpha);
+
+		// Arrowhead (triangle)
+		g.fillTriangle(tipX, cy, baseX, cy - ah, baseX, cy + ah);
+
+		// Shaft (rectangle)
+		const shaftLeft = Math.min(baseX, shaftEndX);
+		const shaftRight = Math.max(baseX, shaftEndX);
+		g.fillRect(shaftLeft, cy - sw2, shaftRight - shaftLeft, sw2 * 2);
+	}
+
+	private drawLastShotTrail() {
+		this.lastShotGfx.clear();
+		const trail = this.lastShotTrail;
+		if (trail.length < 2) return;
+		const step = Math.max(1, Math.floor(trail.length / 80));
+		for (let i = 0; i < trail.length; i += step) {
+			const alpha = 0.15 + 0.4 * (i / trail.length);
+			this.lastShotGfx.fillStyle(COLORS.aiming, alpha);
+			this.lastShotGfx.fillCircle(trail[i].x, trail[i].y, this.sw(1));
+		}
+	}
+
+	private drawTrajectory(tank: TankState, _weaponIndex: number, power: number) {
+		this.trajectoryGfx.clear();
+		const tip = getTurretTip(tank, this.localTerrain ?? undefined);
+		const rad = (tank.turretAngle * Math.PI) / 180;
+
+		const maxLength = (80 + 100 * 2.33) * 0.75;
+		const length = (80 + power * 2.33) * 0.75;
+		const halfAngle = 5 * (Math.PI / 180);
+
+		const tx = tip.x;
+		const ty = tip.y;
+
+		// Barrel pivot (40px back from tip along barrel direction)
+		const pivotX = tx - Math.cos(rad) * 40;
+		const pivotY = ty + Math.sin(rad) * 40;
+
+		// Range disk centered on barrel pivot, radius = maxLength + barrel length
+		// so the cone tip at max power exactly touches the disk edge
+		this.trajectoryGfx.fillStyle(COLORS.aiming, 0.06);
+		this.trajectoryGfx.fillCircle(pivotX, pivotY, maxLength + 40);
+
+		// Outer cone
+		const lx = tx + Math.cos(rad + halfAngle) * length;
+		const ly = ty - Math.sin(rad + halfAngle) * length;
+		const rx = tx + Math.cos(rad - halfAngle) * length;
+		const ry = ty - Math.sin(rad - halfAngle) * length;
+		this.trajectoryGfx.fillStyle(COLORS.aiming, 0.07);
+		this.trajectoryGfx.fillTriangle(tx, ty, lx, ly, rx, ry);
+
+		// Inner cone highlight
+		const innerHalf = halfAngle * 0.35;
+		const ilx = tx + Math.cos(rad + innerHalf) * length;
+		const ily = ty - Math.sin(rad + innerHalf) * length;
+		const irx = tx + Math.cos(rad - innerHalf) * length;
+		const iry = ty - Math.sin(rad - innerHalf) * length;
+		this.trajectoryGfx.fillStyle(COLORS.aiming, 0.18);
+		this.trajectoryGfx.fillTriangle(tx, ty, ilx, ily, irx, iry);
+
+		// Center axis line
+		this.trajectoryGfx.lineStyle(1, COLORS.aiming, 0.22);
+		this.trajectoryGfx.beginPath();
+		this.trajectoryGfx.moveTo(tx, ty);
+		this.trajectoryGfx.lineTo(tx + Math.cos(rad) * length, ty - Math.sin(rad) * length);
+		this.trajectoryGfx.strokePath();
 	}
 
 	private showAirstrikeZone(x: number) {
@@ -793,7 +1074,7 @@ export default class GameScene extends Scene {
 		});
 	}
 
-	private updateWeaponUI(activeIndex: number) {
+	private updateWeaponUI(activeIndex: number, isMyTurn = true) {
 		this.weaponUiGfx.clear();
 		const iSize = this.sw(42);
 		const iGap = this.sw(8);
@@ -809,8 +1090,21 @@ export default class GameScene extends Scene {
 			const cx = startX + si * (iSize + iGap) + half;
 			const cy = iconY;
 			const active = typeIdx === activeIndex;
+			const hovered = typeIdx === this.hoveredWeaponTypeIdx && !active && isMyTurn;
 			const onCooldown = myCooldowns[typeIdx] === true;
 			const type = PROJECTILE_TYPES[typeIdx];
+
+			// Hover highlight
+			if (hovered && !onCooldown) {
+				this.weaponUiGfx.lineStyle(this.sw(4), 0xffffff, 0.5);
+				this.weaponUiGfx.strokeRoundedRect(
+					cx - half - this.sw(2),
+					cy - half - this.sw(2),
+					iSize + this.sw(4),
+					iSize + this.sw(4),
+					r + this.sw(1)
+				);
+			}
 
 			// Outer glow for active icon
 			if (active && !onCooldown) {
@@ -875,6 +1169,12 @@ export default class GameScene extends Scene {
 					.setPosition(cx, cy - half - this.sh(10))
 					.setText(onCooldown ? `${type.name.toUpperCase()} (USED)` : type.name.toUpperCase())
 					.setFontSize(Math.round(this.sh(11)));
+			}
+
+			// Opponent's turn — dim the icon
+			if (!isMyTurn) {
+				this.weaponUiGfx.fillStyle(0x000000, 0.55);
+				this.weaponUiGfx.fillRoundedRect(cx - half, cy - half, iSize, iSize, r);
 			}
 		});
 	}
@@ -1088,14 +1388,6 @@ export default class GameScene extends Scene {
 				break;
 			}
 		}
-	}
-
-	private updatePowerBar(power: number) {
-		this.powerFill.clear();
-		const pct = power / 100;
-		const color = pct < 0.4 ? COLORS.barHigh : pct < 0.7 ? COLORS.barMid : COLORS.barLow;
-		this.powerFill.fillStyle(color);
-		this.powerFill.fillRect(this.barX, this.barY, this.barW * pct, this.barH);
 	}
 
 	private updateFuelBar(fuel: number) {
