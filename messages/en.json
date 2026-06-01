@@ -28,6 +28,7 @@
 	"joined_on": "Joined on {date}",
 	"home_page": "Home page",
 	"no_user": "User not found",
+	"google": "Continue with Google",
 
 	"name_place_holder": "Steve",
 	"mail_place_holder": "steve.jobs@gmail.com",
@@ -35,6 +36,9 @@
 	"repeat_password": "Repeat password",
 	"show_password": "Show password",
 	"name": "Username",
+	"cannot_send_self": "Can't send a friend request to yourself",
+	"accept_friend": "Friend request accepted",
+	"declined_friend": "Friend request declined",
 
 	"friend_request_received": "New friend request received",
 	"friend_request_sent": "Friend request sent",

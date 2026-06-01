@@ -10,6 +10,7 @@
 	import { formSchema } from './schema';
 	import * as z from 'zod';
 	import { en, fr, es } from 'zod/locales';
+	import google from '$lib/assets/google.png';
 
 	const localeMap = { en, fr, es };
 	z.config(localeMap[getLocale()]());
@@ -79,6 +80,9 @@
 		error = '';
 		useBackup = false;
 	}
+	async function signInWithGoogle() {
+		await authClient.signIn.social({ provider: 'google', callbackURL: '/' });
+	}
 </script>
 
 <div class="bg-muted/30 flex min-h-screen items-center justify-center px-4">
@@ -89,7 +93,7 @@
 			</h1>
 			<div class="flex gap-3">
 				<ThemeToggle />
-				<div class="glass">
+				<div>
 					<LanguagePicker />
 				</div>
 			</div>
@@ -136,10 +140,17 @@
 						<p class="text-destructive text-sm font-medium">{error}</p>
 					{/if}
 
-					<button type="submit" class="glass h-11 w-full text-base font-medium">
+					<button type="submit" class="glassbutton h-11 w-full text-base font-medium">
 						{m.login()}
 					</button>
-
+					<button
+						type="button"
+						class="glassbutton flex h-11 w-full items-center justify-center gap-2 text-base font-medium"
+						onclick={() => void signInWithGoogle()}
+					>
+						<img src={google} alt="Google" class="h-5 w-5" />
+						{m.google()}
+					</button>
 					<p class="text-muted-foreground text-center text-sm">
 						{m.no_account()}
 						<a href={resolve('/register')} class="underline">{m.register()}</a>
