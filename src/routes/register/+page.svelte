@@ -35,7 +35,7 @@
 			</h1>
 			<div class="flex gap-3">
 				<ThemeToggle />
-				<div class="glass">
+				<div>
 					<LanguagePicker />
 				</div>
 			</div>
