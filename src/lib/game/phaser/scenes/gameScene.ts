@@ -745,10 +745,10 @@ export default class GameScene extends Scene {
 			this.turnText.setText(`${PLAYER_NAMES[currentPlayer]}'s Turn`);
 		}
 
-		this.updateFuelBar(data.fuel);
-		this.updateHealthBar(data.tanks[this.myPlayerIndex].health);
 		const isMyTurn = currentPlayer === this.myPlayerIndex && phase === 'AIMING';
-		this.updateWeaponUI(data.weaponIndex, isMyTurn);
+		if (isMyTurn) this.updateFuelBar(data.fuel);
+		this.updateHealthBar(data.tanks[this.myPlayerIndex].health);
+		this.updateWeaponUI(isMyTurn ? data.weaponIndex : -1, isMyTurn);
 		this.drawFireButton(this.fireBtnHovered && isMyTurn, !isMyTurn);
 		this.drawMoveButton(0, this.moveLeftBtnHovered && isMyTurn, !isMyTurn);
 		this.drawMoveButton(1, this.moveRightBtnHovered && isMyTurn, !isMyTurn);
