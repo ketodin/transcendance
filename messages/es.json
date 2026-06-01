@@ -29,14 +29,15 @@
 	"joined_on": "Registrado el {date}",
 	"home_page": "Página de inicio",
 	"no_user": "Usuario no encontrado",
+	"google": "Continuar con Google",
 
 	"name_place_holder": "Esteban",
 	"mail_place_holder": "esteban.trabajos@gmail.com",
 	"password": "Contraseña",
 	"repeat_password": "Repita la contraseña",
 	"show_password": "Mostrar contraseña",
-
 	"name": "Nombre de usuario",
+	"cannot_send_self": "No puedes enviarte una solicitud de amistad a ti mismo",
 
 	"terms_of_service": "Términos de servicio\nServicio en línea Transcendence\n\nÚltima actualización: 11 de mayo de 2026\n\n1. Descripción\nAceptas usar este servicio de forma responsable y de acuerdo con estos términos.\n\n2. Elegibilidad\nDebes tener al menos 13 años y cumplir las leyes aplicables.\n\n3. Reglas de uso\nNo se permite hacer trampas, explotar errores, acosar o abusar del servicio.\n\n4. Cuentas\nEres responsable de tu cuenta y de toda actividad realizada en ella.\n\n5. Terminación\nEl acceso puede ser suspendido o eliminado en cualquier momento por incumplimiento.\n\n6. Descargo de responsabilidad\nEl servicio se proporciona tal cual, sin garantías. No somos responsables de pérdidas o daños.\n\n7. Aceptación\nEl uso del servicio implica la aceptación de estos términos.\n",
 	"privacy_policy": "Política de privacidad\nServicio en línea Transcendence\n\nÚltima actualización: 11 de mayo de 2026\n\n1. Datos recopilados\nRecopilamos datos mínimos como información de cuenta, estadísticas y registros técnicos.\n\n2. Uso\nLos datos se usan solo para operar y mejorar el servicio.\n\n3. Compartición\nNo vendemos datos personales.\n\n4. Seguridad\nAplicamos medidas razonables sin garantía total.\n\n5. Retención\nLos datos se conservan solo el tiempo necesario.\n\n6. Derechos\nLos usuarios pueden solicitar acceso o eliminación según la ley.",

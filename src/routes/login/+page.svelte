@@ -139,11 +139,16 @@
 						<p class="text-destructive text-sm font-medium">{error}</p>
 					{/if}
 
-					<button type="submit" class="glass h-11 w-full text-base font-medium">
+					<button type="submit" class="glassbutton h-11 w-full text-base font-medium">
 						{m.login()}
 					</button>
-					<button type="button" onclick={() => void signInWithGoogle()}>
-						Continuer avec Google
+					<button
+						type="button"
+						class="glassbutton flex h-11 w-full items-center justify-center gap-2 text-base font-medium"
+						onclick={() => void signInWithGoogle()}
+					>
+						<img src="/google.png" alt="Google" class="h-5 w-5" />
+						{m.google()}
 					</button>
 					<p class="text-muted-foreground text-center text-sm">
 						{m.no_account()}
