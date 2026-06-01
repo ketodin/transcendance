@@ -1,4 +1,4 @@
-import type { Handle } from '@sveltejs/kit';
+import { type Handle, redirect } from '@sveltejs/kit';
 import { getTextDirection } from '$lib/paraglide/runtime';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { auth } from '$lib/server/auth';
@@ -11,6 +11,7 @@ import { TankRoom } from '$lib/game/colyseus/TankRoom';
 import { StatusRoom } from '$lib/game/colyseus/StatusRoom';
 
 let gameServer: ColyseusServer | null = null;
+const PUBLIC_ROUTES = [ '/login', '/register', '/legal/terms', '/legal/privacy', 'favicon.png' ];
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
@@ -44,7 +45,17 @@ export const handleColyseus: Handle = async ({ event, resolve }) => {
 		matchMaker.defineRoomType('tank_room', TankRoom);
 		matchMaker.defineRoomType('status', StatusRoom);
 	}
-	return resolve(event, {});
+	return resolve(event);
 };
 
-export const handle: Handle = sequence(handleParaglide, handleBetterAuth, handleColyseus);
+export const handleRouteProtection: Handle = async ({ event, resolve }) => {
+	const { pathname } = event.url;
+	const isPublic = PUBLIC_ROUTES.some(route => pathname === route);
+	if (!isPublic && !event.locals.user) {
+		const redirectTo = encodeURIComponent(pathname);
+		redirect(303, `/login?redirectTo=${redirectTo}`);
+	}
+	return resolve(event);
+};
+
+export const handle: Handle = sequence(handleColyseus, handleParaglide, handleBetterAuth, handleRouteProtection);
