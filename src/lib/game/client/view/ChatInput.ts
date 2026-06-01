@@ -65,7 +65,7 @@ export class ChatInput {
 		setTimeout(() => this.input.focus(), 30);
 	}
 
-	private reposition(): void {
+	private readonly reposition = (): void => {
 		if (!this.isOpen) return;
 		const canvas = this.scene.game.canvas;
 		const canvasRect = canvas.getBoundingClientRect();
@@ -84,7 +84,7 @@ export class ChatInput {
 		const cssLeft = canvasRect.left + canvasRect.width / 2;
 		this.container.style.top = `${cssTop}px`;
 		this.container.style.left = `${cssLeft}px`;
-	}
+	};
 
 	toggle() {
 		if (this.isOpen) this.close();
