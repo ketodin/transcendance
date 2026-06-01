@@ -7,6 +7,10 @@
 	import { disconnectStatusRoom } from '$lib/status-client';
 
 	let { data }: PageProps = $props();
+
+	// if /avatar/[userid] exist : is avatar
+	// else if user.image_url exist : is avatar
+	// else : letter with decent background.
 </script>
 
 <div class="flex flex-col gap-16">
@@ -31,3 +35,5 @@
 		disableForm={data.disableForm}
 	/>
 </div>
+
+
