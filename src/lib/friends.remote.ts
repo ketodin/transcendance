@@ -16,6 +16,7 @@ async function sendOrAccept(meId: string, otherId: string) {
 	/// if found any reverse request, stop
 	if (updates.count > 0) {
 		statusHub.friendAccepted(meId, otherId);
+		statusHub.notify(otherId, 'friend_request_accepted', { fromUserId: meId });
 		return;
 	}
 	/// create a pending request if not already friend
@@ -23,6 +24,7 @@ async function sendOrAccept(meId: string, otherId: string) {
 		await db.friendRequest.create({
 			data: { senderId: meId, receiverId: otherId, status: 'PENDING' }
 		});
+		statusHub.notify(otherId, 'friend_request_received', { fromUserId: meId });
 	} catch (e) {
 		if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
 			// ignore if already exist
@@ -42,6 +44,7 @@ async function dismissOrRemove(meId: string, otherId: string) {
 		}
 	});
 	statusHub.friendRemoved(meId, otherId);
+	statusHub.notify(otherId, 'friend_request_denied', { fromUserId: meId });
 }
 
 export const list = query(async () => {

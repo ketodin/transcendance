@@ -3,6 +3,7 @@ import { writable } from 'svelte/store';
 import { colyseusClient } from '$lib/colyseusClient';
 import type { FriendStatus, StatusState } from './game/colyseus/schema/StatusRoomState';
 import { browser } from '$app/environment';
+import { attachNotificationListeners } from './notification-client';
 
 export const presenceById = writable<Record<string, boolean>>({});
 
@@ -15,6 +16,7 @@ export async function connectStatusRoom(userId: string) {
 	if (roomLeave) return roomLeave;
 
 	const room = await colyseusClient!.joinOrCreate<StatusState>('status', { userId });
+	attachNotificationListeners(room);
 	const cb = Callbacks.get(room);
 	const stops = new Map<string, () => void>();
 

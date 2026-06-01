@@ -50,5 +50,11 @@ export const statusHub = {
 	friendRemoved(a: string, b: string) {
 		rooms.get(a)?.state.friends.delete(b);
 		rooms.get(b)?.state.friends.delete(a);
+	},
+
+	notify(userId: string, type: string, payload: object) {
+		const room = rooms.get(userId);
+		if (!room) return;
+		room.clients[0]?.send(`notification_${type}`, payload);
 	}
 };
