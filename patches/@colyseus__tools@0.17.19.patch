@@ -1,0 +1,17 @@
+diff --git a/build/index.mjs b/build/index.mjs
+index b984199ff1e07616e9c8e564dd5eab829b161165..87a7ce734164e9e721e2e5b1463a82ed97e62a3c 100644
+--- a/build/index.mjs
++++ b/build/index.mjs
+@@ -12,9 +12,9 @@ import {
+   dynamicImport
+ } from "@colyseus/core";
+ import { WebSocketTransport } from "@colyseus/ws-transport";
+-var BunWebSockets = dynamicImport("@colyseus/bun-websockets");
+-var RedisDriver = dynamicImport("@colyseus/redis-driver");
+-var RedisPresence = dynamicImport("@colyseus/redis-presence");
++// var BunWebSockets = dynamicImport("@colyseus/bun-websockets");
++// var RedisDriver = dynamicImport("@colyseus/redis-driver");
++// var RedisPresence = dynamicImport("@colyseus/redis-presence");
+ var ALLOWED_KEYS = {
+   "displayLogs": "boolean",
+   "options": "object",

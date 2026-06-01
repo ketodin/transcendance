@@ -12,11 +12,20 @@ export type PhysicsResult =
 	| { type: 'explode'; x: number; y: number }
 	| { type: 'oob' };
 
-export function getTurretTip(tank: TankState): { x: number; y: number } {
+export function getTurretTip(tank: TankState, terrain?: TerrainState): { x: number; y: number } {
 	const rad = (tank.turretAngle * Math.PI) / 180;
+	let pivotX = tank.x;
+	let pivotY = tank.y - 24;
+	if (terrain) {
+		const ly = getHeightAt(terrain, tank.x - 15);
+		const ry = getHeightAt(terrain, tank.x + 15);
+		const slope = Math.atan2(ry - ly, 30);
+		pivotX = tank.x + 17 * Math.sin(slope);
+		pivotY = tank.y - 17 * Math.cos(slope) - 7;
+	}
 	return {
-		x: tank.x + Math.cos(rad) * 40,
-		y: tank.y - 24 - Math.sin(rad) * 40
+		x: pivotX + Math.cos(rad) * 40,
+		y: pivotY - Math.sin(rad) * 40
 	};
 }
 

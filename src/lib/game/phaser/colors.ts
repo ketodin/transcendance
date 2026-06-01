@@ -1,6 +1,9 @@
 function cssHex(varName: string): number {
 	const val = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
-	return parseInt(val.replace('#', ''), 16);
+	const hex = val.replace('#', '').trim();
+	// Production CSS minifies #ffffff → #fff; expand shorthand before parsing
+	const full = hex.length === 3 ? hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2] : hex;
+	return parseInt(full, 16);
 }
 
 function cssStr(varName: string): string {
@@ -23,6 +26,7 @@ export const COLORS = {
 	fuelLow: 0xff0000,
 	white: 0xffffff,
 	black: 0x000000,
+	aiming: 0xffffff,
 
 	// ─── Game-inherent — hardcoded, never affected by theme ──────────────
 	craterOuter: 0xff6600,
@@ -66,6 +70,7 @@ export const COLOR_STRINGS = {
 export function syncFromCSS(): void {
 	// Only theme-linked — game-inherent stay hardcoded above
 	COLORS.navy = cssHex('--game-navy');
+	COLORS.aiming = cssHex('--game-aiming');
 	COLORS.terrain = cssHex('--game-terrain');
 	COLORS.terrainDark = cssHex('--game-terrain-dark');
 	COLORS.terrainBase = cssHex('--game-terrain-base');
