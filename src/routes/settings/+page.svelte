@@ -3,6 +3,7 @@
 	import { signOut } from '$lib/auth-client';
 	import { Button } from '$lib/components/ui/button';
 	import { m } from '$lib/paraglide/messages';
+	import { Input } from '$lib/components/ui/input';
 	import type { PageProps } from './$types';
 	import { disconnectStatusRoom } from '$lib/status-client';
 
@@ -10,11 +11,14 @@
 	import * as Form from '$lib/components/ui/form';
 	import { superForm, fileProxy } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
-	import { avatarSchema } from './avatarSchema';
+	import { avatarSchema, nameSchema } from './schema';
 	import SuperDebug from "sveltekit-superforms";
 
 	let { data }: PageProps = $props();
 
+
+	const nameForm = $derived(superForm(data.nameForm, { validators: zod4Client(nameSchema) }));
+	const { form: nameData, enhance: nameEnhance } = $derived(nameForm);
 
 	const avatarForm = $derived(superForm(data.avatarForm, { validators: zod4Client(avatarSchema) }));
 	const { form: avatarData, enhance: avatarEnhance } = $derived(avatarForm);
@@ -69,6 +73,25 @@
 	</form>
 	<SuperDebug display={false} data={$avatarData}/> <!-- TODO: why is this needed, find a way to remove it -->
 
+
+	<!-- TODO: move this to a component -->
+	<h2>Change Username</h2>
+	<form method="POST" action="?/changeName" use:nameEnhance>
+		<Form.Field form={nameForm} name="name">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label class="text-sm font-medium">Name</Form.Label>
+					<Input
+						{...props}
+						type="text"
+						bind:value={$nameData.name}
+					/>
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors />
+			<Form.Button type="submit" class="glass">Change Name</Form.Button>
+		</Form.Field>
+	</form>
+
+
 </div>
-
-

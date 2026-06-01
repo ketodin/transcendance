@@ -3,7 +3,7 @@ import { superValidate, setError, message, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth } from '$lib/server/auth';
 import { enableSchema, verifySchema, disableSchema } from '$lib/components/totp/schema';
-import { avatarSchema } from './avatarSchema';
+import { avatarSchema, nameSchema } from './schema';
 import { m } from '$lib/paraglide/messages';
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -13,6 +13,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) return redirect(302, '/');
 	return {
 		user: locals.user,
+		nameForm: await superValidate({ name: locals.user.name }, zod4(nameSchema)),
 		avatarForm: await superValidate(zod4(avatarSchema)),
 		enableForm: await superValidate(zod4(enableSchema)),
 		verifyForm: await superValidate(zod4(verifySchema)),
@@ -36,6 +37,18 @@ export const actions: Actions = {
 		);
 		await writeFile(filePath, buffer);
 		return message(form, 'Updated Avatar');
+	},
+	changeName: async ({ request, locals }) => {
+		if (!locals.user) return redirect(303, '/login');
+		const form = await superValidate(request, zod4(nameSchema));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+		await auth.api.updateUser({
+			body: { name: form.data.name },
+			headers: request.headers,
+		})
+		return message(form, 'Updated Name');
 	},
 	enable: async ({ request }) => {
 		const form = await superValidate(request, zod4(enableSchema));
