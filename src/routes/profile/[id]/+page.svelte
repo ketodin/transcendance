@@ -5,7 +5,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Settings } from '@lucide/svelte';
 	import * as friends from '$lib/friends.remote';
-	import { toast } from 'svelte-sonner';
+	import { toast } from '$lib/components/toast';
 
 	const { data }: PageProps = $props();
 	import { getLocale } from '$lib/paraglide/runtime';
@@ -44,11 +44,7 @@
 			{:else if data.userType === 'friend'}
 				<Button
 					onclick={async () => {
-						await friends.remove(data.user.id);
-						toast.success(m.removed_friend(), {
-							unstyled: true,
-							class: 'glass flex px-4 py-3 gap-4'
-						});
+						await friends.remove(data.user.id).then(() => toast.success(m.removed_friend()));
 					}}
 					class="glassbutton"
 					variant="outline"
@@ -56,11 +52,7 @@
 					<p>{m.remove_friend()}</p>
 				</Button>
 				<Button
-					onclick={() =>
-						toast.success(m.invited_play(), {
-							unstyled: true,
-							class: 'glass flex px-4 py-3 gap-4'
-						})}
+					onclick={() => toast.success(m.game_invite_sent())}
 					class="glassbutton"
 					variant="outline"
 				>
@@ -69,11 +61,7 @@
 			{:else if data.userType === 'someone'}
 				<Button
 					onclick={async () => {
-						await friends.accept(data.user.id);
-						toast.success(m.sent_friend_request(), {
-							unstyled: true,
-							class: 'glass flex px-4 py-3 gap-4'
-						});
+						await friends.accept(data.user.id).then(() => toast.success(m.friend_request_sent()));
 					}}
 					class="glassbutton"
 					variant="outline"
