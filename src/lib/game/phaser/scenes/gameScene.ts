@@ -211,7 +211,6 @@ export default class GameScene extends Scene {
 		}
 	}
 
-
 	private setupUI() {
 		this.statusText = this.add
 			.text(this.scale.width / 2, this.scale.height / 2, 'Connecting...', {
@@ -682,7 +681,7 @@ export default class GameScene extends Scene {
 		// Bubble chat
 		this.speechBubbles[0].sync(data.tanks[0]);
 		this.speechBubbles[1].sync(data.tanks[1]);
-// Sync projectile with client-side trail
+		// Sync projectile with client-side trail
 		const proj = data.projectile;
 		if (proj.active) {
 			if (!this.lastProjActive) {
@@ -916,7 +915,7 @@ export default class GameScene extends Scene {
 		const iconColor = hovered ? 0x00ccff : 0x4499bb;
 		const bw = s * 20; // bubble width
 		const bh = s * 13; // bubble height
-		const br = s * 3;  // bubble corner radius
+		const br = s * 3; // bubble corner radius
 		const bx = cx - bw / 2;
 		const by = cy - bh / 2 - s * 2;
 
@@ -924,16 +923,12 @@ export default class GameScene extends Scene {
 		g.fillRoundedRect(bx, by, bw, bh, br);
 
 		// Tail (bottom-left triangle)
-		g.fillTriangle(
-			bx + s * 3, by + bh,
-			bx + s * 3, by + bh + s * 5,
-			bx + s * 9, by + bh
-		);
+		g.fillTriangle(bx + s * 3, by + bh, bx + s * 3, by + bh + s * 5, bx + s * 9, by + bh);
 
 		// Three dots inside bubble
 		g.fillStyle(hovered ? 0x001a2e : 0x011015, 1);
 		g.fillCircle(cx - s * 5, by + bh / 2, s * 1.8);
-		g.fillCircle(cx,         by + bh / 2, s * 1.8);
+		g.fillCircle(cx, by + bh / 2, s * 1.8);
 		g.fillCircle(cx + s * 5, by + bh / 2, s * 1.8);
 	}
 
