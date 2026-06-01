@@ -10,7 +10,7 @@
 	import { formSchema } from './schema';
 	import * as z from 'zod';
 	import { en, fr, es } from 'zod/locales';
-	import google from "$lib/asset/google.png"
+	import google from '$lib/asset/google.png';
 
 	const localeMap = { en, fr, es };
 	z.config(localeMap[getLocale()]());
