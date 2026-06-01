@@ -3,13 +3,17 @@ import { superValidate, setError, message, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth } from '$lib/server/auth';
 import { enableSchema, verifySchema, disableSchema } from '$lib/components/totp/schema';
+import { avatarSchema } from './avatarSchema';
 import { m } from '$lib/paraglide/messages';
+import { writeFile } from 'node:fs/promises';
+import path from 'node:path';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) return redirect(302, '/');
 	return {
 		user: locals.user,
+		avatarForm: await superValidate(zod4(avatarSchema)),
 		enableForm: await superValidate(zod4(enableSchema)),
 		verifyForm: await superValidate(zod4(verifySchema)),
 		disableForm: await superValidate(zod4(disableSchema))
@@ -17,6 +21,22 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
+	avatar: async ({ request, locals }) => {
+		if (!locals.user) return redirect(303, '/login');
+		const form = await superValidate(request, zod4(avatarSchema));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+		const filePath = path.join(
+			path.resolve('static/avatar'),
+			locals.user.id
+		);
+		const buffer = Buffer.from(
+			await form.data.file.arrayBuffer()
+		);
+		await writeFile(filePath, buffer);
+		return message(form, 'Updated Avatar');
+	},
 	enable: async ({ request }) => {
 		const form = await superValidate(request, zod4(enableSchema));
 		if (!form.valid) return fail(400, { form });
