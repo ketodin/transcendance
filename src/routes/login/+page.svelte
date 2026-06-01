@@ -10,6 +10,7 @@
 	import { formSchema } from './schema';
 	import * as z from 'zod';
 	import { en, fr, es } from 'zod/locales';
+	import google from "$lib/asset/google.png"
 
 	const localeMap = { en, fr, es };
 	z.config(localeMap[getLocale()]());
@@ -147,7 +148,7 @@
 						class="glassbutton flex h-11 w-full items-center justify-center gap-2 text-base font-medium"
 						onclick={() => void signInWithGoogle()}
 					>
-						<img src="/google.png" alt="Google" class="h-5 w-5" />
+						<img src={google} alt="Google" class="h-5 w-5" />
 						{m.google()}
 					</button>
 					<p class="text-muted-foreground text-center text-sm">
