@@ -423,7 +423,10 @@ export default class GameScene extends Scene {
 		});
 		fireBtnZone.on('pointerdown', () => {
 			if (this.localPhase !== 'AIMING' || this.localCurrentPlayer !== this.myPlayerIndex) return;
-			this.room?.send('fire_direct', { angle: this.localTurretAngle, power: this.localPower });
+			this.room?.send('fire_direct', {
+				angle: this.localTurretAngle,
+				power: Math.max(20, this.localPower)
+			});
 		});
 
 		this.weaponUiGfx = this.add.graphics().setDepth(10).setVisible(false);
