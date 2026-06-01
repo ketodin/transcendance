@@ -28,6 +28,7 @@
 	"joined_on": "Registrado el {date}",
 	"home_page": "Página de inicio",
 	"no_user": "Usuario no encontrado",
+	"google": "Continuar con Google",
 
 	"name_place_holder": "Esteban",
 	"mail_place_holder": "esteban.trabajos@gmail.com",
@@ -35,6 +36,9 @@
 	"repeat_password": "Repita la contraseña",
 	"show_password": "Mostrar contraseña",
 	"name": "Nombre de usuario",
+	"cannot_send_self": "No puedes enviarte una solicitud de amistad a ti mismo",
+	"accept_friend": "Solicitud de amistad aceptada",
+	"declined_friend": "Solicitud de amistad rechazada",
 
 	"friend_request_received": "Nueva solicitud de amistad recibida",
 	"friend_request_sent": "Solicitud de amistad enviada",

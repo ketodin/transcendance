@@ -5,6 +5,7 @@ import { z } from 'zod';
 import db from '$lib/server/db';
 import { getFriendList } from './friends';
 import { statusHub } from '$lib/game/colyseus/statusHub';
+import { m } from '$lib/paraglide/messages';
 
 async function sendOrAccept(meId: string, otherId: string) {
 	/// check for reverse request, accepted or not, and set it accepted if found
@@ -72,8 +73,7 @@ export const send = form(z.strictObject({ email: z.email() }), async ({ email },
 	if (!locals.user) return redirect(303, '/login');
 	const other = await db.user.findUnique({ where: { email } });
 	if (!other) return invalid(issue.email('No such user'));
-	if (locals.user.id == other.id)
-		return invalid(issue.email("Can't send a friend request to yourself"));
+	if (locals.user.id == other.id) return invalid(issue.email(m.cannot_send_self()));
 	await sendOrAccept(locals.user.id, other.id);
 	void list().refresh();
 });

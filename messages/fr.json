@@ -28,6 +28,7 @@
 	"joined_on": "Inscription le {date}",
 	"home_page": "Page d’accueil",
 	"no_user": "Utilisateur introuvable",
+	"google": "Continuer avec Google",
 
 	"name_place_holder": "Stephane",
 	"mail_place_holder": "stephane.travail@gmail.com",
@@ -35,6 +36,10 @@
 	"repeat_password": "Répéter le mot de passe",
 	"show_password": "Afficher le mot de passe",
 	"name": "Pseudo",
+	"cannot_send_self": "Impossible de s'envoyer une demande d'ami à soi-même",
+	"accept_friend": "Demande d’ami acceptée",
+	"declined_friend": "Demande d’ami refusée",
+	"sent_friend_request": "Demande d’ami envoyée",
 
 	"friend_request_received": "Nouvelle demande d'ami reçue",
 	"friend_request_sent": "Demande d'ami envoyée",
