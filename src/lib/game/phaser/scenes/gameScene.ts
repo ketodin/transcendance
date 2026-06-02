@@ -17,8 +17,6 @@ import { ChatInput } from '../../client/view/ChatInput';
 import { CHAT_BUBBLE_DURATION } from '$lib/game/shared/chatConfig';
 import { colyseusClient } from '$lib/colyseusClient';
 
-const PLAYER_NAMES = ['Player 1', 'Player 2'];
-
 type InputSnapshot = {
 	moveLeft: boolean;
 	moveRight: boolean;
@@ -74,6 +72,7 @@ export default class GameScene extends Scene {
 	private weaponCooldowns: [boolean[], boolean[]] = [[], []];
 	private hoveredWeaponTypeIdx = -1;
 
+	private playerNames: [string, string] = ['Player 1', 'Player 2'];
 	private lastInput: InputSnapshot = { moveLeft: false, moveRight: false };
 	private localTurretAngle = 90;
 	private lastSentAngle = 90;
@@ -514,6 +513,7 @@ export default class GameScene extends Scene {
 						fuel: data.fuel,
 						weaponIndex: data.weaponIndex
 					};
+					this.playerNames = [data.tanks[0].name, data.tanks[1].name];
 					this.roomReady = true;
 					this.statusText.setVisible(false);
 					this.initViews();
@@ -588,8 +588,11 @@ export default class GameScene extends Scene {
 				this.speechBubbles[data.playerIndex].setText(data.text, tank);
 			});
 		} catch (err) {
-			this.statusText.setText('Connection failed.\nCheck the game server is running.');
-			console.error(err);
+			const message =
+				err instanceof Error
+					? 'Connection failed.\n' + err.message
+					: 'Connection failed.\nCheck the game server is running.';
+			this.statusText.setText(message);
 		}
 	}
 
@@ -745,7 +748,7 @@ export default class GameScene extends Scene {
 			const color =
 				secs > 10 ? COLOR_STRINGS.neonGlow : secs > 5 ? COLOR_STRINGS.yellow : COLOR_STRINGS.red;
 			this.timerText.setText(`${secs}s`).setColor(color);
-			this.turnText.setText(`${PLAYER_NAMES[currentPlayer]}'s Turn`);
+			this.turnText.setText(`${this.playerNames[currentPlayer]}'s Turn`);
 		}
 
 		const isMyTurn = currentPlayer === this.myPlayerIndex && phase === 'AIMING';
@@ -1427,7 +1430,7 @@ export default class GameScene extends Scene {
 			.text(
 				this.scale.width / 2,
 				this.scale.height / 2 - this.sh(70),
-				`${PLAYER_NAMES[winner]} Wins!`,
+				`${this.playerNames[winner]} Wins!`,
 				{
 					fontSize: `${Math.round(this.sh(52))}px`,
 					color: COLOR_STRINGS.gold,
