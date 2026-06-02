@@ -2,13 +2,19 @@ import { redirect } from '@sveltejs/kit';
 import { superValidate, setError, message, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth } from '$lib/server/auth';
+import db from '$lib/server/db';
 import { enableSchema, verifySchema, disableSchema } from '$lib/components/totp/schema';
 import { m } from '$lib/paraglide/messages';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
+	const credentialAccount = await db.account.findFirst({
+		where: { userId: locals.user!.id, providerId: 'credential' },
+		select: { id: true }
+	});
 	return {
 		user: locals.user!,
+		hasPassword: credentialAccount !== null,
 		enableForm: await superValidate(zod4(enableSchema)),
 		verifyForm: await superValidate(zod4(verifySchema)),
 		disableForm: await superValidate(zod4(disableSchema))
