@@ -7,7 +7,6 @@ import { m } from '$lib/paraglide/messages';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	// if (!locals.user) return redirect(302, '/');
 	return {
 		user: locals.user!,
 		enableForm: await superValidate(zod4(enableSchema)),

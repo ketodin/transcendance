@@ -66,7 +66,7 @@
 			return;
 		}
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
-		await goto(redirectUrl, {replaceState: true});
+		await goto(redirectUrl, { replaceState: true });
 	}
 
 	async function verifyBackupCode() {
@@ -77,7 +77,7 @@
 			return;
 		}
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
-		await goto(redirectUrl, {replaceState: true});
+		await goto(redirectUrl, { replaceState: true });
 	}
 
 	function goBack() {
@@ -159,7 +159,10 @@
 					</button>
 					<p class="text-muted-foreground text-center text-sm">
 						{m.no_account()}
-						<a href={resolve(redirectTo ? `/register?redirectTo=${redirectTo}` : '/register')} class="underline">{m.register()}</a>
+						<a
+							href={resolve(redirectTo ? `/register?redirectTo=${redirectTo}` : '/register')}
+							class="underline">{m.register()}</a
+						>
 					</p>
 				</form>
 			{:else}

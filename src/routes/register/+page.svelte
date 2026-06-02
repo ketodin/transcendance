@@ -27,7 +27,6 @@
 	const form = $derived(superForm(data.form, { validators: zod4Client(formSchema) }));
 	const { form: formData, enhance } = $derived(form);
 
-
 	const redirectTo = page.url.searchParams.get('redirectTo');
 </script>
 
@@ -113,7 +112,10 @@
 				</Form.Button>
 				<p class="text-muted-foreground text-center text-sm">
 					{m.already_account()}
-					<a href={resolve(redirectTo ? `/login?redirectTo=${redirectTo}` : '/register')} class="underline">{m.login()}</a>
+					<a
+						href={resolve(redirectTo ? `/login?redirectTo=${redirectTo}` : '/register')}
+						class="underline">{m.login()}</a
+					>
 				</p>
 			</form>
 		</div>

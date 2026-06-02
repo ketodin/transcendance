@@ -11,7 +11,7 @@ import { TankRoom } from '$lib/game/colyseus/TankRoom';
 import { StatusRoom } from '$lib/game/colyseus/StatusRoom';
 
 let gameServer: ColyseusServer | null = null;
-const PUBLIC_ROUTES = [ '/login', '/register', '/legal/terms', '/legal/privacy', 'favicon.png' ];
+const PUBLIC_ROUTES = ['/login', '/register', '/legal/terms', '/legal/privacy', 'favicon.png'];
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
@@ -50,14 +50,18 @@ export const handleColyseus: Handle = async ({ event, resolve }) => {
 
 export const handleRouteProtection: Handle = async ({ event, resolve }) => {
 	const { pathname } = event.url;
-	const isPublic = PUBLIC_ROUTES.some(route => pathname === route);
+	const isPublic = PUBLIC_ROUTES.some((route) => pathname === route);
 	if (!isPublic && !event.locals.user) {
-		if (pathname === '/')
-			return redirect(303, `/login`);
+		if (pathname === '/') return redirect(303, `/login`);
 		const redirectTo = encodeURIComponent(pathname);
 		return redirect(303, `/login?redirectTo=${redirectTo}`);
 	}
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(handleColyseus, handleParaglide, handleBetterAuth, handleRouteProtection);
+export const handle: Handle = sequence(
+	handleColyseus,
+	handleParaglide,
+	handleBetterAuth,
+	handleRouteProtection
+);
