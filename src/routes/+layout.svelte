@@ -37,7 +37,7 @@
 	{#if !isAuthRoute && $session.data !== null}
 		<div class="app">
 			<Header />
-			<FriendList userId={$session.data.user.id} />
+			<FriendList />
 			<Footer />
 
 			<main class="game-container">
