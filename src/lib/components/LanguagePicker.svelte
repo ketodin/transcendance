@@ -8,7 +8,7 @@
 		{ code: 'es', flag: '🇪🇸' }
 	];
 
-	let current = $state(getLocale() as Locale);
+	let current = $state(getLocale());
 	let open = $state(false);
 
 	function selectLanguage(code: Locale) {
