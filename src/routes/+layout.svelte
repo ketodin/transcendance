@@ -11,6 +11,7 @@
 	import type { Snippet } from 'svelte';
 	import { shaderTheme } from '$lib/shader-theme';
 	import { useSession } from '$lib/auth-client';
+	import { getReactiveLocale } from '$lib/locale.svelte';
 
 	let { children }: { children: Snippet } = $props();
 
@@ -32,18 +33,20 @@
 
 <Shader base={baseTheme} error={errorTheme} />
 
-{#if !isAuthRoute && $session.data !== null}
-	<div class="app">
-		<Header />
-		<FriendList />
-		<Footer />
+{#key getReactiveLocale()}
+	{#if !isAuthRoute && $session.data !== null}
+		<div class="app">
+			<Header />
+			<FriendList />
+			<Footer />
 
-		<main class="game-container">
-			<div class="content">
-				{@render children?.()}
-			</div>
-		</main>
-	</div>
-{:else}
-	{@render children?.()}
-{/if}
+			<main class="game-container">
+				<div class="content">
+					{@render children?.()}
+				</div>
+			</main>
+		</div>
+	{:else}
+		{@render children?.()}
+	{/if}
+{/key}
