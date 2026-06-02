@@ -19,7 +19,6 @@
 	}
 </script>
 
-
 <div
 	class="card glassbutton"
 	role="link"
@@ -31,7 +30,7 @@
 		<Settings size={20} />
 	</a>
 	<span class="name"
-	>{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}</span
+		>{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}</span
 	>
 	<div class="avatar">
 		{#if user.image}

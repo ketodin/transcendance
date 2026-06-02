@@ -25,15 +25,19 @@
 	}
 
 	$effect(() => {
-		checkApiAvatar().then((exists) => {
-			if (exists) {
-				source = 'api';
-			} else if (image) {
-				source = 'image_url';
-			} else {
-				source = 'initial';
-			}
-		});
+		void checkApiAvatar()
+			.then((exists) => {
+				if (exists) {
+					source = 'api';
+				} else if (image) {
+					source = 'image_url';
+				} else {
+					source = 'initial';
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			});
 	});
 
 	function onImgError() {

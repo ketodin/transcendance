@@ -28,13 +28,8 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		const filePath = path.join(
-			path.resolve('static/avatar'),
-			locals.user.id
-		);
-		const buffer = Buffer.from(
-			await form.data.file.arrayBuffer()
-		);
+		const filePath = path.join(path.resolve('static/avatar'), locals.user.id);
+		const buffer = Buffer.from(await form.data.file.arrayBuffer());
 		await writeFile(filePath, buffer);
 		return message(form, 'Updated Avatar');
 	},
@@ -46,8 +41,8 @@ export const actions: Actions = {
 		}
 		await auth.api.updateUser({
 			body: { name: form.data.name },
-			headers: request.headers,
-		})
+			headers: request.headers
+		});
 		return message(form, 'Updated Name');
 	},
 	enable: async ({ request }) => {

@@ -17,7 +17,6 @@
 		page.url.pathname.startsWith('/login') || page.url.pathname.startsWith('/register')
 	);
 
-
 	const is404 = $derived(page.status === 404);
 
 	const baseTheme = $derived($shaderTheme === 'dark' ? 1 : 0);

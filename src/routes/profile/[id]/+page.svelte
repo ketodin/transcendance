@@ -20,13 +20,16 @@
 
 	const friendList = $derived(await friends.list());
 
-	const isFriend = $derived(friendList.some((friend) => data.userProfile.id === friend.id && friend.friendRequestStatus === "ACCEPTED"));
+	const isFriend = $derived(
+		friendList.some(
+			(friend) => data.userProfile.id === friend.id && friend.friendRequestStatus === 'ACCEPTED'
+		)
+	);
 
 	type UserType = 'self' | 'friend' | 'someone';
 	const userType: UserType = $derived(
-		data.user!.id === data.userProfile.id ? 'self'
-			: isFriend ? 'friend' : 'someone');
-
+		data.user!.id === data.userProfile.id ? 'self' : isFriend ? 'friend' : 'someone'
+	);
 </script>
 
 <div class="glass h-full w-full p-6">
@@ -71,7 +74,9 @@
 			{:else if userType === 'someone'}
 				<Button
 					onclick={async () => {
-						await friends.accept(data.userProfile.id).then(() => toast.success(m.friend_request_sent()));
+						await friends
+							.accept(data.userProfile.id)
+							.then(() => toast.success(m.friend_request_sent()));
 					}}
 					class="glassbutton"
 					variant="outline"
