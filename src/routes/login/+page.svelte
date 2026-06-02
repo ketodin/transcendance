@@ -11,6 +11,7 @@
 	import * as z from 'zod';
 	import { en, fr, es } from 'zod/locales';
 	import google from '$lib/assets/google.png';
+	import { page } from '$app/state';
 
 	const localeMap = { en, fr, es };
 	z.config(localeMap[getLocale()]());
@@ -22,6 +23,9 @@
 	let code = $state('');
 	let useBackup = $state(false);
 	let fieldErrors = $state<{ email?: string; password?: string }>({});
+
+	const redirectTo = page.url.searchParams.get('redirectTo');
+	const redirectUrl = redirectTo ? '/' + decodeURIComponent(redirectTo) : '/';
 
 	async function handleSubmit() {
 		error = '';
@@ -40,7 +44,7 @@
 		await signIn.email({
 			email,
 			password,
-			callbackURL: '/',
+			callbackURL: redirectUrl,
 			fetchOptions: {
 				onSuccess: (ctx) => {
 					if ((ctx.data as Record<string, unknown>)?.twoFactorRedirect) {
@@ -61,7 +65,8 @@
 			error = result.error?.message ?? 'Unknown error';
 			return;
 		}
-		await goto(resolve('/'));
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
+		await goto(redirectUrl, {replaceState: true});
 	}
 
 	async function verifyBackupCode() {
@@ -71,7 +76,8 @@
 			error = result.error?.message ?? 'Unknown error';
 			return;
 		}
-		await goto(resolve('/'));
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
+		await goto(redirectUrl, {replaceState: true});
 	}
 
 	function goBack() {
@@ -81,7 +87,7 @@
 		useBackup = false;
 	}
 	async function signInWithGoogle() {
-		await authClient.signIn.social({ provider: 'google', callbackURL: '/' });
+		await authClient.signIn.social({ provider: 'google', callbackURL: redirectUrl });
 	}
 </script>
 
@@ -153,7 +159,7 @@
 					</button>
 					<p class="text-muted-foreground text-center text-sm">
 						{m.no_account()}
-						<a href={resolve('/register')} class="underline">{m.register()}</a>
+						<a href={resolve(redirectTo ? `/register?redirectTo=${redirectTo}` : '/register')} class="underline">{m.register()}</a>
 					</p>
 				</form>
 			{:else}

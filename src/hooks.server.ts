@@ -52,8 +52,10 @@ export const handleRouteProtection: Handle = async ({ event, resolve }) => {
 	const { pathname } = event.url;
 	const isPublic = PUBLIC_ROUTES.some(route => pathname === route);
 	if (!isPublic && !event.locals.user) {
+		if (pathname === '/')
+			return redirect(303, `/login`);
 		const redirectTo = encodeURIComponent(pathname);
-		redirect(303, `/login?redirectTo=${redirectTo}`);
+		return redirect(303, `/login?redirectTo=${redirectTo}`);
 	}
 	return resolve(event);
 };

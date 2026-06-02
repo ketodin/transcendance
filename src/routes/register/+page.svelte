@@ -12,6 +12,7 @@
 	import { getLocale } from '$lib/paraglide/runtime';
 	import * as z from 'zod';
 	import { en, fr, es } from 'zod/locales';
+	import { page } from '$app/state';
 
 	const localeMap = {
 		en,
@@ -25,6 +26,9 @@
 
 	const form = $derived(superForm(data.form, { validators: zod4Client(formSchema) }));
 	const { form: formData, enhance } = $derived(form);
+
+
+	const redirectTo = page.url.searchParams.get('redirectTo');
 </script>
 
 <div class="bg-muted/30 flex min-h-screen items-center justify-center px-4">
@@ -108,7 +112,8 @@
 					{m.register()}
 				</Form.Button>
 				<p class="text-muted-foreground text-center text-sm">
-					{m.already_account()} <a href={resolve('/login')} class="underline">{m.login()}</a>
+					{m.already_account()}
+					<a href={resolve(redirectTo ? `/login?redirectTo=${redirectTo}` : '/register')} class="underline">{m.login()}</a>
 				</p>
 			</form>
 		</div>
