@@ -3,6 +3,9 @@
 	import ThemeToggle from './ThemeToggle.svelte';
 	import LanguagePicker from './LanguagePicker.svelte';
 	import ProfileCard from '$lib/components/ProfileCard.svelte';
+	import type { User } from '$lib/server/prisma/browser';
+
+	const { user }: { user: User } = $props();
 </script>
 
 <header class="header pointer-events-none fixed top-0 right-0 left-0 z-50 flex px-[1%] py-[1%]">
@@ -13,7 +16,7 @@
 		<div class="flex items-center gap-2">
 			<LanguagePicker />
 			<ThemeToggle />
-			<ProfileCard />
+			<ProfileCard {user} />
 		</div>
 	</div>
 </header>

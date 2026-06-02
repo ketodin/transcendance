@@ -1,50 +1,48 @@
 <script lang="ts">
-	import { useSession } from '$lib/auth-client';
+	import type { User } from '$lib/server/prisma/browser';
 	import { Settings } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
-	const session = useSession();
+	const { user }: { user: User } = $props();
 
 	function handleCardClick(e: MouseEvent) {
 		const target = e.target as HTMLElement;
 		if (target.closest('.settings-link')) return;
-		void goto(resolve('/profile/[id]', { id: $session.data!.user.id }));
+		void goto(resolve('/profile/[id]', { id: user.id }));
 	}
 
 	function handleCardKeydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' || e.key === ' ') {
-			void goto(resolve('/profile/[id]', { id: $session.data!.user.id }));
+			void goto(resolve('/profile/[id]', { id: user.id }));
 		}
 	}
 </script>
 
-{#if $session.data}
-	{@const user = $session.data.user}
-	<div
-		class="card glassbutton"
-		role="link"
-		tabindex="0"
-		onclick={handleCardClick}
-		onkeydown={handleCardKeydown}
+
+<div
+	class="card glassbutton"
+	role="link"
+	tabindex="0"
+	onclick={handleCardClick}
+	onkeydown={handleCardKeydown}
+>
+	<a href={resolve('/settings')} class="settings-link" onclick={(e) => e.stopPropagation()}>
+		<Settings size={20} />
+	</a>
+	<span class="name"
+	>{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}</span
 	>
-		<a href={resolve('/settings')} class="settings-link" onclick={(e) => e.stopPropagation()}>
-			<Settings size={20} />
-		</a>
-		<span class="name"
-			>{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}</span
-		>
-		<div class="avatar">
-			{#if user.image}
-				<img src={user.image} alt="avatar" />
-			{:else}
-				<div class="placeholder">
-					{user.name?.charAt(0)?.toUpperCase() ?? '?'}
-				</div>
-			{/if}
-		</div>
+	<div class="avatar">
+		{#if user.image}
+			<img src={user.image} alt="avatar" />
+		{:else}
+			<div class="placeholder">
+				{user.name?.charAt(0)?.toUpperCase() ?? '?'}
+			</div>
+		{/if}
 	</div>
-{/if}
+</div>
 
 <style>
 	.card {
