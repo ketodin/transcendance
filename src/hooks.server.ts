@@ -49,10 +49,11 @@ export const handleColyseus: Handle = async ({ event, resolve }) => {
 };
 
 export const handleRouteProtection: Handle = async ({ event, resolve }) => {
-	const { pathname } = event.url;
+	let { pathname } = event.url;
 	const isPublic = PUBLIC_ROUTES.some((route) => pathname === route);
 	if (!isPublic && !event.locals.user) {
-		if (pathname === '/') return redirect(303, `/login`);
+		if (pathname.startsWith('/')) pathname = pathname.slice(1);
+		if (pathname === '') return redirect(303, `/login`);
 		const redirectTo = encodeURIComponent(pathname);
 		return redirect(303, `/login?redirectTo=${redirectTo}`);
 	}
