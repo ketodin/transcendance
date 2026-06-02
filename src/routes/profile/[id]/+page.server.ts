@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { redirect, error } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import db from '$lib/server/db';
 import { m } from '$lib/paraglide/messages';
 
@@ -30,16 +30,15 @@ async function isFriend(meId: string, otherId: string): Promise<boolean> {
 }
 
 export const load: PageServerLoad = async ({ locals, params }) => {
-	if (!locals.user) return redirect(303, '/login');
 	const user = await db.user.findUnique({
 		where: { id: params.id }
 	});
 	if (!user) return error(404, m.no_user());
 
 	const userType: UserType =
-		locals.user.id === user.id
+		locals.user!.id === user.id
 			? 'self'
-			: (await isFriend(locals.user.id, user.id))
+			: (await isFriend(locals.user!.id, user.id))
 				? 'friend'
 				: 'someone';
 
