@@ -1,4 +1,5 @@
 services:
+
   transcendence:
     build: .
     restart: unless-stopped
@@ -9,3 +10,12 @@ services:
       DATABASE_URL: file:/data/database.db
     volumes:
       - ./data/:/data
+
+  caddy:
+    image: caddy:2.11.3-alpine
+    restart: unless-stopped
+    ports:
+      - 4443:443
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./certs:/etc/caddy/certs:ro

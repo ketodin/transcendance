@@ -29,6 +29,8 @@ src/lib/paraglide
 /src/lib/server/prisma
 *.db
 
+/certs
+
 # Docusaurus
 
 # Dependencies
