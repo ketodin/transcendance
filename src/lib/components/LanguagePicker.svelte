@@ -1,20 +1,19 @@
 <script lang="ts">
-	import { getLocale, setLocale } from '$lib/paraglide/runtime';
+	import { getLocale } from '$lib/paraglide/runtime';
+	import { setLocale, type Locale } from '$lib/locale.svelte';
 
-	const languages = [
+	const languages: { code: Locale; flag: string }[] = [
 		{ code: 'fr', flag: '🇫🇷' },
 		{ code: 'en', flag: '🇬🇧' },
 		{ code: 'es', flag: '🇪🇸' }
-	] as const;
+	];
 
-	type Locale = (typeof languages)[number]['code'];
-
-	let current = $state(getLocale() satisfies Locale);
+	let current = $state(getLocale() as Locale);
 	let open = $state(false);
 
 	function selectLanguage(code: Locale) {
 		current = code;
-		void setLocale(current);
+		setLocale(code);
 		open = false;
 	}
 
