@@ -35,7 +35,9 @@
 
 <div class="glass h-full w-full p-6">
 	<div class="glass header p-6">
-		<Avatar {...data.userProfile} size="15%" />
+		<div class="avatar"> <!-- TODO: remove this div and class, integrate this in to the Avatar component -->
+			<Avatar {...data.userProfile} size="100%" />
+		</div>
 		<div class="info p-8">
 			<p class="name">{data.userProfile.name}</p>
 			<p class="botinfo">{m.joined_on({ date: formattedDate })}</p>
@@ -81,6 +83,21 @@
 </div>
 
 <style>
+	.avatar {
+		margin: 1vw;
+		width: 15%;
+		aspect-ratio: 1 / 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 3vw;
+		font-weight: bold;
+		border-radius: 50%;
+		border: none;
+		background: transparent;
+		padding: 0;
+		overflow: hidden;
+	}
 	.header {
 		display: flex;
 		flex-direction: row;
