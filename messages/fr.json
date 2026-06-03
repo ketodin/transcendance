@@ -79,5 +79,14 @@
 	"error_invalid_password": "Mot de passe incorrect.",
 	"error_generic": "Une erreur est survenue. Veuillez réessayer.",
 	"error_session_expired": "Session expirée, veuillez recommencer.",
-	"error_invalid_code": "Code incorrect. Veuillez réessayer."
+	"error_invalid_code": "Code incorrect. Veuillez réessayer.",
+
+	"totp_backup_instruction": "Entrez l'un de vos codes de secours.",
+	"totp_app_instruction": "Entrez le code à 6 chiffres de votre application d'authentification.",
+	"backup_code": "Code de secours",
+	"totp_code": "Code TOTP",
+	"verify": "Vérifier",
+	"back_to_totp": "← Code TOTP",
+	"use_backup_code": "Utiliser un code de secours ?",
+	"back": "← Retour"
 }

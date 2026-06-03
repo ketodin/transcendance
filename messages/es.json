@@ -78,5 +78,14 @@
 	"error_invalid_password": "Contraseña incorrecta.",
 	"error_generic": "Ocurrió un error. Por favor, inténtelo de nuevo.",
 	"error_session_expired": "Sesión expirada, por favor empiece de nuevo.",
-	"error_invalid_code": "Código incorrecto. Por favor, inténtelo de nuevo."
+	"error_invalid_code": "Código incorrecto. Por favor, inténtelo de nuevo.",
+
+	"totp_backup_instruction": "Ingrese uno de sus códigos de respaldo.",
+	"totp_app_instruction": "Ingrese el código de 6 dígitos de su aplicación de autenticación.",
+	"backup_code": "Código de respaldo",
+	"totp_code": "Código TOTP",
+	"verify": "Verificar",
+	"back_to_totp": "← Código TOTP",
+	"use_backup_code": "¿Usar código de respaldo?",
+	"back": "← Atrás"
 }

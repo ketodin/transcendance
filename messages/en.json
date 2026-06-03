@@ -78,5 +78,14 @@
 	"error_invalid_password": "Incorrect password.",
 	"error_generic": "An error occurred. Please try again.",
 	"error_session_expired": "Session expired, please start over.",
-	"error_invalid_code": "Incorrect code. Please try again."
+	"error_invalid_code": "Incorrect code. Please try again.",
+
+	"totp_backup_instruction": "Enter one of your backup codes.",
+	"totp_app_instruction": "Enter the 6-digit code from your authenticator app.",
+	"backup_code": "Backup code",
+	"totp_code": "TOTP code",
+	"verify": "Verify",
+	"back_to_totp": "← TOTP code",
+	"use_backup_code": "Use backup code?",
+	"back": "← Back"
 }
