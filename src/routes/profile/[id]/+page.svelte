@@ -2,6 +2,7 @@
 	import type { PageProps } from './$types';
 	import { resolve } from '$app/paths';
 	import { m } from '$lib/paraglide/messages';
+	import Avatar from '$lib/components/Avatar.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Settings } from '@lucide/svelte';
 	import * as friends from '$lib/friends.remote';
@@ -34,16 +35,7 @@
 
 <div class="glass h-full w-full p-6">
 	<div class="glass header p-6">
-		<div class="avatar outline">
-			{#if data.userProfile.image}
-				<img src={data.userProfile.image} alt="avatar" />
-			{:else}
-				<div class="placeholder">
-					{data.userProfile.name?.charAt(0)?.toUpperCase() ?? '?'}
-				</div>
-			{/if}
-		</div>
-
+		<Avatar {...data.userProfile} size="15%" />
 		<div class="info p-8">
 			<p class="name">{data.userProfile.name}</p>
 			<p class="botinfo">{m.joined_on({ date: formattedDate })}</p>
@@ -89,19 +81,6 @@
 </div>
 
 <style>
-	.avatar {
-		margin: 1vw;
-		width: 15%;
-		aspect-ratio: 1 / 1;
-
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		font-size: 3vw;
-		font-weight: bold;
-	}
-
 	.header {
 		display: flex;
 		flex-direction: row;

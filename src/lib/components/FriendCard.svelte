@@ -14,7 +14,7 @@
 </script>
 
 <a href={resolve('/profile/[id]', { id: friend.id })} class="glassdeep user">
-	<Avatar {...friend} />
+	<Avatar {...friend} size="2.5rem" />
 	<div class="info">
 		<div class="name">{friend.name}</div>
 		{#if friend.friendRequestStatus == 'SENT' || friend.friendRequestStatus == 'RECEIVED'}

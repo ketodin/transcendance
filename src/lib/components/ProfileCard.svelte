@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Avatar from '$lib/components/Avatar.svelte';
 	import type { User } from '$lib/server/prisma/browser';
 	import { Settings } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
@@ -32,15 +33,7 @@
 	<span class="name"
 		>{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}</span
 	>
-	<div class="avatar">
-		{#if user.image}
-			<img src={user.image} alt="avatar" />
-		{:else}
-			<div class="placeholder">
-				{user.name?.charAt(0)?.toUpperCase() ?? '?'}
-			</div>
-		{/if}
-	</div>
+	<Avatar {...user} size="2.0rem" />
 </div>
 
 <style>

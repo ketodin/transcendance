@@ -4,6 +4,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { m } from '$lib/paraglide/messages';
 	import { Input } from '$lib/components/ui/input';
+	import Avatar from '$lib/components/Avatar.svelte';
 	import type { PageProps } from './$types';
 	import { disconnectStatusRoom } from '$lib/status-client';
 	import { LogOut, Crop } from '@lucide/svelte';
@@ -78,13 +79,7 @@
 			class="avatar group relative cursor-pointer outline"
 			onclick={() => fileInput.click()}
 		>
-			{#if data.user.image}
-				<img src={data.user.image} alt="avatar" class="h-full w-full rounded-full object-cover" />
-			{:else}
-				<div class="placeholder">
-					{data.user.name?.charAt(0)?.toUpperCase() ?? '?'}
-				</div>
-			{/if}
+			<Avatar {...data.user} size="100%" />
 
 			<div
 				class="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"

@@ -28,18 +28,20 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
 	avatar: async ({ request, locals }) => {
-		if (!locals.user) return redirect(303, '/login');
 		const form = await superValidate(request, zod4(avatarSchema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		const filePath = path.join(path.resolve('static/avatar'), locals.user.id);
+		const filePath = path.join(path.resolve('static/avatar'), locals.user!.id);
 		const buffer = Buffer.from(await form.data.file.arrayBuffer());
 		await writeFile(filePath, buffer);
+		await auth.api.updateUser({
+			body: { image: `/avatar/${locals.user!.id}` },
+			headers: request.headers
+		});
 		return message(form, 'Updated Avatar');
 	},
-	changeName: async ({ request, locals }) => {
-		if (!locals.user) return redirect(303, '/login');
+	changeName: async ({ request }) => {
 		const form = await superValidate(request, zod4(nameSchema));
 		if (!form.valid) {
 			return fail(400, { form });
