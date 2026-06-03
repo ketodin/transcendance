@@ -35,7 +35,8 @@
 				class="glass"
 				variant="outline"
 				size="icon-sm"
-				onclick={async () => {
+				onclick={async (e) => {
+					e.preventDefault();
 					await friends.accept(friend.id).then(() => toast.success(m.friend_request_accept()));
 				}}><Check /></Button
 			>
@@ -44,7 +45,8 @@
 				class="glass text-red-400"
 				variant="outline"
 				size="icon-sm"
-				onclick={async () => {
+				onclick={async (e) => {
+					e.preventDefault();
 					await friends.remove(friend.id).then(() => toast.success(m.friend_request_deny()));
 				}}><X /></Button
 			>
@@ -84,6 +86,9 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+	}
+	.actions :global(button) {
+		cursor: pointer;
 	}
 	.separator {
 		width: 1px;
