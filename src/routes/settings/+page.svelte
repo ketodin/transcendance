@@ -137,10 +137,8 @@
 	.avatar {
 		margin: 1vw;
 		width: 15%;
+		height: 15%;
 		aspect-ratio: 1 / 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
 		font-size: 3vw;
 		font-weight: bold;
 		border-radius: 50%;
@@ -159,7 +157,7 @@
 	.header {
 		display: flex;
 		flex-direction: row;
-		align-items: stretch;
+		align-items: center;
 		margin-bottom: 2rem;
 	}
 
