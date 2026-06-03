@@ -11,7 +11,7 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	default: async ({ request, url }) => {
 		const form = await superValidate(request, zod4(formSchema));
 
 		if (!form.valid) {
@@ -27,6 +27,9 @@ export const actions: Actions = {
 			return setError(form, 'email', m.already_email());
 		}
 
-		return redirect(303, '/');
+		const redirectTo = url.searchParams.get('redirectTo');
+		const redirectUrl = redirectTo ? decodeURIComponent(redirectTo) : '/';
+
+		return redirect(303, '/' + redirectUrl);
 	}
 };

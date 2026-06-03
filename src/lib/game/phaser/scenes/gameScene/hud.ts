@@ -1,6 +1,5 @@
 import type GameScene from './GameScene';
 import { COLORS, COLOR_STRINGS } from '../../colors';
-import { PLAYER_NAMES } from './types';
 
 export function updateFuelBar(scene: GameScene, fuel: number) {
 	scene.fuelFill.clear();
@@ -39,7 +38,7 @@ export function showGameOver(scene: GameScene, winner: number) {
 		.text(
 			scene.scale.width / 2,
 			scene.scale.height / 2 - scene.sh(70),
-			`${PLAYER_NAMES[winner]} Wins!`,
+			`${scene.playerNames[winner]} Wins!`,
 			{
 				fontSize: `${Math.round(scene.sh(52))}px`,
 				color: COLOR_STRINGS.gold,

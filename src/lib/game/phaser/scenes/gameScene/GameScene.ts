@@ -11,7 +11,6 @@ import type { GameRoomState } from '../../../colyseus/schema/GameRoomState';
 import { COLOR_STRINGS } from '../../colors';
 import { EventBus } from '../../EventBus';
 import type { InputSnapshot, GameUpdateData } from './types';
-import { PLAYER_NAMES } from './types';
 import { createBackground, setupUI } from './setup';
 import { connectToServer } from './server';
 import { drawLastShotTrail, drawTrajectory } from './effects';
@@ -46,6 +45,7 @@ export default class GameScene extends Scene {
 	selectableWeaponIndices: number[] = [];
 	weaponCooldowns: [boolean[], boolean[]] = [[], []];
 	hoveredWeaponTypeIdx = -1;
+	playerNames: [string, string] = ['Player 1', 'Player 2'];
 
 	lastInput: InputSnapshot = { moveLeft: false, moveRight: false };
 	localTurretAngle = 90;
@@ -266,7 +266,7 @@ export default class GameScene extends Scene {
 			const color =
 				secs > 10 ? COLOR_STRINGS.neonGlow : secs > 5 ? COLOR_STRINGS.yellow : COLOR_STRINGS.red;
 			this.timerText.setText(`${secs}s`).setColor(color);
-			this.turnText.setText(`${PLAYER_NAMES[currentPlayer]}'s Turn`);
+			this.turnText.setText(`${this.playerNames[currentPlayer]}'s Turn`);
 		}
 
 		const isMyTurn = currentPlayer === this.myPlayerIndex && phase === 'AIMING';

@@ -57,6 +57,7 @@ export async function connectToServer(scene: GameScene) {
 					fuel: data.fuel,
 					weaponIndex: data.weaponIndex
 				};
+				scene.playerNames = [data.tanks[0].name, data.tanks[1].name];
 				scene.roomReady = true;
 				scene.statusText.setVisible(false);
 				initViews(scene);
@@ -130,7 +131,10 @@ export async function connectToServer(scene: GameScene) {
 			scene.speechBubbles[data.playerIndex].setText(data.text, tank);
 		});
 	} catch (err) {
-		scene.statusText.setText('Connection failed.\nCheck the game server is running.');
-		console.error(err);
+		const message =
+			err instanceof Error
+				? 'Connection failed.\n' + err.message
+				: 'Connection failed.\nCheck the game server is running.';
+		scene.statusText.setText(message);
 	}
 }

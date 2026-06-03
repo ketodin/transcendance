@@ -8,15 +8,12 @@ import { m } from '$lib/paraglide/messages';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	if (!locals.user) return redirect(302, '/');
-
 	const credentialAccount = await db.account.findFirst({
-		where: { userId: locals.user.id, providerId: 'credential' },
+		where: { userId: locals.user!.id, providerId: 'credential' },
 		select: { id: true }
 	});
-
 	return {
-		user: locals.user,
+		user: locals.user!,
 		hasPassword: credentialAccount !== null,
 		enableForm: await superValidate(zod4(enableSchema)),
 		verifyForm: await superValidate(zod4(verifySchema)),
