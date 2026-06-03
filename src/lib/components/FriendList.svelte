@@ -17,12 +17,11 @@
 		)
 	);
 
-	let { userId }: { userId: string } = $props();
 	let showAddFriend = $state(false);
 
 	let disconnect = () => {};
 	onMount(() => {
-		connectStatusRoom(userId)
+		connectStatusRoom()
 			.then((fn) => {
 				disconnect = fn;
 			})

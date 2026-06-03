@@ -10,6 +10,7 @@
 	import { page } from '$app/state';
 	import { shaderTheme } from '$lib/shader-theme';
 	import type { LayoutProps } from './$types';
+	import { getReactiveLocale } from '$lib/locale.svelte';
 
 	let { children, data }: LayoutProps = $props();
 
@@ -29,18 +30,20 @@
 
 <Shader base={baseTheme} error={errorTheme} />
 
-{#if !isAuthRoute}
-	<div class="app">
-		<Header user={data.user!} />
-		<FriendList userId={data.user!.id} />
-		<Footer />
+{#key getReactiveLocale()}
+	{#if !isAuthRoute}
+		<div class="app">
+			<Header user={data.user!} />
+			<FriendList />
+			<Footer />
 
-		<main class="game-container">
-			<div class="content">
-				{@render children?.()}
-			</div>
-		</main>
-	</div>
-{:else}
-	{@render children?.()}
-{/if}
+			<main class="game-container">
+				<div class="content">
+					{@render children?.()}
+				</div>
+			</main>
+		</div>
+	{:else}
+		{@render children?.()}
+	{/if}
+{/key}

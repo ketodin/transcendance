@@ -17,8 +17,6 @@ import { ChatInput } from '../../client/view/ChatInput';
 import { CHAT_BUBBLE_DURATION } from '$lib/game/shared/chatConfig';
 import { colyseusClient } from '$lib/colyseusClient';
 
-const PLAYER_NAMES = ['Player 1', 'Player 2'];
-
 type InputSnapshot = {
 	moveLeft: boolean;
 	moveRight: boolean;
@@ -74,6 +72,7 @@ export default class GameScene extends Scene {
 	private weaponCooldowns: [boolean[], boolean[]] = [[], []];
 	private hoveredWeaponTypeIdx = -1;
 
+	private playerNames: [string, string] = ['Player 1', 'Player 2'];
 	private lastInput: InputSnapshot = { moveLeft: false, moveRight: false };
 	private localTurretAngle = 90;
 	private lastSentAngle = 90;
@@ -89,6 +88,12 @@ export default class GameScene extends Scene {
 	private fireBtnW = 0;
 	private fireBtnH = 0;
 	private fireBtnHovered = false;
+	private chatBtn!: GameObjects.Graphics;
+	private chatBtnCx = 0;
+	private chatBtnCy = 0;
+	private chatBtnW = 0;
+	private chatBtnH = 0;
+	private chatBtnHovered = false;
 	private fuelBg!: GameObjects.Graphics;
 	private fuelFill!: GameObjects.Graphics;
 	private fuelIcon!: GameObjects.Text;
@@ -139,12 +144,7 @@ export default class GameScene extends Scene {
 	private speechBubbles!: [SpeechBubble, SpeechBubble];
 	// chat input
 	private chatInput!: ChatInput;
-	private chatKey!: Input.Keyboard.Key;
 
-	private keys!: {
-		left: Input.Keyboard.Key;
-		right: Input.Keyboard.Key;
-	};
 	private moveLBtnDown = false;
 	private moveRBtnDown = false;
 	private moveLeftBtn!: GameObjects.Graphics;
@@ -167,7 +167,6 @@ export default class GameScene extends Scene {
 	create() {
 		this.createBackground();
 		this.setupUI();
-		this.setupKeys();
 		void this.connectToServer();
 		EventBus.on('theme-changed', this.onThemeChanged);
 
@@ -209,16 +208,6 @@ export default class GameScene extends Scene {
 			stars.fillStyle(COLORS.white, Math.random() * 0.4 + 0.2);
 			stars.fillCircle(sx, sy, Math.random() * 1.2 + 0.3);
 		}
-	}
-
-	private setupKeys() {
-		const kb = this.input.keyboard!;
-		this.keys = {
-			right: kb.addKey(Input.Keyboard.KeyCodes.RIGHT),
-			left: kb.addKey(Input.Keyboard.KeyCodes.LEFT)
-		};
-		//Chat key
-		this.chatKey = kb.addKey(Input.Keyboard.KeyCodes.T);
 	}
 
 	private setupUI() {
@@ -429,6 +418,29 @@ export default class GameScene extends Scene {
 			});
 		});
 
+		// Chat button — placed to the right of the fire button
+		this.chatBtnW = this.fireBtnW;
+		this.chatBtnH = this.fireBtnH;
+		this.chatBtnCx = this.fireBtnCx + this.fireBtnW / 2 + this.sw(8) + this.chatBtnW / 2 + 30;
+		this.chatBtnCy = this.fireBtnCy;
+
+		this.chatBtn = this.add.graphics().setDepth(11).setVisible(false);
+
+		const chatBtnZone = this.add
+			.zone(this.chatBtnCx, this.chatBtnCy, this.chatBtnW, this.chatBtnH)
+			.setDepth(12)
+			.setInteractive({ useHandCursor: true });
+
+		chatBtnZone.on('pointerover', () => {
+			this.chatBtnHovered = true;
+		});
+		chatBtnZone.on('pointerout', () => {
+			this.chatBtnHovered = false;
+		});
+		chatBtnZone.on('pointerdown', () => {
+			this.chatInput?.toggle();
+		});
+
 		this.weaponUiGfx = this.add.graphics().setDepth(10).setVisible(false);
 		this.weaponNameLabel = this.add
 			.text(0, 0, '', {
@@ -514,6 +526,7 @@ export default class GameScene extends Scene {
 						fuel: data.fuel,
 						weaponIndex: data.weaponIndex
 					};
+					this.playerNames = [data.tanks[0].name, data.tanks[1].name];
 					this.roomReady = true;
 					this.statusText.setVisible(false);
 					this.initViews();
@@ -588,8 +601,11 @@ export default class GameScene extends Scene {
 				this.speechBubbles[data.playerIndex].setText(data.text, tank);
 			});
 		} catch (err) {
-			this.statusText.setText('Connection failed.\nCheck the game server is running.');
-			console.error(err);
+			const message =
+				err instanceof Error
+					? 'Connection failed.\n' + err.message
+					: 'Connection failed.\nCheck the game server is running.';
+			this.statusText.setText(message);
 		}
 	}
 
@@ -612,8 +628,11 @@ export default class GameScene extends Scene {
 		//Bubble init
 		this.speechBubbles = [new SpeechBubble(this), new SpeechBubble(this)];
 		// chat init
+		const iSize = this.sw(42);
+		const iconY = this.scale.height - this.sh(66) + 6;
+		const chatBarY = iconY + iSize / 2 + this.sh(10);
 		this.chatInput?.destroy();
-		this.chatInput = new ChatInput(this, (text) => {
+		this.chatInput = new ChatInput(this, chatBarY, (text: string) => {
 			this.room!.send('chat', { text });
 			this.chatInput.block(CHAT_BUBBLE_DURATION);
 		});
@@ -630,11 +649,12 @@ export default class GameScene extends Scene {
 		this.healthIcon.setVisible(true);
 		this.weaponUiGfx.setVisible(true);
 		this.weaponNameLabel.setVisible(true);
-		this.controlsText.setText(`${'← / →'.padEnd(7)}  Move\n` + `${'Mouse'.padEnd(7)}  Aim + Power`);
+		this.controlsText.setText(`Mouse  Aim + Power`);
 		this.controlsBg.setVisible(true);
 		this.controlsText.setVisible(true);
 		this.fireBtn.setVisible(true);
 		this.fireBtnLabel.setVisible(true);
+		this.chatBtn.setVisible(true);
 		this.moveLeftBtn.setVisible(true);
 		this.moveRightBtn.setVisible(true);
 	}
@@ -664,10 +684,6 @@ export default class GameScene extends Scene {
 		// Bubble chat
 		this.speechBubbles[0].sync(data.tanks[0]);
 		this.speechBubbles[1].sync(data.tanks[1]);
-		// chat
-		if (Input.Keyboard.JustDown(this.chatKey)) {
-			this.chatInput?.open();
-		}
 		// Sync projectile with client-side trail
 		const proj = data.projectile;
 		if (proj.active) {
@@ -745,7 +761,7 @@ export default class GameScene extends Scene {
 			const color =
 				secs > 10 ? COLOR_STRINGS.neonGlow : secs > 5 ? COLOR_STRINGS.yellow : COLOR_STRINGS.red;
 			this.timerText.setText(`${secs}s`).setColor(color);
-			this.turnText.setText(`${PLAYER_NAMES[currentPlayer]}'s Turn`);
+			this.turnText.setText(`${this.playerNames[currentPlayer]}'s Turn`);
 		}
 
 		const isMyTurn = currentPlayer === this.myPlayerIndex && phase === 'AIMING';
@@ -753,6 +769,7 @@ export default class GameScene extends Scene {
 		this.updateHealthBar(data.tanks[this.myPlayerIndex].health);
 		this.updateWeaponUI(isMyTurn ? data.weaponIndex : -1, isMyTurn);
 		this.drawFireButton(this.fireBtnHovered && isMyTurn, !isMyTurn);
+		this.drawChatButton(this.chatBtnHovered);
 		this.drawMoveButton(0, this.moveLeftBtnHovered && isMyTurn, !isMyTurn);
 		this.drawMoveButton(1, this.moveRightBtnHovered && isMyTurn, !isMyTurn);
 
@@ -775,8 +792,8 @@ export default class GameScene extends Scene {
 	private handleInput(phase: string) {
 		// Movement input — send only when state changes (keys or on-screen buttons)
 		const snap: InputSnapshot = {
-			moveLeft: this.keys.left.isDown || this.moveLBtnDown,
-			moveRight: this.keys.right.isDown || this.moveRBtnDown
+			moveLeft: this.moveLBtnDown,
+			moveRight: this.moveRBtnDown
 		};
 		if (snap.moveLeft !== this.lastInput.moveLeft || snap.moveRight !== this.lastInput.moveRight) {
 			this.lastInput = snap;
@@ -858,6 +875,64 @@ export default class GameScene extends Scene {
 		g.moveTo(cx - w / 2 + r, cy - h / 2);
 		g.lineTo(cx + w / 2 - r, cy - h / 2);
 		g.strokePath();
+	}
+
+	private drawChatButton(hovered: boolean) {
+		const g = this.chatBtn;
+		g.clear();
+		const cx = this.chatBtnCx;
+		const cy = this.chatBtnCy;
+		const w = this.chatBtnW;
+		const h = this.chatBtnH;
+		const r = this.sw(6);
+
+		// Outer glow on hover
+		if (hovered) {
+			g.lineStyle(this.sw(5), 0x00aaff, 0.18);
+			g.strokeRoundedRect(
+				cx - w / 2 - this.sw(3),
+				cy - h / 2 - this.sw(3),
+				w + this.sw(6),
+				h + this.sw(6),
+				r + this.sw(2)
+			);
+		}
+
+		// Background
+		g.fillStyle(hovered ? 0x051a2e : 0x030f1a, 1);
+		g.fillRoundedRect(cx - w / 2, cy - h / 2, w, h, r);
+
+		// Border
+		g.lineStyle(this.sw(1.5), hovered ? 0x00ccff : 0x005577, 1);
+		g.strokeRoundedRect(cx - w / 2, cy - h / 2, w, h, r);
+
+		// Top bevel
+		g.lineStyle(this.sw(1), 0xffffff, hovered ? 0.15 : 0.06);
+		g.beginPath();
+		g.moveTo(cx - w / 2 + r, cy - h / 2);
+		g.lineTo(cx + w / 2 - r, cy - h / 2);
+		g.strokePath();
+
+		// Speech bubble icon
+		const s = this.sw(1);
+		const iconColor = hovered ? 0x00ccff : 0x4499bb;
+		const bw = s * 20; // bubble width
+		const bh = s * 13; // bubble height
+		const br = s * 3; // bubble corner radius
+		const bx = cx - bw / 2;
+		const by = cy - bh / 2 - s * 2;
+
+		g.fillStyle(iconColor, hovered ? 0.95 : 0.7);
+		g.fillRoundedRect(bx, by, bw, bh, br);
+
+		// Tail (bottom-left triangle)
+		g.fillTriangle(bx + s * 3, by + bh, bx + s * 3, by + bh + s * 5, bx + s * 9, by + bh);
+
+		// Three dots inside bubble
+		g.fillStyle(hovered ? 0x001a2e : 0x011015, 1);
+		g.fillCircle(cx - s * 5, by + bh / 2, s * 1.8);
+		g.fillCircle(cx, by + bh / 2, s * 1.8);
+		g.fillCircle(cx + s * 5, by + bh / 2, s * 1.8);
 	}
 
 	private drawMoveButton(side: 0 | 1, hovered: boolean, disabled: boolean) {
@@ -1427,7 +1502,7 @@ export default class GameScene extends Scene {
 			.text(
 				this.scale.width / 2,
 				this.scale.height / 2 - this.sh(70),
-				`${PLAYER_NAMES[winner]} Wins!`,
+				`${this.playerNames[winner]} Wins!`,
 				{
 					fontSize: `${Math.round(this.sh(52))}px`,
 					color: COLOR_STRINGS.gold,

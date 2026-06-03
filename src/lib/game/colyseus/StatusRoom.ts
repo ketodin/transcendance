@@ -2,14 +2,22 @@ import { Room, type Client } from 'colyseus';
 import { StatusState, FriendStatus } from './schema/StatusRoomState';
 import { getFriendList } from '$lib/friends';
 import { statusHub } from '$lib/game/colyseus/statusHub';
+import { auth } from '$lib/server/auth';
+import { type User } from 'better-auth/types';
 
 export class StatusRoom extends Room<{ state: StatusState }> {
 	state = new StatusState();
 	userId = '';
 	maxClients = 1;
 
-	async onJoin(_client: Client, options: { userId: string }) {
-		this.userId = options.userId;
+	async onAuth(_client: Client, _options: unknown, ctx: { headers: Headers }) {
+		const session = await auth.api.getSession({ headers: ctx.headers });
+		if (!session?.user) throw new Error('Not authenticated');
+		return session.user;
+	}
+
+	async onJoin(_client: Client, options: undefined, auth: User) {
+		this.userId = auth.id;
 		statusHub.bind(this.userId, this);
 
 		const friends = await getFriendList(this.userId); // need to use this instead of non realtime sveltekit `query`

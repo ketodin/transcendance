@@ -122,13 +122,14 @@
 			</Button>
 		</div>
 	</div>
-
-	<TOTPSection
-		user={data.user}
-		enableForm={data.enableForm}
-		verifyForm={data.verifyForm}
-		disableForm={data.disableForm}
-	/>
+	{#if data.hasPassword}
+		<TOTPSection
+			user={data.user}
+			enableForm={data.enableForm}
+			verifyForm={data.verifyForm}
+			disableForm={data.disableForm}
+		/>
+	{/if}
 </div>
 
 <style>

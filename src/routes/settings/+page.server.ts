@@ -2,6 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import { superValidate, setError, message, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth } from '$lib/server/auth';
+import db from '$lib/server/db';
 import { enableSchema, verifySchema, disableSchema } from '$lib/components/totp/schema';
 import { avatarSchema, nameSchema } from './schema';
 import { m } from '$lib/paraglide/messages';
@@ -10,10 +11,14 @@ import path from 'node:path';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	if (!locals.user) return redirect(302, '/');
+	const credentialAccount = await db.account.findFirst({
+		where: { userId: locals.user!.id, providerId: 'credential' },
+		select: { id: true }
+	});
 	return {
-		user: locals.user,
-		nameForm: await superValidate({ name: locals.user.name }, zod4(nameSchema)),
+		user: locals.user!,
+		hasPassword: credentialAccount !== null,
+		nameForm: await superValidate({ name: locals.user!.name }, zod4(nameSchema)),
 		avatarForm: await superValidate(zod4(avatarSchema)),
 		enableForm: await superValidate(zod4(enableSchema)),
 		verifyForm: await superValidate(zod4(verifySchema)),

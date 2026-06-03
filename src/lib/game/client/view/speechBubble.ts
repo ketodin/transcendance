@@ -15,7 +15,7 @@ export class SpeechBubble {
 			.text(0, 0, '', {
 				fontSize: '13px',
 				color: COLOR_STRINGS.black,
-				wordWrap: { width: 160 },
+				wordWrap: { width: 160, useAdvancedWrap: true },
 				align: 'center'
 			})
 			.setOrigin(0.5, 0.5)
@@ -44,7 +44,7 @@ export class SpeechBubble {
 
 	sync(tank: TankState): void {
 		const bx = tank.x;
-		const by = tank.y - 80;
+		const by = tank.y - 100;
 
 		this.bg.clear();
 
