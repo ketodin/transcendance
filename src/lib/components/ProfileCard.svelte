@@ -1,50 +1,40 @@
 <script lang="ts">
-	import { useSession } from '$lib/auth-client';
+	import Avatar from '$lib/components/Avatar.svelte';
+	import type { User } from '$lib/server/prisma/browser';
 	import { Settings } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
-	const session = useSession();
+	const { user }: { user: User } = $props();
 
 	function handleCardClick(e: MouseEvent) {
 		const target = e.target as HTMLElement;
 		if (target.closest('.settings-link')) return;
-		void goto(resolve('/profile/[id]', { id: $session.data!.user.id }));
+		void goto(resolve('/profile/[id]', { id: user.id }));
 	}
 
 	function handleCardKeydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' || e.key === ' ') {
-			void goto(resolve('/profile/[id]', { id: $session.data!.user.id }));
+			void goto(resolve('/profile/[id]', { id: user.id }));
 		}
 	}
 </script>
 
-{#if $session.data}
-	{@const user = $session.data.user}
-	<div
-		class="card glassbutton"
-		role="link"
-		tabindex="0"
-		onclick={handleCardClick}
-		onkeydown={handleCardKeydown}
+<div
+	class="card glassbutton"
+	role="link"
+	tabindex="0"
+	onclick={handleCardClick}
+	onkeydown={handleCardKeydown}
+>
+	<a href={resolve('/settings')} class="settings-link" onclick={(e) => e.stopPropagation()}>
+		<Settings size={20} />
+	</a>
+	<span class="name"
+		>{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}</span
 	>
-		<a href={resolve('/settings')} class="settings-link" onclick={(e) => e.stopPropagation()}>
-			<Settings size={20} />
-		</a>
-		<span class="name"
-			>{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}</span
-		>
-		<div class="avatar">
-			{#if user.image}
-				<img src={user.image} alt="avatar" />
-			{:else}
-				<div class="placeholder">
-					{user.name?.charAt(0)?.toUpperCase() ?? '?'}
-				</div>
-			{/if}
-		</div>
-	</div>
-{/if}
+	<Avatar {...user} size="2.0rem" />
+</div>
 
 <style>
 	.card {
@@ -81,31 +71,5 @@
 		font-size: 13px;
 		font-weight: 600;
 		white-space: nowrap;
-	}
-
-	.avatar {
-		width: 28px;
-		height: 28px;
-		border-radius: 50%;
-		overflow: hidden;
-		flex-shrink: 0;
-		border: 2px solid rgba(255, 255, 255, 0.2);
-	}
-
-	.avatar img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.placeholder {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 12px;
-		font-weight: bold;
-		background: rgba(255, 255, 255, 0.1);
 	}
 </style>

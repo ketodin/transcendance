@@ -7,21 +7,18 @@
 	import '../app.css';
 	import { Toaster } from 'svelte-sonner';
 
-	import { page } from '$app/stores';
-	import type { Snippet } from 'svelte';
+	import { page } from '$app/state';
 	import { shaderTheme } from '$lib/shader-theme';
-	import { useSession } from '$lib/auth-client';
+	import type { LayoutProps } from './$types';
 	import { getReactiveLocale } from '$lib/locale.svelte';
 
-	let { children }: { children: Snippet } = $props();
+	let { children, data }: LayoutProps = $props();
 
 	const isAuthRoute = $derived(
-		$page.url.pathname.startsWith('/login') || $page.url.pathname.startsWith('/register')
+		page.url.pathname.startsWith('/login') || page.url.pathname.startsWith('/register')
 	);
 
-	const session = useSession();
-
-	const is404 = $derived($page.status === 404);
+	const is404 = $derived(page.status === 404);
 
 	const baseTheme = $derived($shaderTheme === 'dark' ? 1 : 0);
 
@@ -34,9 +31,9 @@
 <Shader base={baseTheme} error={errorTheme} />
 
 {#key getReactiveLocale()}
-	{#if !isAuthRoute && $session.data !== null}
+	{#if !isAuthRoute}
 		<div class="app">
-			<Header />
+			<Header user={data.user!} />
 			<FriendList />
 			<Footer />
 

@@ -5,7 +5,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { resolve } from '$app/paths';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { authClient, signIn } from '$lib/auth-client';
 	import { formSchema } from './schema';
 	import * as z from 'zod';
@@ -65,6 +65,7 @@
 			error = result.error?.message ?? 'Unknown error';
 			return;
 		}
+		await invalidateAll();
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		await goto(redirectUrl, { replaceState: true });
 	}
@@ -76,6 +77,7 @@
 			error = result.error?.message ?? 'Unknown error';
 			return;
 		}
+		await invalidateAll();
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		await goto(redirectUrl, { replaceState: true });
 	}
@@ -174,14 +176,12 @@
 					class="space-y-5"
 				>
 					<p class="text-muted-foreground text-center text-sm">
-						{useBackup
-							? 'Enter one of your backup codes.'
-							: 'Enter the 6-digit code from your authenticator app.'}
+						{useBackup ? m.totp_backup_instruction() : m.totp_app_instruction()}
 					</p>
 
 					<div class="space-y-2">
 						<label class="text-sm font-medium" for="code">
-							{useBackup ? 'Backup code' : 'TOTP code'}
+							{useBackup ? m.backup_code() : m.totp_code()}
 						</label>
 						<Input
 							id="code"
@@ -197,7 +197,8 @@
 						<p class="text-destructive text-sm font-medium">{error}</p>
 					{/if}
 
-					<button type="submit" class="glass h-11 w-full text-base font-medium"> Verify </button>
+					<button type="submit" class="glass h-11 w-full text-base font-medium">{m.verify()}</button
+					>
 
 					<div class="text-muted-foreground flex justify-between text-sm">
 						<button
@@ -208,9 +209,9 @@
 								error = '';
 							}}
 						>
-							{useBackup ? '← TOTP code' : 'Use backup code?'}
+							{useBackup ? m.back_to_totp() : m.use_backup_code()}
 						</button>
-						<button type="button" onclick={goBack}>← Back</button>
+						<button type="button" onclick={goBack}>{m.back()}</button>
 					</div>
 				</form>
 			{/if}
