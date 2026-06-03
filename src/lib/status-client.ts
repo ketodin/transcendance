@@ -10,12 +10,12 @@ export const presenceById = writable<Record<string, boolean>>({});
 let roomLeave: (() => Promise<void> | void) | null = null;
 let disconnecting = false;
 
-export async function connectStatusRoom(userId: string) {
+export async function connectStatusRoom() {
 	if (!browser) return () => {};
 	if (disconnecting) return () => {};
 	if (roomLeave) return roomLeave;
 
-	const room = await colyseusClient!.joinOrCreate<StatusState>('status', { userId });
+	const room = await colyseusClient!.joinOrCreate<StatusState>('status');
 	attachNotificationListeners(room);
 	const cb = Callbacks.get(room);
 	const stops = new Map<string, () => void>();

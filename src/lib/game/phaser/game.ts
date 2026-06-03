@@ -1,5 +1,5 @@
 import PreloadScene from './scenes/preloadScene';
-import GameScene from './scenes/gameScene';
+import GameScene from './scenes/gameScene/GameScene';
 import { AUTO, Scale, Game, type Types } from 'phaser';
 
 const DEFAULT_WIDTH = 1920;

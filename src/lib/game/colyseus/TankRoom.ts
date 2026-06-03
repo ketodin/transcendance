@@ -1,4 +1,5 @@
-import { Room, type Client } from 'colyseus';
+import { Room, type Client, ServerError } from 'colyseus';
+import { auth } from '$lib/server/auth';
 import { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 import { generateTerrain, getHeightAt, applyCrater } from '$lib/game/shared/logic/terrain';
 import { createProjectile, stepProjectile, getTurretTip } from '$lib/game/shared/logic/physics';
@@ -7,6 +8,8 @@ import type { GameState } from '$lib/game/shared/state/GameState';
 import type { TankState } from '$lib/game/shared/state/TankState';
 // import chat handler
 import { registerChatHandler } from '$lib/game/colyseus/handlers/chatHandler';
+
+const activePlayers = new Set<string>();
 
 const SCENE_WIDTH = 1920;
 const SCENE_HEIGHT = 1080;
@@ -26,6 +29,9 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	private inputs = new Map<string, InputState>();
 	private tickCount = 0;
 	private _nextTurnPending = false;
+	private player0Name = 'Player 1';
+	private player1Name = 'Player 2';
+	private playerIds: [string, string] = ['', ''];
 
 	onCreate() {
 		this.maxClients = 2;
@@ -113,14 +119,26 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		registerChatHandler(this, (client) => this.getPlayerIndex(client));
 	}
 
-	onJoin(client: Client) {
+	async onAuth(_client: Client, _options: unknown, ctx: { headers: Headers }) {
+		const session = await auth.api.getSession({ headers: ctx.headers });
+		if (!session?.user) throw new ServerError(4001, 'Not authenticated');
+		if (activePlayers.has(session.user.id)) throw new ServerError(4002, 'Already in a game.');
+		return session.user;
+	}
+
+	onJoin(client: Client, _options: unknown, user: { id: string; name: string }) {
 		const idx = this.clients.length - 1;
+		activePlayers.add(user.id);
 		console.log(`[TankRoom] onJoin — idx=${idx}, sessionId=${client.sessionId}`);
 		if (idx === 0) {
 			this.state.player0Id = client.sessionId;
+			this.player0Name = user.name;
+			this.playerIds[0] = user.id;
 			console.log('[TankRoom] Player 1 registered, waiting for Player 2...');
 		} else if (idx === 1) {
 			this.state.player1Id = client.sessionId;
+			this.player1Name = user.name;
+			this.playerIds[1] = user.id;
 			console.log('[TankRoom] Player 2 joined — starting game...');
 			try {
 				this.initGame();
@@ -132,8 +150,11 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	}
 
 	onLeave(client: Client) {
+		const idx = this.getPlayerIndex(client);
+		if (idx !== -1 && this.playerIds[idx]) activePlayers.delete(this.playerIds[idx]);
+
 		if (this.physicsState && this.physicsState.phase !== 'OVER') {
-			const winner = this.getPlayerIndex(client) === 0 ? 1 : 0;
+			const winner = (idx === 0 ? 1 : 0) satisfies 0 | 1;
 			this.physicsState.phase = 'OVER';
 			this.state.phase = 'OVER';
 			this.state.winner = winner;
@@ -154,7 +175,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			turretAngle: index === 0 ? 60 : 120,
 			health: 100,
 			color: index === 0 ? 0xcc2222 : 0x2255cc,
-			name: `Player ${index + 1}`,
+			name: index === 0 ? this.player0Name : this.player1Name,
 			facing: index === 0 ? 1 : -1
 		});
 		const emptyCooldowns = (): boolean[] => new Array<boolean>(PROJECTILE_TYPES.length).fill(false);
