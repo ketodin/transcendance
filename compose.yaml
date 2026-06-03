@@ -2,8 +2,6 @@ services:
   transcendence:
     build: .
     restart: unless-stopped
-    ports:
-      - 3000:3000
     env_file: .env.prod
     environment:
       DATABASE_URL: file:/data/database.db
@@ -11,6 +9,8 @@ services:
       - ./data/:/data
 
   caddy:
+    depends_on:
+      - transcendence
     image: caddy:2.11.3-alpine
     restart: unless-stopped
     ports:
