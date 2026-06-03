@@ -46,12 +46,14 @@
 {/if}
 
 <div
-	class="glass fixed left-0 top-[calc(var(--header-height)+var(--layout-gap)+1rem)] w-[var(--sidebar-width)] bottom-[calc(var(--footer-height)+0.5rem)] !rounded-l-none !rounded-r-[var(--radius-xl)] flex flex-col px-3 pt-3 pb-6 overflow-y-auto transition-transform duration-300 ease-in-out max-lg:w-4/5 max-lg:max-w-[300px] max-lg:z-[45] {$friendListOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-[110%]'}"
+	class="glass fixed top-[calc(var(--header-height)+var(--layout-gap)+1rem)] bottom-[calc(var(--footer-height)+0.5rem)] left-0 flex w-[var(--sidebar-width)] flex-col overflow-y-auto !rounded-l-none !rounded-r-[var(--radius-xl)] px-3 pt-3 pb-6 transition-transform duration-300 ease-in-out max-lg:z-[45] max-lg:w-4/5 max-lg:max-w-[300px] {$friendListOpen
+		? 'max-lg:translate-x-0'
+		: 'max-lg:-translate-x-[110%]'}"
 >
-	<div class="flex items-center justify-center relative mb-4">
-		<h2 class="text-base font-semibold opacity-60 uppercase tracking-[0.08em]">{m.friends()}</h2>
+	<div class="relative mb-4 flex items-center justify-center">
+		<h2 class="text-base font-semibold tracking-[0.08em] uppercase opacity-60">{m.friends()}</h2>
 		<button
-			class="absolute right-0 bg-transparent border-0 cursor-pointer opacity-50 p-[2px] flex items-center justify-center rounded-[4px] text-inherit transition-[opacity,background-color] duration-200 hover:opacity-100 hover:bg-white/10"
+			class="absolute right-0 flex cursor-pointer items-center justify-center rounded-[4px] border-0 bg-transparent p-[2px] text-inherit opacity-50 transition-[opacity,background-color] duration-200 hover:bg-white/10 hover:opacity-100"
 			onclick={() => (showAddFriend = !showAddFriend)}
 			title="Add a friend"
 		>
@@ -64,7 +66,7 @@
 	</div>
 
 	{#if showAddFriend}
-		<form class="glass flex flex-col gap-[0.4rem] mb-3 p-[0.6rem]" {...friends.send}>
+		<form class="glass mb-3 flex flex-col gap-[0.4rem] p-[0.6rem]" {...friends.send}>
 			<Input {...friends.send.fields.email.as('text')} placeholder={m.mail_place_holder()} />
 			{#each friends.send.fields.email.issues() as issue (issue.message)}
 				<p class="text-xs text-red-400">{issue.message}</p>

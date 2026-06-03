@@ -2,10 +2,20 @@ services:
   transcendence:
     build: .
     restart: unless-stopped
-    ports:
-      - 3000:3000
     env_file: .env.prod
     environment:
       DATABASE_URL: file:/data/database.db
+      AVATAR_DIR: /data/avatar
     volumes:
       - ./data/:/data
+
+  caddy:
+    depends_on:
+      - transcendence
+    image: caddy:2.11.3-alpine
+    restart: unless-stopped
+    ports:
+      - 4443:443
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./certs:/etc/caddy/certs:ro

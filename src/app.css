@@ -168,8 +168,6 @@
 	position: relative;
 }
 
-
-
 .glass {
 	background: rgba(var(--color-background), 0.15);
 	/* autoprefixer: off */

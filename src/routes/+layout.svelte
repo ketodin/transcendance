@@ -7,21 +7,18 @@
 	import '../app.css';
 	import { Toaster } from 'svelte-sonner';
 
-	import { page } from '$app/stores';
-	import type { Snippet } from 'svelte';
+	import { page } from '$app/state';
 	import { shaderTheme } from '$lib/shader-theme';
-	import { useSession } from '$lib/auth-client';
+	import type { LayoutProps } from './$types';
 	import { getReactiveLocale } from '$lib/locale.svelte';
 
-	let { children }: { children: Snippet } = $props();
+	let { children, data }: LayoutProps = $props();
 
 	const isAuthRoute = $derived(
-		$page.url.pathname.startsWith('/login') || $page.url.pathname.startsWith('/register')
+		page.url.pathname.startsWith('/login') || page.url.pathname.startsWith('/register')
 	);
 
-	const session = useSession();
-
-	const is404 = $derived($page.status === 404);
+	const is404 = $derived(page.status === 404);
 
 	const baseTheme = $derived($shaderTheme === 'dark' ? 1 : 0);
 
@@ -34,13 +31,15 @@
 <Shader base={baseTheme} error={errorTheme} />
 
 {#key getReactiveLocale()}
-	{#if !isAuthRoute && $session.data !== null}
+	{#if !isAuthRoute}
 		<div class="app">
-			<Header />
+			<Header user={data.user!} />
 			<FriendList />
 			<Footer />
 
-			<main class="fixed right-[1%] top-[calc(var(--header-height)+var(--layout-gap)+1rem)] bottom-[calc(var(--footer-height)+0.5rem)] overflow-y-auto overflow-x-hidden rounded-[var(--radius-xl)] lg:left-[calc(240px+0.75rem)] left-0">
+			<main
+				class="fixed top-[calc(var(--header-height)+var(--layout-gap)+1rem)] right-[1%] bottom-[calc(var(--footer-height)+0.5rem)] left-[1%] overflow-x-hidden overflow-y-auto rounded-[var(--radius-xl)] lg:left-[calc(240px+0.75rem)]"
+			>
 				{@render children?.()}
 			</main>
 		</div>

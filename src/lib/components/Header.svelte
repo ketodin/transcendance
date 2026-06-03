@@ -3,8 +3,11 @@
 	import ThemeToggle from './ThemeToggle.svelte';
 	import LanguagePicker from './LanguagePicker.svelte';
 	import ProfileCard from '$lib/components/ProfileCard.svelte';
-	import { Users } from '@lucide/svelte';
 	import { friendListOpen } from '$lib/stores/sidebar';
+	import { Users } from '@lucide/svelte';
+	import type { User } from '$lib/server/prisma/browser';
+
+	const { user }: { user: User } = $props();
 </script>
 
 <header class="pointer-events-none fixed top-0 right-0 left-0 z-50 flex px-[1%] py-[1%]">
@@ -19,17 +22,14 @@
 			>
 				<Users size={20} />
 			</button>
-			<a
-				href={resolve('/')}
-				class="truncate text-xl font-bold tracking-tight md:text-3xl"
-			>
+			<a href={resolve('/')} class="truncate text-xl font-bold tracking-tight md:text-3xl">
 				Transcendence
 			</a>
 		</div>
 		<div class="flex items-center gap-2">
 			<LanguagePicker />
 			<ThemeToggle />
-			<ProfileCard />
+			<ProfileCard {user} />
 		</div>
 	</div>
 </header>
