@@ -5,7 +5,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { resolve } from '$app/paths';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { authClient, signIn } from '$lib/auth-client';
 	import { formSchema } from './schema';
 	import * as z from 'zod';
@@ -65,6 +65,7 @@
 			error = result.error?.message ?? 'Unknown error';
 			return;
 		}
+		await invalidateAll();
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		await goto(redirectUrl, { replaceState: true });
 	}
@@ -76,6 +77,7 @@
 			error = result.error?.message ?? 'Unknown error';
 			return;
 		}
+		await invalidateAll();
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		await goto(redirectUrl, { replaceState: true });
 	}
