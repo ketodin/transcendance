@@ -35,8 +35,7 @@
 				class="glass"
 				variant="outline"
 				size="icon-sm"
-				onclick={async (e) => {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+				onclick={async (e: MouseEvent) => {
 					e.preventDefault();
 					await friends.accept(friend.id).then(() => toast.success(m.friend_request_accept()));
 				}}><Check /></Button
@@ -46,8 +45,7 @@
 				class="glass text-red-400"
 				variant="outline"
 				size="icon-sm"
-				onclick={async (e) => {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+				onclick={async (e: MouseEvent) => {
 					e.preventDefault();
 					await friends.remove(friend.id).then(() => toast.success(m.friend_request_deny()));
 				}}><X /></Button
