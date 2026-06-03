@@ -40,10 +40,8 @@
 			<FriendList />
 			<Footer />
 
-			<main class="game-container">
-				<div class="content">
-					{@render children?.()}
-				</div>
+			<main class="fixed right-[1%] top-[calc(var(--header-height)+var(--layout-gap)+1rem)] bottom-[calc(var(--footer-height)+0.5rem)] overflow-y-auto overflow-x-hidden rounded-[var(--radius-xl)] lg:left-[calc(240px+0.75rem)] left-0">
+				{@render children?.()}
 			</main>
 		</div>
 	{:else}

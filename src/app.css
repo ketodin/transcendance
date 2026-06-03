@@ -168,27 +168,7 @@
 	position: relative;
 }
 
-.game-container {
-	position: absolute;
 
-	top: calc(var(--header-height) + var(--layout-gap) + -1.5%);
-	left: calc(20% + 2%);
-	right: 1%;
-	bottom: 1%;
-
-	display: flex;
-}
-
-.content {
-	top: calc(var(--header-height) + var(--layout-gap) + 1rem);
-	right: 1%;
-	left: 22%;
-	bottom: 1%;
-	position: fixed;
-
-	overflow-y: auto;
-	border-radius: var(--radius-xl);
-}
 
 .glass {
 	background: rgba(var(--color-background), 0.15);
