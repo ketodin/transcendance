@@ -72,30 +72,4 @@
 		font-weight: 600;
 		white-space: nowrap;
 	}
-
-	.avatar {
-		width: 28px;
-		height: 28px;
-		border-radius: 50%;
-		overflow: hidden;
-		flex-shrink: 0;
-		border: 2px solid rgba(255, 255, 255, 0.2);
-	}
-
-	.avatar img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.placeholder {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 12px;
-		font-weight: bold;
-		background: rgba(255, 255, 255, 0.1);
-	}
 </style>

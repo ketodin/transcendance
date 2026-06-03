@@ -36,6 +36,7 @@
 				variant="outline"
 				size="icon-sm"
 				onclick={async (e) => {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 					e.preventDefault();
 					await friends.accept(friend.id).then(() => toast.success(m.friend_request_accept()));
 				}}><Check /></Button
@@ -46,6 +47,7 @@
 				variant="outline"
 				size="icon-sm"
 				onclick={async (e) => {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 					e.preventDefault();
 					await friends.remove(friend.id).then(() => toast.success(m.friend_request_deny()));
 				}}><X /></Button

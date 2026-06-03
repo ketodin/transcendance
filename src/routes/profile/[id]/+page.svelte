@@ -35,7 +35,8 @@
 
 <div class="glass h-full w-full p-6">
 	<div class="glass header p-6">
-		<div class="avatar"> <!-- TODO: remove this div and class, integrate this in to the Avatar component -->
+		<div class="avatar">
+			<!-- TODO: remove this div and class, integrate this in to the Avatar component -->
 			<Avatar {...data.userProfile} size="100%" />
 		</div>
 		<div class="info p-8">

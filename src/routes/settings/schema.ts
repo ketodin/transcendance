@@ -10,14 +10,8 @@ export const avatarSchema = z.strictObject({
 			message: m.please_upload_file()
 		})
 		.refine((f) => f.size > 0, 'File is required')
-		.refine(
-			(f) => f.size <= MAX_FILE_SIZE,
-			m.max_upload_size()
-		)
-		.refine(
-			(f) => ACCEPTED_TYPES.includes(f.type),
-			m.unknow_upload_file()
-		)
+		.refine((f) => f.size <= MAX_FILE_SIZE, m.max_upload_size())
+		.refine((f) => ACCEPTED_TYPES.includes(f.type), m.unknow_upload_file())
 });
 
 export const nameSchema = z.strictObject({

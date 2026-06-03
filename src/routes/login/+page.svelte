@@ -197,7 +197,8 @@
 						<p class="text-destructive text-sm font-medium">{error}</p>
 					{/if}
 
-					<button type="submit" class="glass h-11 w-full text-base font-medium">{m.verify()}</button>
+					<button type="submit" class="glass h-11 w-full text-base font-medium">{m.verify()}</button
+					>
 
 					<div class="text-muted-foreground flex justify-between text-sm">
 						<button
