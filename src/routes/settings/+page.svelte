@@ -13,6 +13,7 @@
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { avatarSchema, nameSchema } from './schema';
 	import { untrack } from 'svelte';
+	import { toast } from '$lib/components/toast';
 
 	let { data }: PageProps = $props();
 
@@ -33,7 +34,12 @@
 	const avatarForm = superForm(
 		untrack(() => data.avatarForm),
 		{
-			validators: zod4Client(avatarSchema)
+			validators: zod4Client(avatarSchema),
+			onUpdated({ form }) {
+				if (!form.valid && form.errors.file) {
+					toast.error(form.errors.file?.[0]);
+				}
+			}
 		}
 	);
 
