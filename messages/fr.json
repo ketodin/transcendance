@@ -31,6 +31,10 @@
 	"no_user": "Utilisateur introuvable",
 	"google": "Continuer avec Google",
 
+	"please_upload_file": "Veuillez téléverser une image",
+	"max_upload_size": "Taille maximale du téléversement : 5 Mo",
+	"unknow_upload_file": "Seuls les formats PNG et JPEG sont autorisés",
+
 	"name_place_holder": "Stephane",
 	"mail_place_holder": "stephane.travail@gmail.com",
 	"password": "Mot de passe",

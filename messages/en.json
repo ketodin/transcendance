@@ -31,6 +31,10 @@
 	"no_user": "User not found",
 	"google": "Continue with Google",
 
+	"please_upload_file": "Please upload an image",
+	"max_upload_size": "Max 5MB upload size",
+	"unknow_upload_file": "Only PNG and JPEG images are allowed",
+
 	"name_place_holder": "Steve",
 	"mail_place_holder": "steve.jobs@gmail.com",
 	"password": "Password",
