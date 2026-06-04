@@ -92,5 +92,11 @@
 	"verify": "Vérifier",
 	"back_to_totp": "← Code TOTP",
 	"use_backup_code": "Utiliser un code de secours ?",
-	"back": "← Retour"
+	"back": "← Retour",
+
+	"edit": "Modifier",
+	"change_password": "Changer le mot de passe",
+	"new_password": "Nouveau mot de passe",
+	"confirm_new_password": "Confirmer le nouveau mot de passe",
+	"save": "Enregistrer"
 }

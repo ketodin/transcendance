@@ -7,6 +7,7 @@
 	import type { FriendRequestStatus } from '$lib/friends';
 	import { Input } from '$lib/components/ui/input';
 	import { presenceById, connectStatusRoom } from '$lib/status-client';
+	import { friendListOpen } from '$lib/stores/sidebar';
 
 	const friendList = $derived(await friends.list());
 
@@ -34,10 +35,28 @@
 	});
 </script>
 
-<div class="glass sidebar">
-	<div class="sidebar-header">
-		<h2>{m.friends()}</h2>
-		<button class="add-btn" onclick={() => (showAddFriend = !showAddFriend)} title="Add a friend">
+{#if $friendListOpen}
+	<div
+		class="fixed inset-0 z-[44] bg-black/10 backdrop-blur-sm lg:hidden"
+		role="button"
+		tabindex="-1"
+		onclick={() => friendListOpen.set(false)}
+		onkeydown={(e) => e.key === 'Escape' && friendListOpen.set(false)}
+	></div>
+{/if}
+
+<div
+	class="glass fixed top-[calc(var(--header-height)+var(--layout-gap)+1rem)] bottom-[calc(var(--footer-height)+0.5rem)] left-0 flex w-[var(--sidebar-width)] flex-col overflow-y-auto !rounded-l-none !rounded-r-[var(--radius-xl)] px-3 pt-3 pb-6 transition-transform duration-300 ease-in-out max-lg:z-[45] max-lg:w-4/5 max-lg:max-w-[300px] {$friendListOpen
+		? 'max-lg:translate-x-0'
+		: 'max-lg:-translate-x-[110%]'}"
+>
+	<div class="relative mb-4 flex items-center justify-center">
+		<h2 class="text-base font-semibold tracking-[0.08em] uppercase opacity-60">{m.friends()}</h2>
+		<button
+			class="absolute right-0 flex cursor-pointer items-center justify-center rounded-[4px] border-0 bg-transparent p-[2px] text-inherit opacity-50 transition-[opacity,background-color] duration-200 hover:bg-white/10 hover:opacity-100"
+			onclick={() => (showAddFriend = !showAddFriend)}
+			title="Add a friend"
+		>
 			{#if showAddFriend}
 				<X size={20} />
 			{:else}
@@ -47,10 +66,10 @@
 	</div>
 
 	{#if showAddFriend}
-		<form class="add-friend-form glass" {...friends.send}>
+		<form class="glass mb-3 flex flex-col gap-[0.4rem] p-[0.6rem]" {...friends.send}>
 			<Input {...friends.send.fields.email.as('text')} placeholder={m.mail_place_holder()} />
 			{#each friends.send.fields.email.issues() as issue (issue.message)}
-				<p class="error">{issue.message}</p>
+				<p class="text-xs text-red-400">{issue.message}</p>
 			{/each}
 		</form>
 	{/if}
@@ -64,93 +83,6 @@
 	:global(:root) {
 		--header-height: 4rem;
 		--layout-gap: 1rem;
-	}
-
-	.sidebar {
-		position: fixed;
-		left: 1%;
-		top: calc(var(--header-height) + var(--layout-gap) + 1rem);
-		width: 20%;
-		height: calc(100vh - var(--header-height) - var(--layout-gap) - 2% - 4rem);
-		display: flex;
-		flex-direction: column;
-		padding: 1.25rem;
-		overflow-y: auto;
-	}
-
-	.sidebar-header {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		position: relative;
-		margin-bottom: 0.5rem;
-	}
-
-	h2 {
-		font-size: 1rem;
-		font-weight: 600;
-		opacity: 0.6;
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
-	}
-
-	.add-btn {
-		position: absolute;
-		right: 0;
-		background: none;
-		border: none;
-		cursor: pointer;
-		opacity: 0.5;
-		padding: 2px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 4px;
-		color: inherit;
-		transition:
-			opacity 0.2s,
-			background 0.2s;
-	}
-
-	.add-btn:hover {
-		opacity: 1;
-		background: rgba(255, 255, 255, 0.1);
-	}
-
-	.add-friend-form {
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-		margin-bottom: 0.75rem;
-		padding: 0.6rem;
-	}
-
-	.form-actions {
-		display: flex;
-		justify-content: flex-end;
-		align-items: center;
-		gap: 0.5rem;
-		margin-top: 0.25rem;
-	}
-
-	.cancel-btn {
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 0.8rem;
-		opacity: 0.5;
-		color: inherit;
-		padding: 0.25rem 0.5rem;
-		border-radius: 4px;
-		transition: opacity 0.2s;
-	}
-
-	.cancel-btn:hover {
-		opacity: 1;
-	}
-
-	.error {
-		font-size: 0.75rem;
-		color: #f87171;
+		--sidebar-width: 240px;
 	}
 </style>

@@ -3,7 +3,7 @@
 </script>
 
 <div class="flex flex-col items-center justify-center gap-8">
-	<h1 class="text-8xl font-extrabold">Transcendence</h1>
+	<h1 class="text-4xl font-extrabold sm:text-6xl lg:text-8xl">Transcendence</h1>
 	<a
 		href={resolve('/game')}
 		class="group relative h-[40vh] w-[70vw] overflow-hidden rounded-md text-4xl font-bold"

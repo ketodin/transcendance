@@ -91,5 +91,11 @@
 	"verify": "Verificar",
 	"back_to_totp": "← Código TOTP",
 	"use_backup_code": "¿Usar código de respaldo?",
-	"back": "← Atrás"
+	"back": "← Atrás",
+
+	"edit": "Editar",
+	"change_password": "Cambiar contraseña",
+	"new_password": "Nueva contraseña",
+	"confirm_new_password": "Confirmar nueva contraseña",
+	"save": "Guardar"
 }

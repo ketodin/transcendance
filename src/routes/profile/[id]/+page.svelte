@@ -111,13 +111,45 @@
 		flex: 1;
 		min-height: 10vw;
 	}
-
 	.name {
 		font-size: 3vw;
 	}
-
 	.botinfo {
 		font-size: 1vw;
 		opacity: 0.7;
+	}
+	.action {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		justify-content: center;
+	}
+
+	@media (max-width: 768px) {
+		.header {
+			flex-direction: column;
+			align-items: center;
+			gap: 1rem;
+		}
+		.avatar {
+			width: 30%;
+			margin: 0;
+			font-size: 8vw;
+		}
+		.info {
+			align-items: center;
+			min-height: unset;
+			gap: 0.4rem;
+			padding: 0;
+		}
+		.name {
+			font-size: 6vw;
+		}
+		.botinfo {
+			font-size: 3vw;
+		}
+		.action {
+			width: 100%;
+		}
 	}
 </style>

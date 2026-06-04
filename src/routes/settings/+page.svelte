@@ -7,7 +7,7 @@
 	import Avatar from '$lib/components/Avatar.svelte';
 	import type { PageProps } from './$types';
 	import { disconnectStatusRoom } from '$lib/status-client';
-	import { LogOut, Crop } from '@lucide/svelte';
+	import { LogOut, Crop, KeyRound, Pencil, Save } from '@lucide/svelte';
 	import * as Form from '$lib/components/ui/form';
 	import { superForm, fileProxy } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
@@ -24,6 +24,7 @@
 			onUpdated({ form }) {
 				if (form.valid) {
 					nameForm.reset({ data: { name: form.data.name } });
+					editing = false;
 				}
 			}
 		}
@@ -48,6 +49,8 @@
 	const file = fileProxy(avatarForm, 'file');
 
 	let fileInput: HTMLInputElement;
+	let nameFormEl: HTMLFormElement | undefined = $state();
+	let editing = $state(false);
 </script>
 
 <form
@@ -78,7 +81,7 @@
 	</Form.Field>
 </form>
 
-<div class="glass h-full w-full p-6">
+<div class="glass min-h-full w-full p-6">
 	<div class="glass header p-6">
 		<button
 			type="button"
@@ -95,22 +98,42 @@
 		</button>
 
 		<div class="info p-8">
-			<form class="input-form" method="POST" action="?/changeName" use:nameEnhance>
-				<Form.Field form={nameForm} name="name">
-					<div class="edit">
-						{m.display_name()}
+			{#if editing}
+				<form
+					bind:this={nameFormEl}
+					class="input-form"
+					method="POST"
+					action="?/changeName"
+					use:nameEnhance
+				>
+					<Form.Field form={nameForm} name="name">
 						<Form.Control>
 							{#snippet children({ props })}
 								<Input {...props} type="text" bind:value={$nameData.name} />
 							{/snippet}
 						</Form.Control>
-					</div>
-					<Form.FieldErrors />
-				</Form.Field>
-			</form>
+						<Form.FieldErrors />
+					</Form.Field>
+				</form>
+			{:else}
+				<div class="display-name">
+					<span class="display-value">{$nameData.name}</span>
+				</div>
+			{/if}
 		</div>
 
 		<div class="action">
+			{#if editing}
+				<Button class="glassbutton group" onclick={() => nameFormEl?.requestSubmit()}>
+					<Save size={16} />
+					{m.save()}
+				</Button>
+			{:else}
+				<Button class="glassbutton group" onclick={() => (editing = true)}>
+					<Pencil size={16} />
+					{m.edit()}
+				</Button>
+			{/if}
 			<Button
 				class="glassbutton group"
 				onclick={async () => {
@@ -124,12 +147,48 @@
 		</div>
 	</div>
 	{#if data.hasPassword}
-		<TOTPSection
-			user={data.user}
-			enableForm={data.enableForm}
-			verifyForm={data.verifyForm}
-			disableForm={data.disableForm}
-		/>
+		<div class="glass section p-6">
+			<h2 class="section-title">
+				<KeyRound size={18} />
+				{m.change_password()}
+			</h2>
+			<div class="password-fields">
+				<div class="field">
+					<label for="currentPassword">{m.current_password_placeholder()}</label>
+					<Input
+						id="currentPassword"
+						type="password"
+						name="currentPassword"
+						autocomplete="current-password"
+					/>
+				</div>
+				<div class="field">
+					<label for="newPassword">{m.new_password()}</label>
+					<Input id="newPassword" type="password" name="newPassword" autocomplete="new-password" />
+				</div>
+				<div class="field">
+					<label for="confirmPassword">{m.confirm_new_password()}</label>
+					<Input
+						id="confirmPassword"
+						type="password"
+						name="confirmPassword"
+						autocomplete="new-password"
+					/>
+				</div>
+				<Button type="button" class="glassbutton self-end" variant="outline">
+					{m.save()}
+				</Button>
+			</div>
+		</div>
+
+		<div class="glass section p-6">
+			<TOTPSection
+				user={data.user}
+				enableForm={data.enableForm}
+				verifyForm={data.verifyForm}
+				disableForm={data.disableForm}
+			/>
+		</div>
 	{/if}
 </div>
 
@@ -177,7 +236,76 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.4rem;
-		margin-bottom: 0.75rem;
-		padding: 0.6rem;
+	}
+
+	.display-name {
+		display: flex;
+		align-items: center;
+		height: 36px;
+	}
+
+	.display-value {
+		font-size: 1rem;
+		font-weight: 500;
+	}
+
+	.action {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		justify-content: center;
+		align-items: flex-end;
+	}
+
+	.section {
+		margin-top: 1rem;
+	}
+
+	.section-title {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 1rem;
+		font-weight: 600;
+		margin-bottom: 1rem;
+		opacity: 0.9;
+	}
+
+	.password-fields {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+		font-size: 0.85rem;
+		opacity: 0.8;
+	}
+
+	@media (max-width: 768px) {
+		.header {
+			flex-direction: column;
+			align-items: center;
+			gap: 1rem;
+		}
+		.avatar {
+			width: 30%;
+			height: auto;
+			margin: 0;
+			font-size: 8vw;
+		}
+		.info {
+			align-items: center;
+			min-height: unset;
+			padding: 0;
+			width: 100%;
+		}
+		.action {
+			width: 100%;
+			align-items: stretch;
+		}
 	}
 </style>

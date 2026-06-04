@@ -20,56 +20,27 @@
 	}
 </script>
 
+<!-- {#if $session.data} -->
+<!-- {@const user = $session.data.user} -->
 <div
-	class="card glassbutton"
+	class="glassbutton flex cursor-pointer items-center gap-2 px-2.5 py-1.5 hover:!bg-white/[0.08]"
 	role="link"
 	tabindex="0"
 	onclick={handleCardClick}
 	onkeydown={handleCardKeydown}
 >
-	<a href={resolve('/settings')} class="settings-link" onclick={(e) => e.stopPropagation()}>
+	<a
+		href={resolve('/settings')}
+		class="settings-link flex items-center justify-center rounded-[6px] p-1 text-inherit no-underline opacity-50 transition-[opacity,background-color] duration-150 hover:bg-white/10 hover:opacity-100"
+		onclick={(e) => e.stopPropagation()}
+	>
 		<Settings size={20} />
 	</a>
-	<span class="name"
-		>{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}</span
-	>
-	<Avatar {...user} size="2.0rem" />
+	<span class="hidden text-[13px] font-semibold whitespace-nowrap lg:inline">
+		{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}
+	</span>
+	<div class="h-7 w-7 shrink-0 overflow-hidden rounded-full border-2 border-white/20">
+		<Avatar {...user} size="2.0rem" />
+	</div>
 </div>
-
-<style>
-	.card {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 6px 10px;
-	}
-
-	.card:hover {
-		background: rgba(255, 255, 255, 0.08) !important;
-	}
-
-	.settings-link {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 4px;
-		border-radius: 6px;
-		color: inherit;
-		text-decoration: none;
-		opacity: 0.5;
-		transition:
-			opacity 0.15s,
-			background 0.15s;
-	}
-
-	.settings-link:hover {
-		opacity: 1;
-		background: rgba(255, 255, 255, 0.1);
-	}
-
-	.name {
-		font-size: 13px;
-		font-weight: 600;
-		white-space: nowrap;
-	}
-</style>
+<!-- {/if} -->

@@ -91,5 +91,11 @@
 	"verify": "Verify",
 	"back_to_totp": "← TOTP code",
 	"use_backup_code": "Use backup code?",
-	"back": "← Back"
+	"back": "← Back",
+
+	"edit": "Edit",
+	"change_password": "Change password",
+	"new_password": "New password",
+	"confirm_new_password": "Confirm new password",
+	"save": "Save"
 }
