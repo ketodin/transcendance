@@ -1,6 +1,7 @@
 <script lang="ts">
 	import TOTPSection from '$lib/components/totp/TOTPSection.svelte';
 	import { signOut } from '$lib/auth-client';
+	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { m } from '$lib/paraglide/messages';
 	import { Input } from '$lib/components/ui/input';
@@ -139,6 +140,7 @@
 				onclick={async () => {
 					await disconnectStatusRoom();
 					await signOut();
+					goto('/login');
 				}}
 			>
 				<div class="group-hover:text-white">{m.logout()}</div>

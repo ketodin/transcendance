@@ -1,18 +1,34 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
 </script>
 
-<div class="flex flex-col items-center justify-center gap-8">
-	<h1 class="text-4xl font-extrabold sm:text-6xl lg:text-8xl">Transcendence</h1>
-	<a
-		href={resolve('/game')}
-		class="group relative h-[40vh] w-[70vw] overflow-hidden rounded-md text-4xl font-bold"
-	>
-		<img
-			src="/image.png"
-			alt=""
-			class="group-hover:blur-0 absolute inset-0 h-full w-full object-cover blur-xs transition-[filter] duration-300"
-		/>
-		<span class="relative z-10 flex h-full w-full items-center justify-center">PLAY</span>
+<div class="flex min-h-full flex-col items-center justify-center gap-6 p-8">
+	<span class="text-xs uppercase tracking-[0.3em] opacity-30">{data.user.name}</span>
+	<a href={resolve('/game')} class="play-cta glassbutton flex items-center justify-center px-20 py-12 text-6xl font-black uppercase tracking-widest">
+		Play
 	</a>
 </div>
+
+<style>
+	.play-cta {
+		animation: breathe 4s ease-in-out infinite;
+	}
+
+	@keyframes breathe {
+		0%,
+		100% {
+			box-shadow:
+				0 4px 16px rgba(0, 0, 0, 0.25),
+				inset 0 1px 0 rgba(255, 255, 255, 0.12);
+		}
+		50% {
+			box-shadow:
+				0 8px 48px rgba(255, 255, 255, 0.1),
+				0 0 80px rgba(255, 255, 255, 0.04),
+				inset 0 1px 0 rgba(255, 255, 255, 0.2);
+		}
+	}
+</style>
