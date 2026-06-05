@@ -46,6 +46,7 @@
 {/if}
 
 <div
+	id="friend-sidebar"
 	class="glass fixed top-[calc(var(--header-height)+var(--layout-gap)+1rem)] bottom-[calc(var(--footer-height)+0.5rem)] left-0 flex w-[var(--sidebar-width)] flex-col overflow-y-auto !rounded-l-none !rounded-r-[var(--radius-xl)] px-3 pt-3 pb-6 transition-transform duration-300 ease-in-out max-lg:z-[45] max-lg:w-4/5 max-lg:max-w-[300px] {$friendListOpen
 		? 'max-lg:translate-x-0'
 		: 'max-lg:-translate-x-[110%]'}"
