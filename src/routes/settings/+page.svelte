@@ -7,7 +7,7 @@
 	import Avatar from '$lib/components/Avatar.svelte';
 	import type { PageProps } from './$types';
 	import { disconnectStatusRoom } from '$lib/status-client';
-	import { LogOut, Crop, KeyRound, Pencil, Save } from '@lucide/svelte';
+	import { LogOut, Camera, KeyRound, Pencil, Save } from '@lucide/svelte';
 	import * as Form from '$lib/components/ui/form';
 	import { superForm, fileProxy } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
@@ -81,7 +81,7 @@
 	</Form.Field>
 </form>
 
-<div class="glass min-h-full w-full p-6">
+<div class="glass p-6">
 	<div class="glass header p-6">
 		<button
 			type="button"
@@ -93,7 +93,7 @@
 			<div
 				class="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
 			>
-				<Crop class="h-6 w-6 text-white" />
+				<Camera size="20%" />
 			</div>
 		</button>
 
@@ -101,7 +101,6 @@
 			{#if editing}
 				<form
 					bind:this={nameFormEl}
-					class="input-form"
 					method="POST"
 					action="?/changeName"
 					use:nameEnhance
@@ -116,9 +115,7 @@
 					</Form.Field>
 				</form>
 			{:else}
-				<div class="display-name">
-					<span class="display-value">{$nameData.name}</span>
-				</div>
+				<span class="display-name">{$nameData.name}</span>
 			{/if}
 		</div>
 
@@ -141,8 +138,8 @@
 					await signOut();
 				}}
 			>
-				<div class="group-hover:text-white">{m.logout()}</div>
-				<LogOut class="text-red-400 group-hover:text-white" />
+				{m.logout()}
+				<LogOut class="text-red-400 group-hover:text-white transition-colors" />
 			</Button>
 		</div>
 	</div>
@@ -181,7 +178,7 @@
 			</div>
 		</div>
 
-		<div class="glass section p-6">
+		<div class="glass p-6">
 			<TOTPSection
 				user={data.user}
 				enableForm={data.enableForm}
@@ -194,35 +191,21 @@
 
 <style>
 	.avatar {
-		margin: 1vw;
 		width: 15%;
-		height: 15%;
-		aspect-ratio: 1 / 1;
 		font-size: 3vw;
-		font-weight: bold;
 		border-radius: 50%;
-		border: none;
-		background: transparent;
-		padding: 0;
-		overflow: hidden;
-	}
-
-	.edit {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
+		margin: 1vw;
 	}
 
 	.header {
 		display: flex;
-		flex-direction: row;
 		align-items: center;
 		margin-bottom: 2rem;
 	}
 
 	.info {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		flex: 1;
 		min-height: 10vw;
 	}
@@ -232,16 +215,11 @@
 		opacity: 0.7;
 	}
 
-	.input-form {
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-	}
-
 	.display-name {
 		display: flex;
 		align-items: center;
 		height: 36px;
+		font-size: 3vw;
 	}
 
 	.display-value {
@@ -254,18 +232,16 @@
 		flex-direction: column;
 		gap: 0.5rem;
 		justify-content: center;
-		align-items: flex-end;
 	}
 
 	.section {
-		margin-top: 1rem;
+		margin-bottom: 2rem;
 	}
 
 	.section-title {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
-		font-size: 1rem;
 		font-weight: 600;
 		margin-bottom: 1rem;
 		opacity: 0.9;
@@ -283,29 +259,5 @@
 		gap: 0.3rem;
 		font-size: 0.85rem;
 		opacity: 0.8;
-	}
-
-	@media (max-width: 768px) {
-		.header {
-			flex-direction: column;
-			align-items: center;
-			gap: 1rem;
-		}
-		.avatar {
-			width: 30%;
-			height: auto;
-			margin: 0;
-			font-size: 8vw;
-		}
-		.info {
-			align-items: center;
-			min-height: unset;
-			padding: 0;
-			width: 100%;
-		}
-		.action {
-			width: 100%;
-			align-items: stretch;
-		}
 	}
 </style>

@@ -93,17 +93,15 @@
 	}
 </script>
 
-<div class="bg-muted/30 flex min-h-screen items-center justify-center px-4">
+<div class="bg-muted/30 flex min-h-screen items-center justify-center">
 	<div class="glass w-full max-w-md space-y-6 p-6">
-		<div class="flex items-center justify-between">
-			<h1 class="text-2xl font-semibold tracking-tight">
+		<div class="flex justify-between">
+			<h1 class="text-3xl font-semibold">
 				{m.login()}
 			</h1>
 			<div class="flex gap-3">
 				<ThemeToggle />
-				<div>
-					<LanguagePicker />
-				</div>
+				<LanguagePicker />
 			</div>
 		</div>
 
@@ -116,7 +114,7 @@
 					}}
 					class="space-y-5"
 				>
-					<div class="space-y-2">
+					<div class="">
 						<label class="text-sm font-medium" for="email">{m.email()}</label>
 						<Input
 							id="email"

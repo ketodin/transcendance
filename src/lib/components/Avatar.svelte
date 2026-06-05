@@ -23,6 +23,5 @@
 		font-weight: 600;
 		border: 2px solid rgba(255, 255, 255, 0.08);
 		background: rgba(255, 255, 255, 0.1);
-		font-size: 100%;
 	}
 </style>
