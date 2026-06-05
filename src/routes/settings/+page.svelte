@@ -99,12 +99,7 @@
 
 		<div class="info p-8">
 			{#if editing}
-				<form
-					bind:this={nameFormEl}
-					method="POST"
-					action="?/changeName"
-					use:nameEnhance
-				>
+				<form bind:this={nameFormEl} method="POST" action="?/changeName" use:nameEnhance>
 					<Form.Field form={nameForm} name="name">
 						<Form.Control>
 							{#snippet children({ props })}
@@ -139,7 +134,7 @@
 				}}
 			>
 				{m.logout()}
-				<LogOut class="text-red-400 group-hover:text-white transition-colors" />
+				<LogOut class="text-red-400 transition-colors group-hover:text-white" />
 			</Button>
 		</div>
 	</div>
