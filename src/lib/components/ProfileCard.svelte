@@ -20,10 +20,8 @@
 	}
 </script>
 
-<!-- {#if $session.data} -->
-<!-- {@const user = $session.data.user} -->
 <div
-	class="glassbutton flex cursor-pointer items-center gap-2 px-2.5 py-1.5 hover:!bg-white/[0.08]"
+	class="glassbutton flex items-center gap-2 px-2.5 py-1.5 hover:!bg-white/[0.08]"
 	role="link"
 	tabindex="0"
 	onclick={handleCardClick}
@@ -31,16 +29,11 @@
 >
 	<a
 		href={resolve('/settings')}
-		class="settings-link flex items-center justify-center rounded-[6px] p-1 text-inherit no-underline opacity-50 transition-[opacity,background-color] duration-150 hover:bg-white/10 hover:opacity-100"
+		class="p-1 opacity-40 transition-all hover:opacity-100"
 		onclick={(e) => e.stopPropagation()}
 	>
 		<Settings size={20} />
 	</a>
-	<span class="hidden text-[13px] font-semibold whitespace-nowrap lg:inline">
-		{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}
-	</span>
-	<div class="h-7 w-7 shrink-0 overflow-hidden rounded-full border-2 border-white/20">
-		<Avatar {...user} size="2.0rem" />
-	</div>
+	{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}
+	<Avatar {...user} size="2.0rem" />
 </div>
-<!-- {/if} -->

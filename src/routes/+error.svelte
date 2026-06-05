@@ -4,7 +4,7 @@
 	import { resolve } from '$app/paths';
 </script>
 
-<div class="error">
+<div>
 	<div class="content">
 		<h1 class="code">{page.status}</h1>
 
@@ -17,17 +17,11 @@
 </div>
 
 <style>
-	.error {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		text-align: center;
-
-		min-height: 100vh;
-		width: 100%;
-	}
-
 	.content {
+		position: fixed;
+		top: 30%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -38,14 +32,12 @@
 		font-size: clamp(6rem, 12vw, 12rem);
 		font-weight: 800;
 		letter-spacing: -0.05em;
-		margin: 0;
 		opacity: 0.9;
 	}
 
 	.message {
 		font-size: 1.1rem;
 		opacity: 0.7;
-		max-width: 30ch;
 		margin: 0;
 	}
 

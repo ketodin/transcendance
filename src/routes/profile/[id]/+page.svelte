@@ -36,7 +36,6 @@
 <div class="glass h-full w-full p-6">
 	<div class="glass header p-6">
 		<div class="avatar">
-			<!-- TODO: remove this div and class, integrate this in to the Avatar component -->
 			<Avatar {...data.userProfile} size="100%" />
 		</div>
 		<div class="info p-8">
@@ -85,44 +84,38 @@
 
 <style>
 	.avatar {
-		margin: 1vw;
 		width: 15%;
-		aspect-ratio: 1 / 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
 		font-size: 3vw;
-		font-weight: bold;
 		border-radius: 50%;
-		border: none;
-		background: transparent;
-		padding: 0;
-		overflow: hidden;
+		margin: 1vw;
 	}
+
 	.header {
 		display: flex;
 		flex-direction: row;
 		align-items: stretch;
 	}
+
 	.info {
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 		flex: 1;
-		min-height: 10vw;
 	}
+
 	.name {
 		font-size: 3vw;
 	}
+
 	.botinfo {
 		font-size: 1vw;
 		opacity: 0.7;
 	}
+
 	.action {
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
-		justify-content: center;
 	}
 
 	@media (max-width: 768px) {

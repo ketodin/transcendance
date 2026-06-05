@@ -28,15 +28,12 @@
 <svelte:window onclick={handleClickOutside} />
 
 <div class="lang-picker relative flex items-center">
-	<button
-		onclick={() => (open = !open)}
-		class="glassbutton flex h-9 w-9 items-center justify-center text-lg transition hover:bg-white/10 active:scale-95"
-	>
+	<button onclick={() => (open = !open)} class="glassbutton h-9 w-9 text-xl active:scale-95">
 		{currentLang.flag}
 	</button>
 
 	{#if open}
-		<div class="dropdown glassdeep">
+		<div class="dropdown glass">
 			{#each languages as lang (lang.code)}
 				<button
 					onclick={() => selectLanguage(lang.code)}
@@ -55,28 +52,18 @@
 		top: calc(100% + 1rem);
 		right: 50%;
 		transform: translateX(50%);
-
 		display: flex;
-		flex-direction: row;
 		gap: 0.35rem;
-
 		padding: 0.35rem;
-
-		z-index: 50;
-
 		animation: pop 0.15s ease-out;
 	}
 
 	.item {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
 		width: 2.25rem;
 		height: 2.25rem;
 
 		border-radius: 0.5rem;
-		font-size: 1.1rem;
+		font-size: 1.3rem;
 
 		transition: 0.15s ease;
 	}

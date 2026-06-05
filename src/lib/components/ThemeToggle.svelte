@@ -17,11 +17,11 @@
 
 <button
 	onclick={toggleTheme}
-	class="glassbutton flex h-9 w-9 items-center justify-center text-lg transition hover:bg-white/10 active:scale-95"
+	class="glassbutton flex h-9 w-9 items-center justify-center active:scale-95"
 >
 	{#if $shaderTheme === 'dark'}
-		<MoonIcon class="h-[1.2rem] w-[1.2rem] transition-all" />
+		<MoonIcon size="20px" />
 	{:else}
-		<SunIcon class="h-[1.2rem] w-[1.2rem] transition-all" />
+		<SunIcon size="20px" />
 	{/if}
 </button>

@@ -3,23 +3,6 @@
 @import 'shadcn-svelte/tailwind.css';
 @import '@fontsource-variable/inter';
 
-@custom-variant dark (&:is(.dark *));
-
-/* indigo */
-/* --0:#ffffff; */
-/* --50:#eef2ff; */
-/* --100:#e0e7ff; */
-/* --200:#c7d2fe; */
-/* --300:#a5b4fc; */
-/* --400:#818cf8; */
-/* --500:#6366f1; */
-/* --600:#4f46e5; */
-/* --700:#4338ca; */
-/* --800:#3730a3; */
-/* --900:#312e81; */
-/* --950:#1e1b4b; */
-/* --1000:#000000; */
-
 :root {
 	--0: #ffffff;
 	--50: #f9fafb;
@@ -53,7 +36,6 @@
 	--chart-5: #27272a;
 	--radius: 0.625rem;
 
-	/* Game colors — dark mode (night time) */
 	--game-bg: var(--1000); /* canvas background */
 	--game-sky-top: var(--950);
 	--game-navy: var(--800); /* HUD panel bg + text stroke */
@@ -81,45 +63,6 @@
 .dark {
 	--background: var(--950);
 	--foreground: var(--50);
-	--secondary: #27272a;
-	--secondary-foreground: #fafafa;
-	--muted: #27272a;
-	--muted-foreground: #a1a1aa;
-	--accent: #27272a;
-	--accent-foreground: #fafafa;
-	--destructive: #f87171;
-	--border: #ffffff1a;
-	--input: #ffffff26;
-	--ring: #71717a;
-	--chart-1: #d4d4d8;
-	--chart-2: #71717a;
-	--chart-3: #52525b;
-	--chart-4: #3f3f46;
-	--chart-5: #27272a;
-
-	/* Game colors — dark mode (night time) */
-	--game-bg: var(--0); /* canvas background */
-	--game-sky-top: var(--950);
-	--game-navy: var(--800); /* HUD panel bg + text stroke */
-	--game-terrain: var(--950);
-	--game-terrain-dark: var(--100);
-	--game-terrain-base: var(--950);
-	--game-neon-glow: var(--100); /* HUD text + terrain glow */
-	--game-neon-bright: var(--800); /* terrain glow bright pass */
-	--game-bar-high: var(--200);
-	--game-bar-mid: var(--200);
-	--game-bar-low: var(--destructive);
-	--game-fuel-high: var(--200);
-	--game-fuel-mid: var(--200);
-	--game-fuel-low: var(--destructive);
-	--game-white: var(--50); /* tank name + weapon text */
-	--game-black: var(--950); /* tank name stroke + FPS */
-	--game-gold: var(--500); /* "Player X Wins!" text */
-	--game-yellow: var(--500); /* timer warning + active weapon */
-	--game-red: var(--destructive); /* timer critical (≤5s) */
-	--game-hint: var(--200); /* controls hint text */
-	--game-weapon-inactive: var(--600); /* inactive weapon name */
-	--game-aiming: #ffffff; /* aiming cone + range disk */
 }
 
 @theme inline {
@@ -148,18 +91,6 @@
 	--radius-2xl: calc(var(--radius) * 1.8);
 	--radius-3xl: calc(var(--radius) * 2.2);
 	--radius-4xl: calc(var(--radius) * 2.6);
-}
-
-@layer base {
-	* {
-		@apply border-border outline-ring/50;
-	}
-	body {
-		@apply bg-background text-foreground;
-	}
-	html {
-		@apply font-sans;
-	}
 }
 
 .app {
@@ -197,7 +128,6 @@
 }
 
 .glassbutton:hover {
-	/* background: rgba(var(--color-background), 0.35); */
 	transform: translateY(-2px);
 	backdrop-filter: blur(16px);
 }
