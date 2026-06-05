@@ -114,7 +114,7 @@
 					}}
 					class="space-y-5"
 				>
-					<div class="">
+					<div>
 						<label class="text-sm font-medium" for="email">{m.email()}</label>
 						<Input
 							id="email"
