@@ -1,43 +1,42 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
 	import { goto } from '$app/navigation';
+	import { get } from 'svelte/store';
 	import { colyseusClient } from '$lib/colyseusClient';
-	import { pendingGameRoom, type GameStartData } from '$lib/game-room-store';
+	import { pendingGameRoom, searchingRoom, type GameStartData } from '$lib/game-room-store';
 	import type { PageProps } from './$types';
 	import { Loader2 } from '@lucide/svelte';
-	import type { Room } from '@colyseus/sdk';
 	import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 
 	let { data }: PageProps = $props();
 
-	let searching = $state(false);
-	let room: Room<GameRoomState> | null = null;
+	// Dérivé du store : survit aux remounts causés par un changement de langue
+	let searching = $derived($searchingRoom !== null);
 
 	async function startPublicGame() {
-		if (!colyseusClient) return;
-		searching = true;
+		if (!colyseusClient || $searchingRoom) return;
 		try {
-			room = await colyseusClient.joinOrCreate<GameRoomState>('tank_room');
+			const room = await colyseusClient.joinOrCreate<GameRoomState>('tank_room');
+			searchingRoom.set(room);
+
 			room.onMessage('game_start', (gameStartData: GameStartData) => {
-				pendingGameRoom.set({ room: room!, gameStartData });
+				searchingRoom.set(null);
+				pendingGameRoom.set({ room, gameStartData });
 				goto('/game');
 			});
+
 			room.onLeave.once(() => {
-				searching = false;
-				room = null;
+				searchingRoom.set(null);
 			});
 		} catch {
-			searching = false;
-			room = null;
+			searchingRoom.set(null);
 		}
 	}
 
 	async function cancelSearch() {
-		searching = false;
-		if (room) {
-			await room.leave();
-			room = null;
-		}
+		const room = get(searchingRoom);
+		searchingRoom.set(null);
+		if (room) await room.leave();
 	}
 </script>
 

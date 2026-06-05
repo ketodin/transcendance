@@ -23,3 +23,6 @@ export type PendingGameRoom = {
 };
 
 export const pendingGameRoom = writable<PendingGameRoom | null>(null);
+
+// Persiste la room de matchmaking à travers les remounts (ex: changement de langue)
+export const searchingRoom = writable<Room<GameRoomState> | null>(null);
