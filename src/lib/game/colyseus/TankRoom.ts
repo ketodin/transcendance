@@ -34,10 +34,14 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	private playerIds: [string, string] = ['', ''];
 	private playersReady: [boolean, boolean] = [false, false];
 
-	onCreate() {
+	async onCreate(options: { private: boolean } = { private: false }) {
 		this.maxClients = 2;
 		this.patchRate = 16;
 		this.setState(new GameRoomState());
+
+		if (options.private) {
+			await this.setPrivate();
+		}
 
 		this.onMessage<InputState>('input', (client, data) => {
 			if (this.isCurrentPlayer(client)) {

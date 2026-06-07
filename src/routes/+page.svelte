@@ -15,4 +15,9 @@
 		/>
 		<span class="relative z-10 flex h-full w-full items-center justify-center">PLAY</span>
 	</a>
+
+	<form method="POST" action="?/newPrivateGame">
+		<button type="submit" class="glass">Private Game</button>
+	</form>
+
 </div>
