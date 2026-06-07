@@ -112,7 +112,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 
 	onLeave(client: Client) {
 		const idx = this.getPlayerIndex(client);
-		if (idx !== -1 && this.playerIds[idx]) activePlayers.delete(this.playerIds[idx]);
+		if (idx !== undefined && this.playerIds[idx]) activePlayers.delete(this.playerIds[idx]);
 
 		if (this.physicsState && this.physicsState.phase !== 'OVER') {
 			const winner = (idx === 0 ? 1 : 0) satisfies 0 | 1;
@@ -508,9 +508,9 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		return client.sessionId === id;
 	}
 
-	private getPlayerIndex(client: Client): number {
+	private getPlayerIndex(client: Client): 0 | 1 | undefined {
 		if (client.sessionId === this.state.player0Id) return 0;
 		if (client.sessionId === this.state.player1Id) return 1;
-		return -1;
+		return undefined;
 	}
 }
