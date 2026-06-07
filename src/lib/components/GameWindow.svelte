@@ -11,13 +11,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { syncFromCSS } from '$lib/game/phaser/colors';
+	import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 
 	let {
 		phaserRef = $bindable(),
 		room
 	}: {
 		phaserRef: TPhaserRef;
-		room: Room;
+		room: Room<GameRoomState>;
 	} = $props();
 
 	onMount(() => {

@@ -303,7 +303,7 @@ export default class GameScene extends Scene {
 		};
 		if (snap.moveLeft !== this.lastInput.moveLeft || snap.moveRight !== this.lastInput.moveRight) {
 			this.lastInput = snap;
-			this.room!.send('input', snap);
+			this.room.send('input', snap);
 		}
 
 		if (phase === 'AIMING' && this.isGrabbing && this.localTerrain && this.localGameData) {
@@ -322,7 +322,7 @@ export default class GameScene extends Scene {
 			this.localTurretAngle = directAngle;
 			if (Math.abs(directAngle - this.lastSentAngle) > 0.3) {
 				this.lastSentAngle = directAngle;
-				this.room!.send('set_turret_angle', { angle: directAngle });
+				this.room.send('set_turret_angle', { angle: directAngle });
 			}
 
 			const dist = Math.sqrt((mx - pivotX) ** 2 + (my - pivotY) ** 2);

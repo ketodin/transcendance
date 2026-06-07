@@ -306,7 +306,7 @@ export function initViews(scene: GameScene) {
 	const chatBarY = iconY + iSize / 2 + scene.sh(10);
 	scene.chatInput?.destroy();
 	scene.chatInput = new ChatInput(scene, chatBarY, (text: string) => {
-		scene.room!.send('chat', { text });
+		scene.room.send('chat', { text });
 		scene.chatInput.block(CHAT_BUBBLE_DURATION);
 	});
 	scene.projView = new ProjectileView(scene);
