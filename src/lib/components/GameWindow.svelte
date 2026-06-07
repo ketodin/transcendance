@@ -1,5 +1,6 @@
 <script module lang="ts">
 	import type { Game, Scene } from 'phaser';
+	import type { Room } from '@colyseus/sdk';
 
 	export type TPhaserRef = {
 		game: Game | null;
@@ -12,10 +13,11 @@
 	import { syncFromCSS } from '$lib/game/phaser/colors';
 
 	let {
-		phaserRef = $bindable()
+		phaserRef = $bindable(),
+		room,
 	}: {
 		phaserRef: TPhaserRef;
-		// currentActiveScene: (scene: Scene) => void | undefined
+		room: Room
 	} = $props();
 
 	onMount(() => {
@@ -26,7 +28,7 @@
 			const { EventBus } = await import('$lib/game/phaser/EventBus');
 
 			syncFromCSS();
-			phaserRef.game = StartGame('game-container');
+			phaserRef.game = StartGame('game-container', room);
 
 			observer = new MutationObserver(() => {
 				syncFromCSS();
@@ -36,9 +38,6 @@
 
 			EventBus.on('current-scene-ready', (scene_instance: unknown) => {
 				phaserRef.scene = scene_instance as Scene;
-				// if (currentActiveScene) {
-				//     currentActiveScene(scene_instance);
-				// }
 			});
 		})();
 
@@ -47,4 +46,3 @@
 </script>
 
 <div id="game-container"></div>
-<!-- <div id="game-container"></div> -->

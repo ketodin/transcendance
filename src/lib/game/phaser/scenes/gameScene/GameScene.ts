@@ -19,7 +19,7 @@ import { drawFireButton, drawChatButton, drawMoveButton } from './buttons';
 import { updateFuelBar, updateHealthBar } from './hud';
 
 export default class GameScene extends Scene {
-	room: Room<GameRoomState> | null = null;
+	room: Room<GameRoomState>;
 	returningToLobby = false;
 	myPlayerIndex: 0 | 1 = 0;
 
@@ -127,8 +127,9 @@ export default class GameScene extends Scene {
 		return this.fuelBarY - this.sh(20) - this.sh(18);
 	}
 
-	constructor() {
+	constructor(options: { room: Room<GameRoomState> }) {
 		super({ key: 'GameScene' });
+		this.room = options.room;
 	}
 
 	readonly onThemeChanged = () => {

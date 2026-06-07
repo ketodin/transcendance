@@ -1,17 +1,14 @@
 import type GameScene from './GameScene';
 import type { TankState } from '../../../shared/state/TankState';
 import type { TerrainState } from '../../../shared/state/TerrainState';
-import type { GameRoomState } from '../../../colyseus/schema/GameRoomState';
 import type { GameUpdateData } from './types';
-import { colyseusClient } from '$lib/colyseusClient';
 import { handleExplosionFx, showAirstrikeZone } from './effects';
 import { initViews, showGameUI } from './setup';
 import { showGameOver } from './hud';
 
-export async function connectToServer(scene: GameScene) {
+export function connectToServer(scene: GameScene) {
 	scene.roomReady = false;
 	scene.returningToLobby = false;
-	scene.room = null;
 	scene.tankSprites = null;
 	scene.terrainView = null;
 	scene.projView = null;
@@ -24,8 +21,7 @@ export async function connectToServer(scene: GameScene) {
 	scene.localWinner = -1;
 
 	try {
-		const room = await colyseusClient!.joinOrCreate<GameRoomState>('tank_room');
-		scene.room = room;
+		const room = scene.room;
 
 		room.onMessage(
 			'game_start',
