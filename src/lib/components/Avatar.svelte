@@ -9,10 +9,17 @@
 	const initial = $derived(name.charAt(0).toUpperCase());
 </script>
 
-<img src={image} alt={initial} style="--size: {size}" />
+{#if image}
+	<img src={image} alt={name} style="--size: {size}" />
+{:else}
+	<div class="avatar" style="--size: {size}">
+		{initial}
+	</div>
+{/if}
 
 <style>
-	img {
+	img,
+	.avatar {
 		width: var(--size, 2.5rem);
 		aspect-ratio: 1 / 1;
 		border-radius: 50%;
