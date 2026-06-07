@@ -128,7 +128,6 @@ export function connectToServer(scene: GameScene) {
 		});
 
 		room.send('ready');
-
 	} catch (err) {
 		const message =
 			err instanceof Error

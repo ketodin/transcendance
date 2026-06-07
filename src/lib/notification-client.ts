@@ -21,20 +21,24 @@ export function attachNotificationListeners(room: Room) {
 	});
 
 	const NOTIF_INVITE: string = 'notification_invite_request';
-	room.onMessage(`${NOTIF_INVITE}_received`, ({ fromUserName, roomId }: { fromUserId: string, fromUserName: string, roomId: string }) => {
-		toast.info(m.game_invite_received() + 'from ' + fromUserName, { // TODO: i18n
-			action: {
-				label: 'Accept',
-				onClick: async () => {
-					await goto(resolve('/game/[[id]]', { id: roomId }));
+	room.onMessage(
+		`${NOTIF_INVITE}_received`,
+		({ fromUserName, roomId }: { fromUserId: string; fromUserName: string; roomId: string }) => {
+			toast.info(m.game_invite_received() + 'from ' + fromUserName, {
+				// TODO: i18n
+				action: {
+					label: 'Accept',
+					onClick: async () => {
+						await goto(resolve('/game/[[id]]', { id: roomId }));
+					}
+				},
+				cancel: {
+					label: 'Deny',
+					onClick: () => {}
 				}
-			},
-			cancel: {
-				label: 'Deny',
-				onClick: () => {}
-			}
-		})
-	});
+			});
+		}
+	);
 	room.onMessage(`${NOTIF_INVITE}_accepted`, () => toast.success(m.game_invite_accepted()));
 	room.onMessage(`${NOTIF_INVITE}_denied`, () => toast.warning(m.game_invite_denied()));
 }

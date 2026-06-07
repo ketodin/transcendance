@@ -19,5 +19,4 @@
 	<form method="POST" action="?/newPrivateGame">
 		<button type="submit" class="glass">Private Game</button>
 	</form>
-
 </div>

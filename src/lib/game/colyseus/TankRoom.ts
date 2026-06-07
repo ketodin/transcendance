@@ -122,7 +122,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		this.onMessage('ready', (client) => {
 			const idx = this.getPlayerIndex(client);
 			this.playersReady[idx] = true;
-			if (this.playersReady.every(v => v)) {
+			if (this.playersReady.every((v) => v)) {
 				try {
 					this.initGame();
 					console.log('[TankRoom] initGame() OK, phase =', this.state.phase);

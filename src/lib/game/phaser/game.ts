@@ -7,7 +7,6 @@ const DEFAULT_WIDTH = 1920;
 const DEFAULT_HEIGHT = 1080;
 
 const StartGame = (parent: string, room: Room<GameRoomState>) => {
-
 	return new Game({
 		type: AUTO,
 		scale: {
@@ -16,7 +15,7 @@ const StartGame = (parent: string, room: Room<GameRoomState>) => {
 			width: DEFAULT_WIDTH,
 			height: DEFAULT_HEIGHT
 		},
-		scene: [new GameScene({room: room})],
+		scene: [new GameScene({ room: room })],
 		transparent: true,
 		parent
 	});

@@ -14,10 +14,10 @@
 
 	let {
 		phaserRef = $bindable(),
-		room,
+		room
 	}: {
 		phaserRef: TPhaserRef;
-		room: Room
+		room: Room;
 	} = $props();
 
 	onMount(() => {

@@ -9,7 +9,7 @@
 
 	let phaserRef: TPhaserRef = $state({ game: null, scene: null });
 	let room: Room | null = $state(null);
-	let errorMsg: string = $state("")
+	let errorMsg: string = $state('');
 
 	onMount(async () => {
 		try {
@@ -21,11 +21,11 @@
 				errorMsg = String(err);
 			}
 		}
-	})
+	});
 
 	onDestroy(async () => {
 		await room?.leave();
-	})
+	});
 </script>
 
 {#if room}
@@ -35,4 +35,3 @@
 {#if errorMsg}
 	<p class="font-bold text-red-500">Error: {errorMsg}</p>
 {/if}
-

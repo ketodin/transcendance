@@ -59,11 +59,11 @@
 					<p>{m.remove_friend()}</p>
 				</Button>
 				<form method="POST" action="?/invitePrivateGame">
-					<input hidden type="text" name="userId" value="{data.userProfile.id}">
+					<input hidden type="text" name="userId" value={data.userProfile.id} />
 					<Button
 						type="submit"
 						onclick={() => {
-							toast.success(m.game_invite_sent())
+							toast.success(m.game_invite_sent());
 						}}
 						class="glassbutton"
 						variant="outline"
