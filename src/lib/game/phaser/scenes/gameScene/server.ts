@@ -126,6 +126,9 @@ export function connectToServer(scene: GameScene) {
 			const tank = scene.localGameData!.tanks[data.playerIndex];
 			scene.speechBubbles[data.playerIndex].setText(data.text, tank);
 		});
+
+		room.send('ready');
+
 	} catch (err) {
 		const message =
 			err instanceof Error
