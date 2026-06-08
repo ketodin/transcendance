@@ -6,6 +6,7 @@ import { handleExplosionFx, showAirstrikeZone } from './effects';
 import { initViews, showGameUI } from './setup';
 import { showGameOver } from './hud';
 import type { Room } from '@colyseus/sdk';
+import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 
 // TODO remove duplicate message handlers  //
 

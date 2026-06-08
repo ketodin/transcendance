@@ -15,6 +15,7 @@
 	import { avatarSchema, nameSchema } from './schema';
 	import { untrack } from 'svelte';
 	import { toast } from '$lib/components/toast';
+	import { resolve } from '$app/paths';
 
 	let { data }: PageProps = $props();
 
@@ -132,7 +133,7 @@
 				onclick={async () => {
 					await disconnectStatusRoom();
 					await signOut();
-					goto('/login');
+					await goto(resolve('/login'));
 				}}
 			>
 				{m.logout()}
