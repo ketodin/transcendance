@@ -10,8 +10,8 @@
 	const { user }: { user: User } = $props();
 </script>
 
-<header class="fixed top-0 right-0 left-0 z-50 flex px-[1%] py-[1%]">
-	<div class="glass flex h-16 w-full justify-between px-5">
+<header class="fixed top-0 right-0 left-0 z-50 flex">
+	<div class="glass flex h-16 w-full justify-between !rounded-none px-5">
 		<div class="flex items-center gap-3">
 			<button
 				class="flex cursor-pointer rounded-md p-1.5 opacity-70 transition hover:bg-white/10 hover:opacity-100 lg:hidden"
@@ -20,7 +20,10 @@
 			>
 				<Users size={20} />
 			</button>
-			<a href={resolve('/')} class="text-xl font-bold"> Transcendence </a>
+			<a href={resolve('/')} class="flex">
+				<img src="/favicon.png" alt="Logo" class="logo" />
+				<p class="text text-4xl font-bold">Transcendence</p>
+			</a>
 		</div>
 		<div class="flex items-center gap-2">
 			<LanguagePicker />
@@ -29,3 +32,16 @@
 		</div>
 	</div>
 </header>
+
+<style>
+	.logo {
+		height: 50px;
+		width: auto;
+		padding-right: 10px;
+		padding-top: 5px;
+		flex-shrink: 0;
+	}
+	.text {
+		padding-top: 5px;
+	}
+</style>

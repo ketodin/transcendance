@@ -110,7 +110,7 @@
 			<p class="text-muted-foreground text-center text-sm">
 				{m.already_account()}
 				<a
-					href={resolve(redirectTo ? `/login?redirectTo=${redirectTo}` : '/register')}
+					href={resolve(redirectTo ? `/login?redirectTo=${redirectTo}` : '/login')}
 					class="underline">{m.login()}</a
 				>
 			</p>

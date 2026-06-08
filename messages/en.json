@@ -57,8 +57,10 @@
 	"friend_request_denied": "Your friend request was denied",
 	"friend_request_deny": "Friend request denied",
 	"removed_friend": "Removed from friendlist",
+	"accept": "Accept",
+	"deny": "Deny",
 
-	"game_invite_received": "New game invite received",
+	"game_invite_received": "New game invite received from ",
 	"game_invite_sent": "Game invite sent",
 	"game_invite_accepted": "Your game invite was accepted",
 	"game_invite_accept": "Game invite accepted",
