@@ -29,7 +29,7 @@ export function attachNotificationListeners(room: Room) {
 				action: {
 					label: 'Accept',
 					onClick: async () => {
-						await goto(resolve('/game/[[id]]', { id: roomId }));
+						await goto(resolve('/game/[[id]]', { id: roomId }), { invalidateAll: true });
 					}
 				},
 				cancel: {
