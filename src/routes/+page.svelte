@@ -66,10 +66,9 @@
 </script>
 
 <div class="relative h-full w-full overflow-hidden rounded-xl">
-	<div id="lobby-canvas" class="pointer-events-none absolute inset-0 blur-sm"></div>
+	<div id="lobby-canvas" class="pointer-events-none absolute blur-[2px]"></div>
 
-	<div class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-6">
-		<span class="text-xs tracking-[0.3em] uppercase opacity-30">{data.user.name}</span>
+	<div class="absolute inset-0 z-10 flex flex-col items-center justify-start gap-6 mt-20">
 
 		{#if searching}
 			<div class="flex flex-col items-center gap-6">
@@ -88,13 +87,13 @@
 			<div class="flex flex-col items-center gap-4">
 				<button
 					onclick={startPublicGame}
-					class="play-cta glassbutton flex items-center justify-center px-20 py-12 text-6xl font-black tracking-widest uppercase"
+					class="play-cta glassbutton flex items-center justify-center px-8 py-8 text-4xl sm:px-14 sm:py-10 sm:text-5xl lg:px-20 lg:py-12 lg:text-6xl font-black tracking-widest uppercase"
 				>
 					{m.public_game()}
 				</button>
 				<button
 					disabled
-					class="glassbutton flex items-center justify-center px-16 py-6 text-2xl font-bold tracking-widest uppercase opacity-30"
+					class="glassbutton flex items-center justify-center px-6 py-4 text-lg sm:px-10 sm:py-5 sm:text-xl lg:px-16 lg:py-6 lg:text-2xl font-bold tracking-widest uppercase opacity-30"
 				>
 					{m.private_game()}
 				</button>

@@ -117,7 +117,7 @@ export async function connectToServer(scene: GameScene) {
 	scene.localCurrentPlayer = 0;
 	scene.localWinner = -1;
 
-	const pending = get(pendingGameRoom);
+	const pending = get(Room);
 	if (pending) {
 		pendingGameRoom.set(null);
 		scene.room = pending.room;

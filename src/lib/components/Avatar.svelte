@@ -7,12 +7,28 @@
 	let { image, name, size }: Props = $props();
 
 	const initial = $derived(name.charAt(0).toUpperCase());
+	let imageError = $state(false);
+
+	$effect(() => {
+		image;
+		imageError = false;
+	});
 </script>
 
-<img src={image} alt={initial} style="--size: {size}" />
+{#if image && !imageError}
+	<img
+		src={image}
+		alt={initial}
+		style="--size: {size}"
+		onerror={() => (imageError = true)}
+	/>
+{:else}
+	<span style="--size: {size}">{initial}</span>
+{/if}
 
 <style>
-	img {
+	img,
+	span {
 		width: var(--size, 2.5rem);
 		aspect-ratio: 1 / 1;
 		border-radius: 50%;

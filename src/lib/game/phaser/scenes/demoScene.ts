@@ -66,6 +66,8 @@ export default class DemoScene extends Scene {
 
 		this.projView = new ProjectileView(this);
 
+		this.cameras.main.setScroll(0, -280);
+
 		EventBus.emit('current-scene-ready', this);
 		EventBus.on('theme-changed', this.onThemeChanged);
 	}
