@@ -12,4 +12,6 @@ export class GameRoomState extends Schema {
 	@type('int8') winner: number = -1;
 	@type('string') player0Id: string = '';
 	@type('string') player1Id: string = '';
+	@type('string') player0Name: string = '';
+	@type('string') player1Name: string = '';
 }

@@ -103,5 +103,6 @@
 	"change_password": "Cambiar contraseña",
 	"new_password": "Nueva contraseña",
 	"confirm_new_password": "Confirmar nueva contraseña",
-	"save": "Guardar"
+	"save": "Guardar",
+	"gameStartingIn": "La partida comienza en"
 }
