@@ -1,6 +1,7 @@
 <script lang="ts">
 	import TOTPSection from '$lib/components/totp/TOTPSection.svelte';
 	import { signOut } from '$lib/auth-client';
+	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { m } from '$lib/paraglide/messages';
 	import { Input } from '$lib/components/ui/input';
@@ -14,6 +15,7 @@
 	import { avatarSchema, nameSchema } from './schema';
 	import { untrack } from 'svelte';
 	import { toast } from '$lib/components/toast';
+	import { resolve } from '$app/paths';
 
 	let { data }: PageProps = $props();
 
@@ -131,6 +133,7 @@
 				onclick={async () => {
 					await disconnectStatusRoom();
 					await signOut();
+					await goto(resolve('/login'));
 				}}
 			>
 				{m.logout()}

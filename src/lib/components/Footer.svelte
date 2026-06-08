@@ -4,6 +4,7 @@
 </script>
 
 <div
+	id="app-footer"
 	class="glass fixed bottom-0 left-0 flex w-full justify-center gap-8 !rounded-none px-4 py-[0.4rem]"
 >
 	<a

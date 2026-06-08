@@ -5,6 +5,77 @@ import type { GameUpdateData } from './types';
 import { handleExplosionFx, showAirstrikeZone } from './effects';
 import { initViews, showGameUI } from './setup';
 import { showGameOver } from './hud';
+import type { Room } from '@colyseus/sdk';
+import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
+
+// TODO remove duplicate message handlers  //
+
+function setupRoomHandlers(scene: GameScene, room: Room<GameRoomState>) {
+	room.onMessage('game_update', (data: GameUpdateData) => {
+		if (data.weaponCooldowns) scene.weaponCooldowns = data.weaponCooldowns;
+		scene.localGameData = data;
+	});
+
+	room.onMessage(
+		'phase_change',
+		(data: { phase: string; currentPlayer: number; winner?: number }) => {
+			scene.localPhase = data.phase;
+			scene.localCurrentPlayer = data.currentPlayer;
+			if (data.phase === 'AIMING') {
+				scene.isGrabbing = false;
+			}
+			if (data.phase === 'FLYING') {
+				scene.flyingProjectileIsMine = data.currentPlayer === scene.myPlayerIndex;
+				if (scene.flyingProjectileIsMine) {
+					scene.fullFlightTrail = [];
+					scene.lastShotTrail = [];
+					scene.lastShotGfx?.clear();
+				}
+			}
+			if (data.winner !== undefined) scene.localWinner = data.winner;
+			if (data.phase === 'OVER') showGameOver(scene, scene.localWinner);
+		}
+	);
+
+	room.onMessage(
+		'explosion',
+		(data: {
+			x: number;
+			y: number;
+			craterRadius: number;
+			blastRadius: number;
+			terrainHeights: number[];
+			tanks: [TankState, TankState];
+		}) => {
+			handleExplosionFx(scene, data.x, data.y, data.craterRadius, data.blastRadius);
+			if (scene.localTerrain) {
+				scene.localTerrain.heights = data.terrainHeights;
+				scene.terrainView?.sync(scene.localTerrain);
+			}
+			if (scene.localGameData) {
+				scene.localGameData.tanks = data.tanks;
+			}
+		}
+	);
+
+	room.onMessage('airstrike_incoming', (data: { x: number }) => {
+		showAirstrikeZone(scene, data.x);
+	});
+
+	room.onLeave.once(() => {
+		if (scene.returningToLobby) {
+			scene.returningToLobby = false;
+			scene.scene.restart();
+		} else {
+			scene.statusText.setText('Disconnected').setVisible(true);
+		}
+	});
+
+	room.onMessage('chat', (data: { playerIndex: number; text: string }) => {
+		const tank = scene.localGameData!.tanks[data.playerIndex];
+		scene.speechBubbles[data.playerIndex].setText(data.text, tank);
+	});
+}
 
 export function connectToServer(scene: GameScene) {
 	scene.roomReady = false;
@@ -118,6 +189,7 @@ export function connectToServer(scene: GameScene) {
 			}
 		});
 
+		setupRoomHandlers(scene, room);
 		scene.statusText.setText('Waiting for Player 2...');
 		room.onMessage('chat', (data: { playerIndex: number; text: string }) => {
 			const tank = scene.localGameData!.tanks[data.playerIndex];

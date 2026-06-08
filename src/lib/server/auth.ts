@@ -11,6 +11,11 @@ export const auth = betterAuth({
 	database: prismaAdapter(db, {
 		provider: 'sqlite'
 	}),
+	trustedOrigins: (request) => {
+		if (!request) return [];
+		const origin = request.headers.get('origin');
+		return origin ? [origin] : [];
+	},
 	experimental: { joins: true },
 	emailAndPassword: { enabled: true },
 	plugins: [
