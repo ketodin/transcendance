@@ -53,8 +53,10 @@
 	"friend_request_denied": "Tu solicitud de amistad fue rechazada",
 	"friend_request_deny": "Solicitud de amistad rechazada",
 	"removed_friend": "Eliminado de la lista de amigos",
+	"accept": "Aceptar",
+	"deny": "Rechazar",
 
-	"game_invite_received": "Nueva invitación de juego recibida",
+	"game_invite_received": "Nueva invitación de juego recibida por ",
 	"game_invite_sent": "Invitación de juego enviada",
 	"game_invite_accepted": "Tu invitación de juego fue aceptada",
 	"game_invite_accept": "Invitación de juego aceptada",
