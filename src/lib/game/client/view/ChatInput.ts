@@ -1,6 +1,6 @@
 import { COLOR_STRINGS } from '$lib/game/phaser/colors';
 
-export type OnSendCallback = (text: string) => void;
+type OnSendCallback = (text: string) => void;
 
 export class ChatInput {
 	private input: HTMLInputElement;

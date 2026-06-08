@@ -1,7 +1,5 @@
 import type { TankState } from '../../../shared/state/TankState';
 
-export const PLAYER_NAMES = ['Player 1', 'Player 2'] as const;
-
 export type InputSnapshot = {
 	moveLeft: boolean;
 	moveRight: boolean;
@@ -22,8 +20,6 @@ export type GameUpdateData = {
 	projectile: ProjectileSnapshot;
 	fragments?: FragmentSnapshot[];
 	turnTimeLeft: number;
-	power: number;
-	powerIncreasing: boolean;
 	fuel: number;
 	weaponIndex: number;
 	weaponCooldowns?: [boolean[], boolean[]];

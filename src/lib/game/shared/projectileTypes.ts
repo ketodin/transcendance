@@ -1,6 +1,6 @@
 import { COLORS } from '../phaser/colors';
 
-export interface ProjectileType {
+interface ProjectileType {
 	name: string;
 	color: number;
 	glowColor: number;
@@ -13,7 +13,6 @@ export interface ProjectileType {
 	maxDamage: number;
 	bounces: number;
 	splitCount?: number;
-	airstrikeCount?: number;
 	selectable?: boolean;
 	fixedDamage?: boolean;
 }
@@ -85,8 +84,7 @@ export const PROJECTILE_TYPES: ProjectileType[] = [
 		craterRadius: 0,
 		blastRadius: 0,
 		maxDamage: 0,
-		bounces: 0,
-		airstrikeCount: 5
+		bounces: 0
 	},
 	{
 		name: 'Strike Bomb',

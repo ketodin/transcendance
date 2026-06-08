@@ -73,17 +73,6 @@ export function setupUI(scene: GameScene) {
 		.setDepth(10)
 		.setVisible(false);
 
-	scene.add
-		.text(scene.fuelBarX + scene.fuelBarW / 2, scene.fuelBarY - scene.sh(18), 'FUEL', {
-			fontSize: `${Math.round(scene.sh(13))}px`,
-			color: COLOR_STRINGS.fuelHigh,
-			stroke: COLOR_STRINGS.navy,
-			strokeThickness: 3
-		})
-		.setOrigin(0.5, 0)
-		.setDepth(10)
-		.setVisible(false);
-
 	scene.healthBg = scene.add.graphics().setDepth(10);
 	scene.healthBg.fillStyle(COLORS.navy, 0.92);
 	scene.healthBg.fillRect(

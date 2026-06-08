@@ -34,7 +34,6 @@ export function connectToServer(scene: GameScene) {
 				fuel: number;
 				weaponIndex: number;
 				turnTimeLeft: number;
-				power: number;
 				weaponCooldowns?: [boolean[], boolean[]];
 			}) => {
 				scene.myPlayerIndex = data.player0Id === room.sessionId ? 0 : 1;
@@ -48,8 +47,6 @@ export function connectToServer(scene: GameScene) {
 					tanks: data.tanks,
 					projectile: { active: false, x: 0, y: 0, typeIndex: 0, bouncesLeft: 0 },
 					turnTimeLeft: data.turnTimeLeft,
-					power: data.power,
-					powerIncreasing: true,
 					fuel: data.fuel,
 					weaponIndex: data.weaponIndex
 				};

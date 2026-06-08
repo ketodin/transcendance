@@ -63,6 +63,7 @@
 .dark {
 	--background: var(--950);
 	--foreground: var(--50);
+	--game-aiming: #ffffff; /* aiming cone + range disk */
 }
 
 @theme inline {

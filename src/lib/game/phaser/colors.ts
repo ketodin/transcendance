@@ -56,15 +56,13 @@ export const COLORS = {
 
 export const COLOR_STRINGS = {
 	// Theme-linked
-	bg: '#ffffff',
 	navy: '#0e0e24',
 	neonGlow: '#88e8a0',
 	white: '#ffffff',
 	black: '#000000',
 	gold: '#d4b832',
 	yellow: '#ffdd55',
-	red: '#ff4444',
-	fuelHigh: '#00ccff'
+	red: '#ff4444'
 };
 
 export function syncFromCSS(): void {
@@ -85,7 +83,6 @@ export function syncFromCSS(): void {
 	COLORS.white = cssHex('--game-white');
 	COLORS.black = cssHex('--game-black');
 
-	COLOR_STRINGS.bg = cssStr('--game-bg');
 	COLOR_STRINGS.navy = cssStr('--game-navy');
 	COLOR_STRINGS.neonGlow = cssStr('--game-neon-glow');
 	COLOR_STRINGS.white = cssStr('--game-white');
@@ -93,5 +90,4 @@ export function syncFromCSS(): void {
 	COLOR_STRINGS.gold = cssStr('--game-gold');
 	COLOR_STRINGS.yellow = cssStr('--game-yellow');
 	COLOR_STRINGS.red = cssStr('--game-red');
-	COLOR_STRINGS.fuelHigh = cssStr('--game-fuel-high');
 }
