@@ -6,6 +6,10 @@
 	"logout": "cerrar sesión",
 	"register": "Registrarse",
 	"play": "Jugar",
+	"public_game": "Partida pública",
+	"private_game": "Partida privada",
+	"search_matchmaking": "Buscando una partida",
+	"cancel": "Cancelar",
 	"chat": "Mensajes",
 	"rank": "Clasificación",
 	"profile": "Profilo",
@@ -50,6 +54,8 @@
 	"friend_request_denied": "{name} ha rechazado tu solicitud de amistad",
 	"friend_request_deny": "Solicitud de amistad rechazada",
 	"removed_friend": "Eliminado de la lista de amigos",
+	"accept": "Aceptar",
+	"deny": "Rechazar",
 
 	"game_invite_received": "Nueva invitación de juego recibida de {name}",
 	"game_invite_sent": "Invitación de juego enviada",
@@ -94,5 +100,6 @@
 	"change_password": "Cambiar contraseña",
 	"new_password": "Nueva contraseña",
 	"confirm_new_password": "Confirmar nueva contraseña",
-	"save": "Guardar"
+	"save": "Guardar",
+	"gameStartingIn": "La partida comienza en"
 }

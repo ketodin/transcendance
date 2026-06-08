@@ -4,15 +4,9 @@ import { matchMaker } from 'colyseus';
 
 export const load: PageServerLoad = async ({ params }) => {
 	if (params.id) {
-		try {
-			const reservation = await matchMaker.joinById(params.id, {});
-			return { reservation };
-		} catch (e) {
-			const msg = e instanceof Error ? e.message : '';
-			if (msg.includes('not found')) {
-				error(410, 'Room no longer exists');
-			} else throw e;
-		}
+		const rooms = await matchMaker.query({ roomId: params.id });
+		if (!rooms.length) error(410, 'Room no longer exists');
+		return { reservation: null };
 	}
 
 	const reservation = await matchMaker.joinOrCreate('tank_room', {});

@@ -6,6 +6,10 @@
 	"logout": "Logout",
 	"register": "Register",
 	"play": "Play",
+	"public_game": "Public game",
+	"private_game": "Private game",
+	"search_matchmaking": "Searching for a match",
+	"cancel": "Cancel",
 	"chat": "Messages",
 	"rank": "Ranking",
 	"profile": "Profile",
@@ -50,6 +54,8 @@
 	"friend_request_denied": "{name} declined your friend request",
 	"friend_request_deny": "Friend request denied",
 	"removed_friend": "Removed from friendlist",
+	"accept": "Accept",
+	"deny": "Deny",
 
 	"game_invite_received": "New game invite received from {name}",
 	"game_invite_sent": "Game invite sent",
@@ -94,5 +100,6 @@
 	"change_password": "Change password",
 	"new_password": "New password",
 	"confirm_new_password": "Confirm new password",
-	"save": "Save"
+	"save": "Save",
+	"gameStartingIn": "Game starting in"
 }

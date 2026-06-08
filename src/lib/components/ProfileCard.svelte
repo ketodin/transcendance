@@ -29,11 +29,12 @@
 >
 	<a
 		href={resolve('/settings')}
-		class="p-1 opacity-40 transition-all hover:opacity-100"
-		onclick={(e) => e.stopPropagation()}
+		class="settings-link flex items-center justify-center rounded-[6px] p-1 text-inherit no-underline opacity-50 transition-[opacity,background-color] duration-150 hover:bg-white/10 hover:opacity-100"
 	>
 		<Settings size={20} />
 	</a>
-	{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}
+	<span class="hidden text-[13px] font-semibold whitespace-nowrap lg:inline">
+		{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}
+	</span>
 	<Avatar {...user} size="2.0rem" />
 </div>

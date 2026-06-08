@@ -26,14 +26,16 @@ export const send = command(z.string(), async (otherId) => {
 
 export const accept = command(
 	z.object({ roomId: z.string(), toUserId: z.string() }),
-	({ roomId, toUserId }) => {
+	async ({ roomId, toUserId }) => {
 		const { locals } = getRequestEvent();
 		if (!locals.user) return redirect(303, '/login');
 
-		// check if the game room still exists
-		statusHub.notify(toUserId, 'invite_request_accepted', {
-			fromUserName: locals.user.name
-		});
+		const rooms = await matchMaker.query({ roomId });
+		if (rooms.length) {
+			statusHub.notify(toUserId, 'invite_request_accepted', {
+				fromUserName: locals.user.name
+			});
+		}
 
 		return { roomId };
 	}

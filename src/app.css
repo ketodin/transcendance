@@ -133,6 +133,21 @@
 	backdrop-filter: blur(16px);
 }
 
+body.game-mode header,
+body.game-mode #friend-sidebar,
+body.game-mode #app-footer {
+	display: none;
+}
+
+body.game-mode main {
+	top: 0 !important;
+	right: 0 !important;
+	bottom: 0 !important;
+	left: 0 !important;
+	border-radius: 0 !important;
+	overflow: hidden !important;
+}
+
 .glassdeep {
 	background: rgba(var(--color-background), 0.15);
 	/* autoprefixer: off */

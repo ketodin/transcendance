@@ -39,7 +39,7 @@
 			<Footer />
 
 			<main
-				class="fixed top-[calc(var(--header-height)+var(--layout-gap)+1rem)] right-[1%] bottom-[calc(var(--footer-height)+0.5rem)] left-[1%] overflow-x-hidden overflow-y-auto rounded-[var(--radius-xl)] lg:left-[calc(240px+0.75rem)]"
+				class="fixed top-[calc(var(--header-height)+var(--layout-gap))] right-[1%] bottom-[calc(var(--footer-height)+1rem)] left-[1%] overflow-x-hidden overflow-y-auto rounded-[var(--radius-xl)] lg:left-[calc(240px+0.75rem)]"
 			>
 				{@render children?.()}
 			</main>

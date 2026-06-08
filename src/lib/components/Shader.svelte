@@ -60,7 +60,7 @@ void main() {
 	vec2 uv = gl_FragCoord.xy / u_res.xy;
 	vec2 p = uv * 3.0 - 1.5;
 
-	float t = u_time * 0.1;
+	float t = u_time * 0.03;
 
 	p += vec2(
 		fbm(p + t + u_seed),
@@ -80,7 +80,7 @@ void main() {
 
 	vec3 l1 = vec3(0.4, 0.4, 0.4);
 	vec3 l2 = vec3(0.20, 0.06, 0.18);
-	vec3 l3 = vec3(0.00, 0.15, 0.28);
+	vec3 l3 = vec3(0.00, 0.10, 0.28);
 
 	vec3 lightCol = mix(l1, l2, n);
 	lightCol = mix(lightCol, l3, smoothstep(0.2, 0.9, n));

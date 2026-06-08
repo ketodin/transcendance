@@ -36,14 +36,14 @@ export function attachNotificationListeners(room: Room) {
 		}) => {
 			toast.info(m.game_invite_received({ name: fromUserName }), {
 				action: {
-					label: 'Accept',
+					label: ' ✔ ',
 					onClick: async () => {
 						await invite.accept({ roomId, toUserId: fromUserId });
 						await goto(resolve('/game/[[id]]', { id: roomId }), { invalidateAll: true });
 					}
 				},
 				cancel: {
-					label: 'Deny',
+					label: ' ✖ ',
 					onClick: async () => {
 						await invite.deny({ toUserId: fromUserId });
 					}
