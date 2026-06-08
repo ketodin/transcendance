@@ -14,7 +14,6 @@ const activePlayers = new Set<string>();
 const SCENE_WIDTH = 1920;
 const SCENE_HEIGHT = 1080;
 const MOVE_SPEED = 100;
-const POWER_RATE = 55;
 const MAX_SLOPE_ANGLE = 80;
 const MAX_FUEL_DISTANCE = 200;
 const TANK_X: [number, number] = [180, 1740];
@@ -44,29 +43,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			}
 		});
 
-		this.onMessage('charge_start', (client) => {
-			if (!this.isCurrentPlayer(client)) return;
-			if (this.physicsState?.phase !== 'AIMING') return;
-			this.physicsState.phase = 'CHARGING';
-			this.physicsState.power = 0;
-			this.physicsState.powerIncreasing = true;
-			this.state.phase = 'CHARGING';
-			this.state.power = 0;
-			this.state.powerIncreasing = true;
-			this.broadcast('phase_change', {
-				phase: 'CHARGING',
-				currentPlayer: this.physicsState.currentPlayer
-			});
-		});
-
-		this.onMessage('fire', (client) => {
-			if (!this.isCurrentPlayer(client)) return;
-			if (this.physicsState?.phase !== 'CHARGING') return;
-			const p = this.physicsState.currentPlayer;
-			if (this.physicsState.weaponCooldowns[p][this.physicsState.weaponIndex]) return;
-			this.fireProjectile();
-		});
-
 		this.onMessage('fire_direct', (client, data: { angle: number; power: number }) => {
 			if (!this.isCurrentPlayer(client)) return;
 			if (this.physicsState?.phase !== 'AIMING') return;
@@ -86,7 +62,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			const tank = this.physicsState.tanks[p];
 			tank.turretAngle = data.angle;
 			this.clampTurretAngle(p);
-			this.syncTank(p);
 		});
 
 		this.onMessage('select_weapon', (client, data: { index: number }) => {
@@ -98,20 +73,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			if (this.physicsState.weaponCooldowns[p][data.index]) return;
 			this.physicsState.weaponIndex = data.index;
 			this.state.weaponIndex = data.index;
-		});
-
-		this.onMessage('cycle_weapon', (client) => {
-			if (!this.isCurrentPlayer(client)) return;
-			if (this.physicsState?.phase !== 'AIMING') return;
-			const p = this.physicsState.currentPlayer;
-			const selectable = PROJECTILE_TYPES.map((t, i) => (t.selectable !== false ? i : -1)).filter(
-				(i) => i !== -1
-			);
-			const available = selectable.filter((i) => !this.physicsState.weaponCooldowns[p][i]);
-			if (available.length === 0) return;
-			const cur = available.indexOf(this.physicsState.weaponIndex);
-			this.physicsState.weaponIndex = available[(cur + 1) % available.length];
-			this.state.weaponIndex = this.physicsState.weaponIndex;
 		});
 
 		this.setSimulationInterval((dt) => this.tick(dt), 1000 / 60);
@@ -151,7 +112,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 
 	onLeave(client: Client) {
 		const idx = this.getPlayerIndex(client);
-		if (idx !== -1 && this.playerIds[idx]) activePlayers.delete(this.playerIds[idx]);
+		if (idx !== undefined && this.playerIds[idx]) activePlayers.delete(this.playerIds[idx]);
 
 		if (this.physicsState && this.physicsState.phase !== 'OVER') {
 			const winner = (idx === 0 ? 1 : 0) satisfies 0 | 1;
@@ -187,19 +148,14 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			currentPlayer: 0,
 			phase: 'AIMING',
 			power: 0,
-			powerIncreasing: true,
 			weaponIndex: 0,
 			fuel: 100,
 			turnTimeLeft: 30,
 			weaponCooldowns: [emptyCooldowns(), emptyCooldowns()]
 		};
-		this.syncTank(0);
-		this.syncTank(1);
-		this.initTerrainHeights();
 		this.state.phase = 'AIMING';
 		this.state.currentPlayer = 0;
 		this.state.power = 0;
-		this.state.powerIncreasing = true;
 		this.state.weaponIndex = 0;
 		this.state.fuel = 100;
 		this.state.turnTimeLeft = 30;
@@ -220,7 +176,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			fuel: 100,
 			weaponIndex: 0,
 			turnTimeLeft: 30,
-			power: 0,
 			weaponCooldowns: this.physicsState.weaponCooldowns
 		});
 	}
@@ -234,7 +189,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		const currentId = p === 0 ? this.state.player0Id : this.state.player1Id;
 		const input = this.inputs.get(currentId) ?? null;
 
-		if (phase === 'AIMING' || phase === 'CHARGING') {
+		if (phase === 'AIMING') {
 			this.physicsState.turnTimeLeft -= dt / 1000;
 			this.state.turnTimeLeft = this.physicsState.turnTimeLeft;
 			if (this.physicsState.turnTimeLeft <= 0) {
@@ -261,23 +216,9 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 					tank.y = newY;
 					this.clampTurretAngle(p);
 
-					this.syncTank(p);
 					this.state.fuel = this.physicsState.fuel;
 				}
 			}
-		}
-
-		if (phase === 'CHARGING') {
-			const rate = (POWER_RATE * dt) / 1000;
-			if (this.physicsState.powerIncreasing) {
-				this.physicsState.power = Math.min(100, this.physicsState.power + rate);
-				if (this.physicsState.power >= 100) this.physicsState.powerIncreasing = false;
-			} else {
-				this.physicsState.power = Math.max(0, this.physicsState.power - rate);
-				if (this.physicsState.power <= 0) this.physicsState.powerIncreasing = true;
-			}
-			this.state.power = this.physicsState.power;
-			this.state.powerIncreasing = this.physicsState.powerIncreasing;
 		}
 
 		if (phase === 'FLYING') {
@@ -400,13 +341,11 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			if (dist < blastRadius) {
 				const dmg = fixedDamage ? maxDamage : Math.round(maxDamage * (1 - dist / blastRadius));
 				t.health = Math.max(0, t.health - dmg);
-				this.syncTank(i as 0 | 1);
 				if (t.health === 0) deadTankIdx = i;
 			}
 		}
 
 		applyCrater(this.physicsState.terrain, x, y, craterRadius);
-		this.syncTerrainHeights();
 		this.snapTanksToTerrain();
 
 		this.broadcast('explosion', {
@@ -531,8 +470,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 				: { active: false, x: 0, y: 0, typeIndex: 0, bouncesLeft: 0 },
 			fragments: ps.fragments.map((f) => ({ x: f.x, y: f.y, typeIndex: f.typeIndex })),
 			turnTimeLeft: ps.turnTimeLeft,
-			power: ps.power,
-			powerIncreasing: ps.powerIncreasing,
 			fuel: ps.fuel,
 			weaponIndex: ps.weaponIndex,
 			weaponCooldowns: ps.weaponCooldowns
@@ -542,18 +479,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	private clampTurretAngle(playerIndex: 0 | 1) {
 		const tank = this.physicsState.tanks[playerIndex];
 		tank.turretAngle = Math.max(-180, Math.min(180, tank.turretAngle));
-	}
-
-	private syncTank(idx: 0 | 1) {
-		const tank = this.physicsState.tanks[idx];
-		const schema = idx === 0 ? this.state.tank0 : this.state.tank1;
-		schema.x = tank.x;
-		schema.y = tank.y;
-		schema.turretAngle = tank.turretAngle;
-		schema.health = tank.health;
-		schema.color = tank.color;
-		schema.name = tank.name;
-		schema.facing = tank.facing;
 	}
 
 	private syncProjectile() {
@@ -569,30 +494,10 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		this.state.projectile.bouncesLeft = proj.bouncesLeft;
 	}
 
-	private initTerrainHeights() {
-		const { heights, cols, floorY, sceneWidth, sceneHeight } = this.physicsState.terrain;
-		this.state.terrain.heights.splice(0);
-		for (const h of heights) {
-			this.state.terrain.heights.push(h);
-		}
-		this.state.terrain.cols = cols;
-		this.state.terrain.floorY = floorY;
-		this.state.terrain.sceneWidth = sceneWidth;
-		this.state.terrain.sceneHeight = sceneHeight;
-	}
-
-	private syncTerrainHeights() {
-		const { heights } = this.physicsState.terrain;
-		for (let i = 0; i < heights.length; i++) {
-			this.state.terrain.heights[i] = heights[i];
-		}
-	}
-
 	private snapTanksToTerrain() {
 		for (let i = 0; i < 2; i++) {
 			const tank = this.physicsState.tanks[i];
 			tank.y = getHeightAt(this.physicsState.terrain, tank.x);
-			this.syncTank(i as 0 | 1);
 		}
 	}
 
@@ -603,9 +508,9 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		return client.sessionId === id;
 	}
 
-	private getPlayerIndex(client: Client): number {
+	private getPlayerIndex(client: Client): 0 | 1 | undefined {
 		if (client.sessionId === this.state.player0Id) return 0;
 		if (client.sessionId === this.state.player1Id) return 1;
-		return -1;
+		return undefined;
 	}
 }

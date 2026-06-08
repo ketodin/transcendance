@@ -261,7 +261,7 @@ export default class GameScene extends Scene {
 
 		drawLastShotTrail(this.lastShotGfx, this.lastShotTrail, this);
 
-		if (phase === 'AIMING' || phase === 'CHARGING') {
+		if (phase === 'AIMING') {
 			const secs = Math.ceil(data.turnTimeLeft);
 			const color =
 				secs > 10 ? COLOR_STRINGS.neonGlow : secs > 5 ? COLOR_STRINGS.yellow : COLOR_STRINGS.red;

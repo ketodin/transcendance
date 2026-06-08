@@ -7,10 +7,7 @@ import { getHeightAt } from './terrain.js';
 const TRAIL_LENGTH = 35;
 const TANK_HIT_RADIUS = 30;
 
-export type PhysicsResult =
-	| { type: 'ok' }
-	| { type: 'explode'; x: number; y: number }
-	| { type: 'oob' };
+type PhysicsResult = { type: 'ok' } | { type: 'explode'; x: number; y: number } | { type: 'oob' };
 
 export function getTurretTip(tank: TankState, terrain?: TerrainState): { x: number; y: number } {
 	const rad = (tank.turretAngle * Math.PI) / 180;

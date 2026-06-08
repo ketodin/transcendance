@@ -1,20 +1,18 @@
 import { type TankState } from '../../shared/state/TankState';
 import { type TerrainState } from '../../shared/state/TerrainState';
 import { getHeightAt } from '../../shared/logic/terrain';
-import { GameObjects, Scene } from 'phaser';
+import { GameObjects } from 'phaser';
 import { COLORS, COLOR_STRINGS } from '../../phaser/colors';
 
 const HULL_H = 17; // height from terrain contact to hull top
 
 export class TankSprite {
-	private scene: Scene;
 	private bodyGfx: GameObjects.Graphics;
 	private turretGfx: GameObjects.Graphics;
 	private healthGfx: GameObjects.Graphics;
 	private nameLabel: GameObjects.Text;
 
-	constructor(scene: Scene, state: TankState) {
-		this.scene = scene;
+	constructor(scene: GameObjects.Graphics['scene'], state: TankState) {
 		this.bodyGfx = scene.add.graphics();
 		this.turretGfx = scene.add.graphics();
 		this.healthGfx = scene.add.graphics();
@@ -235,68 +233,6 @@ export class TankSprite {
 		const color = pct > 0.5 ? COLORS.barHigh : pct > 0.25 ? COLORS.barMid : COLORS.barLow;
 		this.healthGfx.fillStyle(color);
 		this.healthGfx.fillRect(bx, by, w * pct, h);
-	}
-
-	explodeAndDestroy(state: TankState): void {
-		this.bodyGfx.setVisible(false);
-		this.turretGfx.setVisible(false);
-		this.healthGfx.setVisible(false);
-		this.nameLabel.setVisible(false);
-
-		const flash = this.scene.add.graphics().setDepth(15);
-		flash.fillStyle(COLORS.white);
-		flash.fillCircle(0, 0, 32);
-		flash.setPosition(state.x, state.y - 14);
-		this.scene.tweens.add({
-			targets: flash,
-			alpha: 0,
-			scaleX: 3,
-			scaleY: 3,
-			duration: 350,
-			ease: 'Quad.Out',
-			onComplete: () => flash.destroy()
-		});
-
-		const pieces: { gfx: GameObjects.Graphics; vx: number; vy: number }[] = [];
-		const colors = [
-			state.color,
-			TankSprite.shade(state.color, 0.5),
-			0x141414,
-			0x404040,
-			COLORS.craterOuter,
-			state.color
-		];
-		for (let i = 0; i < 14; i++) {
-			const angle = (Math.PI * 2 * i) / 14 + (Math.random() - 0.5) * 0.5;
-			const speed = 70 + Math.random() * 170;
-			const size = 2 + Math.random() * 7;
-			const gfx = this.scene.add.graphics().setDepth(14);
-			gfx.fillStyle(colors[i % colors.length]);
-			gfx.fillRect(-size / 2, -size / 2, size, size);
-			gfx.setPosition(state.x, state.y - 14);
-			pieces.push({ gfx, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 90 });
-		}
-
-		const DURATION = 1300;
-		let elapsed = 0;
-		const event = this.scene.time.addEvent({
-			delay: 16,
-			loop: true,
-			callback: () => {
-				elapsed += 16;
-				const progress = Math.min(1, elapsed / DURATION);
-				for (const p of pieces) {
-					p.vy += 350 * 0.016;
-					p.gfx.x += p.vx * 0.016;
-					p.gfx.y += p.vy * 0.016;
-					p.gfx.setAlpha(1 - progress);
-				}
-				if (progress >= 1) {
-					for (const p of pieces) p.gfx.destroy();
-					event.destroy();
-				}
-			}
-		});
 	}
 
 	destroy(): void {

@@ -1,4 +1,3 @@
-import PreloadScene from './scenes/preloadScene';
 import GameScene from './scenes/gameScene/GameScene';
 import { AUTO, Scale, Game, type Types } from 'phaser';
 
@@ -13,7 +12,7 @@ const config: Types.Core.GameConfig = {
 		width: DEFAULT_WIDTH,
 		height: DEFAULT_HEIGHT
 	},
-	scene: [PreloadScene, GameScene]
+	scene: [GameScene]
 };
 
 const StartGame = (parent: string) => {
