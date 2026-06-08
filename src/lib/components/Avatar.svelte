@@ -4,15 +4,20 @@
 		name: string;
 		size: string;
 	};
-	let { image, name, size }: Props = $props();
-
+	let { image, name, size = '2.5rem' }: Props = $props();
 	const initial = $derived(name.charAt(0).toUpperCase());
+	let failedSrc = $state<string | null>(null);
+	const imgFailed = $derived(failedSrc === image);
+
+	function handleImageError() {
+		failedSrc = image;
+	}
 </script>
 
-{#if image}
-	<img src={image} alt={name} style="--size: {size}" />
+{#if image && !imgFailed}
+	<img src={image} alt={initial} style="width: {size}" onerror={handleImageError} />
 {:else}
-	<div class="avatar" style="--size: {size}">
+	<div class="avatar" style="width: {size}">
 		{initial}
 	</div>
 {/if}
@@ -20,7 +25,6 @@
 <style>
 	img,
 	.avatar {
-		width: var(--size, 2.5rem);
 		aspect-ratio: 1 / 1;
 		border-radius: 50%;
 		object-fit: cover;
