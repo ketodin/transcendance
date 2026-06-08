@@ -101,5 +101,6 @@
 	"change_password": "Change password",
 	"new_password": "New password",
 	"confirm_new_password": "Confirm new password",
-	"save": "Save"
+	"save": "Save",
+	"gameStartingIn": "Game starting in"
 }
