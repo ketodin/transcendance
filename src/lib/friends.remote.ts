@@ -37,10 +37,10 @@ async function sendOrAccept(me: User, other: User) {
 async function dismissOrRemove(me: User, other: User) {
 	const requests = await db.friendRequest.findMany({
 		where: {
-		OR: [
-			{ senderId: me.id, receiverId: other.id },
-			{ senderId: other.id, receiverId: me.id }
-		]
+			OR: [
+				{ senderId: me.id, receiverId: other.id },
+				{ senderId: other.id, receiverId: me.id }
+			]
 		}
 	});
 	const isPending = requests.some((r) => r.status === 'PENDING');
@@ -54,10 +54,8 @@ async function dismissOrRemove(me: User, other: User) {
 		}
 	});
 	statusHub.friendRemoved(me.id, other.id);
-	if (isPending)
-		statusHub.notify(other.id, 'friend_request_denied', { fromUserName: me.name });
-	else if (isAccepted)
-		statusHub.notify(other.id, 'friend_request_removed', {});
+	if (isPending) statusHub.notify(other.id, 'friend_request_denied', { fromUserName: me.name });
+	else if (isAccepted) statusHub.notify(other.id, 'friend_request_removed', {});
 }
 
 export const list = query(async () => {

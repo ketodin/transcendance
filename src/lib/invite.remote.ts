@@ -4,7 +4,6 @@ import { z } from 'zod';
 import db from '$lib/server/db';
 import { matchMaker } from 'colyseus';
 import { statusHub } from '$lib/game/colyseus/statusHub';
-import { resolve } from '$app/paths';
 
 export const send = command(z.string(), async (otherId) => {
 	const { locals } = getRequestEvent();

@@ -7,8 +7,8 @@ export const load: PageServerLoad = async ({ params }) => {
 		try {
 			const reservation = await matchMaker.joinById(params.id, {});
 			return { reservation };
-		} catch (e: any) {
-			const msg: string = e?.message ?? '';
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : '';
 			if (msg.includes('not found')) {
 				error(410, 'Room no longer exists');
 			} else throw e;
