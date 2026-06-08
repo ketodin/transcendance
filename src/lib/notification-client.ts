@@ -24,16 +24,15 @@ export function attachNotificationListeners(room: Room) {
 	room.onMessage(
 		`${NOTIF_INVITE}_received`,
 		({ fromUserName, roomId }: { fromUserId: string; fromUserName: string; roomId: string }) => {
-			toast.info(m.game_invite_received() + 'from ' + fromUserName, {
-				// TODO: i18n
+			toast.info(m.game_invite_received() + fromUserName, {
 				action: {
-					label: 'Accept',
+					label: ' ✔ ',
 					onClick: async () => {
 						await goto(resolve('/game/[[id]]', { id: roomId }), { invalidateAll: true });
 					}
 				},
 				cancel: {
-					label: 'Deny',
+					label: ' ✖ ',
 					onClick: () => {}
 				}
 			});

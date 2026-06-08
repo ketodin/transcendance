@@ -58,8 +58,10 @@
 	"friend_request_denied": "Votre demande d'ami a été refusée",
 	"friend_request_deny": "Demande d'ami refusée",
 	"removed_friend": "Retiré de la liste d'amis",
+	"accept": "Accepter",
+	"deny": "Refuser",
 
-	"game_invite_received": "Nouvelle invitation de jeu reçue",
+	"game_invite_received": "Nouvelle invitation de jeu reçue de ",
 	"game_invite_sent": "Invitation de jeu envoyée",
 	"game_invite_accepted": "Votre invitation de jeu a été acceptée",
 	"game_invite_accept": "Invitation de jeu acceptée",
