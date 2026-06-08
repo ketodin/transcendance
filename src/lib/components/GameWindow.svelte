@@ -4,7 +4,7 @@
 	import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 	import type { Room } from '@colyseus/sdk';
 
-	let { room }: { room: Room<GameRoomState>; } = $props();
+	let { room }: { room: Room<GameRoomState> } = $props();
 
 	onMount(() => {
 		let observer: MutationObserver | undefined;

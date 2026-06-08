@@ -82,8 +82,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 
 		this.onMessage('ready', (client) => {
 			const idx = this.getPlayerIndex(client);
-			if (idx !== undefined)
-				this.playersReady[idx] = true;
+			if (idx !== undefined) this.playersReady[idx] = true;
 			if (this.playersReady.every((v) => v)) {
 				try {
 					this.initGame();

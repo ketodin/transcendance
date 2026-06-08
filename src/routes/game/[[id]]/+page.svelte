@@ -1,7 +1,7 @@
 <script lang="ts">
 	import GameWindow from '$lib/components/GameWindow.svelte';
 	import { colyseusClient } from '$lib/colyseusClient';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import type { Room } from '@colyseus/sdk';
 	import type { PageProps } from './$types';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
@@ -15,9 +15,9 @@
 
 	const connectRoom = async () => {
 		try {
-			console.log("try to join", reservation);
+			console.log('try to join', reservation);
 			room = await colyseusClient!.consumeSeatReservation(reservation);
-			console.log("joined room", room);
+			console.log('joined room', room);
 		} catch (err) {
 			if (err instanceof Error) {
 				errorMsg = err.message;
@@ -29,19 +29,17 @@
 
 	onMount(() => {
 		void connectRoom();
-	})
+	});
 
 	afterNavigate(() => {
-		console.log("afterNavigate")
+		console.log('afterNavigate');
 		void connectRoom();
 	});
 
 	beforeNavigate(() => {
-		console.log("leaving room", room);
+		console.log('leaving room', room);
 		void room?.leave();
 	});
-
-
 </script>
 
 {#key room}
