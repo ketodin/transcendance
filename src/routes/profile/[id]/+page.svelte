@@ -58,13 +58,19 @@
 				>
 					<p>{m.remove_friend()}</p>
 				</Button>
-				<Button
-					onclick={() => toast.success(m.game_invite_sent())}
-					class="glassbutton"
-					variant="outline"
-				>
-					{m.invite_play()}
-				</Button>
+				<form method="POST" action="?/invitePrivateGame">
+					<input hidden type="text" name="userId" value={data.userProfile.id} />
+					<Button
+						type="submit"
+						onclick={() => {
+							toast.success(m.game_invite_sent());
+						}}
+						class="glassbutton"
+						variant="outline"
+					>
+						{m.invite_play()}
+					</Button>
+				</form>
 			{:else if userType === 'someone'}
 				<Button
 					onclick={async () => {

@@ -31,11 +31,16 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	private player0Name = 'Player 1';
 	private player1Name = 'Player 2';
 	private playerIds: [string, string] = ['', ''];
+	private playersReady: [boolean, boolean] = [false, false];
 
-	onCreate() {
+	async onCreate(options: { private: boolean } = { private: false }) {
 		this.maxClients = 2;
 		this.patchRate = 16;
 		this.setState(new GameRoomState());
+
+		if (options.private) {
+			await this.setPrivate();
+		}
 
 		this.onMessage<InputState>('input', (client, data) => {
 			if (this.isCurrentPlayer(client)) {
@@ -75,6 +80,19 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			this.state.weaponIndex = data.index;
 		});
 
+		this.onMessage('ready', (client) => {
+			const idx = this.getPlayerIndex(client);
+			if (idx !== undefined) this.playersReady[idx] = true;
+			if (this.playersReady.every((v) => v)) {
+				try {
+					this.initGame();
+					console.log('[TankRoom] initGame() OK, phase =', this.state.phase);
+				} catch (e) {
+					console.error('[TankRoom] initGame() threw:', e);
+				}
+			}
+		});
+
 		this.setSimulationInterval((dt) => this.tick(dt), 1000 / 60);
 		// register chat handler
 		registerChatHandler(this, (client) => this.getPlayerIndex(client));
@@ -101,12 +119,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			this.player1Name = user.name;
 			this.playerIds[1] = user.id;
 			console.log('[TankRoom] Player 2 joined — starting game...');
-			try {
-				this.initGame();
-				console.log('[TankRoom] initGame() OK, phase =', this.state.phase);
-			} catch (e) {
-				console.error('[TankRoom] initGame() threw:', e);
-			}
 		}
 	}
 
@@ -126,6 +138,11 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			});
 			void this.lock();
 		}
+	}
+
+	onDrop(client: Client) {
+		const idx = this.getPlayerIndex(client);
+		if (idx !== undefined && this.playerIds[idx]) activePlayers.delete(this.playerIds[idx]);
 	}
 
 	private initGame() {

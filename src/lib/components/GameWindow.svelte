@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { syncFromCSS } from '$lib/game/phaser/colors';
+	import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
+	import type { Room } from '@colyseus/sdk';
+
+	let { room }: { room: Room<GameRoomState> } = $props();
 
 	onMount(() => {
 		let observer: MutationObserver | undefined;
@@ -10,7 +14,7 @@
 			const { EventBus } = await import('$lib/game/phaser/EventBus');
 
 			syncFromCSS();
-			StartGame('game-container');
+			StartGame('game-container', room);
 
 			observer = new MutationObserver(() => {
 				syncFromCSS();
