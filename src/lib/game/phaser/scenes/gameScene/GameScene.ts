@@ -19,7 +19,7 @@ import { drawFireButton, drawChatButton, drawMoveButton } from './buttons';
 import { updateFuelBar, updateHealthBar } from './hud';
 
 export default class GameScene extends Scene {
-	room: Room<GameRoomState> | null = null;
+	room: Room<GameRoomState>;
 	returningToLobby = false;
 	myPlayerIndex: 0 | 1 = 0;
 
@@ -127,8 +127,9 @@ export default class GameScene extends Scene {
 		return this.fuelBarY - this.sh(20) - this.sh(18);
 	}
 
-	constructor() {
+	constructor(options: { room: Room<GameRoomState> }) {
 		super({ key: 'GameScene' });
+		this.room = options.room;
 	}
 
 	readonly onThemeChanged = () => {
@@ -261,7 +262,7 @@ export default class GameScene extends Scene {
 
 		drawLastShotTrail(this.lastShotGfx, this.lastShotTrail, this);
 
-		if (phase === 'AIMING' || phase === 'CHARGING') {
+		if (phase === 'AIMING') {
 			const secs = Math.ceil(data.turnTimeLeft);
 			const color =
 				secs > 10 ? COLOR_STRINGS.neonGlow : secs > 5 ? COLOR_STRINGS.yellow : COLOR_STRINGS.red;
@@ -302,7 +303,7 @@ export default class GameScene extends Scene {
 		};
 		if (snap.moveLeft !== this.lastInput.moveLeft || snap.moveRight !== this.lastInput.moveRight) {
 			this.lastInput = snap;
-			this.room!.send('input', snap);
+			this.room.send('input', snap);
 		}
 
 		if (phase === 'AIMING' && this.isGrabbing && this.localTerrain && this.localGameData) {
@@ -321,7 +322,7 @@ export default class GameScene extends Scene {
 			this.localTurretAngle = directAngle;
 			if (Math.abs(directAngle - this.lastSentAngle) > 0.3) {
 				this.lastSentAngle = directAngle;
-				this.room!.send('set_turret_angle', { angle: directAngle });
+				this.room.send('set_turret_angle', { angle: directAngle });
 			}
 
 			const dist = Math.sqrt((mx - pivotX) ** 2 + (my - pivotY) ** 2);

@@ -117,7 +117,7 @@ export function handleExplosionFx(
 	spawnCraterDust(scene, x, y, craterRadius);
 }
 
-export function spawnCraterDust(scene: Scene, x: number, y: number, radius: number) {
+function spawnCraterDust(scene: Scene, x: number, y: number, radius: number) {
 	const count = Math.floor(radius * 1.2);
 	const colors = [
 		COLORS.terrain,

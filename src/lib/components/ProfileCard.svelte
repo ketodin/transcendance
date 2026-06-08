@@ -20,10 +20,8 @@
 	}
 </script>
 
-<!-- {#if $session.data} -->
-<!-- {@const user = $session.data.user} -->
 <div
-	class="glassbutton flex cursor-pointer items-center gap-2 px-2.5 py-1.5 hover:!bg-white/[0.08]"
+	class="glassbutton flex items-center gap-2 px-2.5 py-1.5 hover:!bg-white/[0.08]"
 	role="link"
 	tabindex="0"
 	onclick={handleCardClick}
@@ -40,4 +38,3 @@
 	</span>
 	<Avatar {...user} size="2.0rem" />
 </div>
-<!-- {/if} -->

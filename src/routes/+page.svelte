@@ -1,44 +1,8 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages';
-	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
-	import { colyseusClient } from '$lib/colyseusClient';
-	import { pendingGameRoom, searchingRoom, type GameStartData } from '$lib/game-room-store';
-	import type { PageProps } from './$types';
-	import { Loader2 } from '@lucide/svelte';
-	import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 	import { syncFromCSS } from '$lib/game/phaser/colors';
-
-	let { data }: PageProps = $props();
-
-	let searching = $derived($searchingRoom !== null);
-
-	async function startPublicGame() {
-		if (!colyseusClient || $searchingRoom) return;
-		try {
-			const room = await colyseusClient.joinOrCreate<GameRoomState>('tank_room');
-			searchingRoom.set(room);
-
-			room.onMessage('game_start', (gameStartData: GameStartData) => {
-				searchingRoom.set(null);
-				pendingGameRoom.set({ room, gameStartData });
-				goto('/game');
-			});
-
-			room.onLeave.once(() => {
-				searchingRoom.set(null);
-			});
-		} catch {
-			searchingRoom.set(null);
-		}
-	}
-
-	async function cancelSearch() {
-		const room = get(searchingRoom);
-		searchingRoom.set(null);
-		if (room) await room.leave();
-	}
 
 	onMount(() => {
 		let game: import('phaser').Game | null = null;
@@ -66,38 +30,36 @@
 </script>
 
 <div class="relative h-full w-full overflow-hidden rounded-xl">
-	<div id="lobby-canvas" class="pointer-events-none absolute blur-[2px]"></div>
+	<div id="lobby-canvas" class="pointer-events-none absolute blur-xs"></div>
 
 	<div class="absolute inset-0 z-10 flex flex-col items-center justify-start gap-6 mt-20">
-
-		{#if searching}
-			<div class="flex flex-col items-center gap-6">
-				<Loader2 class="size-16 animate-spin opacity-80" />
-				<span class="text-2xl font-semibold tracking-widest uppercase opacity-80">
-					{m.search_matchmaking()}
-				</span>
+		<!-- <div class="flex flex-col items-center gap-6">
+			<Loader2 class="size-16 animate-spin opacity-80" />
+			<span class="text-2xl font-semibold tracking-widest uppercase opacity-80">
+				{m.search_matchmaking()}
+			</span>
+			<button
+				onclick={cancelSearch}
+				class="glassbutton px-10 py-4 text-sm font-semibold tracking-widest uppercase opacity-60 hover:opacity-100"
+			>
+				{m.cancel()}
+			</button>
+		</div> -->
+		<div class="flex flex-col items-center gap-4">
+			<a
+				href={resolve('/game')}
+				class="play-cta glassbutton flex items-center justify-center px-8 py-8 text-4xl sm:px-14 sm:py-10 sm:text-5xl lg:px-20 lg:py-12 lg:text-6xl font-black tracking-widest uppercase"
+			>
+				{m.public_game()}
+		</a>
+			<form method="POST" action="?/newPrivateGame">
 				<button
-					onclick={cancelSearch}
-					class="glassbutton px-10 py-4 text-sm font-semibold tracking-widest uppercase opacity-60 hover:opacity-100"
-				>
-					{m.cancel()}
-				</button>
-			</div>
-		{:else}
-			<div class="flex flex-col items-center gap-4">
-				<button
-					onclick={startPublicGame}
-					class="play-cta glassbutton flex items-center justify-center px-8 py-8 text-4xl sm:px-14 sm:py-10 sm:text-5xl lg:px-20 lg:py-12 lg:text-6xl font-black tracking-widest uppercase"
-				>
-					{m.public_game()}
-				</button>
-				<button
-					disabled
+					type="submit"
 					class="glassbutton flex items-center justify-center px-6 py-4 text-lg sm:px-10 sm:py-5 sm:text-xl lg:px-16 lg:py-6 lg:text-2xl font-bold tracking-widest uppercase opacity-30"
 				>
 					{m.private_game()}
 				</button>
-			</div>
-		{/if}
+			</form>
+		</div>
 	</div>
 </div>

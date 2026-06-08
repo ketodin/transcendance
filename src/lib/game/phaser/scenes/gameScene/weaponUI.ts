@@ -1,7 +1,7 @@
 import { PROJECTILE_TYPES } from '../../../shared/projectileTypes';
 import { GameObjects } from 'phaser';
 
-export interface WeaponUICtx {
+interface WeaponUICtx {
 	weaponUiGfx: GameObjects.Graphics;
 	weaponNameLabel: GameObjects.Text;
 	selectableWeaponIndices: number[];
@@ -109,7 +109,7 @@ export function updateWeaponUI(ctx: WeaponUICtx, activeIndex: number, isMyTurn =
 	});
 }
 
-export function drawWeaponIconShape(
+function drawWeaponIconShape(
 	g: GameObjects.Graphics,
 	cx: number,
 	cy: number,

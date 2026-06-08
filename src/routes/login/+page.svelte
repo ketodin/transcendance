@@ -5,7 +5,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { resolve } from '$app/paths';
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { authClient, signIn } from '$lib/auth-client';
 	import { formSchema } from './schema';
 	import * as z from 'zod';
@@ -65,9 +65,8 @@
 			error = result.error?.message ?? 'Unknown error';
 			return;
 		}
-		await invalidateAll();
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
-		await goto(redirectUrl, { replaceState: true });
+		await goto(redirectUrl, { replaceState: true, invalidateAll: true });
 	}
 
 	async function verifyBackupCode() {
@@ -77,9 +76,8 @@
 			error = result.error?.message ?? 'Unknown error';
 			return;
 		}
-		await invalidateAll();
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
-		await goto(redirectUrl, { replaceState: true });
+		await goto(redirectUrl, { replaceState: true, invalidateAll: true });
 	}
 
 	function goBack() {
@@ -93,17 +91,15 @@
 	}
 </script>
 
-<div class="bg-muted/30 flex min-h-screen items-center justify-center px-4">
+<div class="bg-muted/30 flex min-h-screen items-center justify-center">
 	<div class="glass w-full max-w-md space-y-6 p-6">
-		<div class="flex items-center justify-between">
-			<h1 class="text-2xl font-semibold tracking-tight">
+		<div class="flex justify-between">
+			<h1 class="text-3xl font-semibold">
 				{m.login()}
 			</h1>
 			<div class="flex gap-3">
 				<ThemeToggle />
-				<div>
-					<LanguagePicker />
-				</div>
+				<LanguagePicker />
 			</div>
 		</div>
 
@@ -116,7 +112,7 @@
 					}}
 					class="space-y-5"
 				>
-					<div class="space-y-2">
+					<div>
 						<label class="text-sm font-medium" for="email">{m.email()}</label>
 						<Input
 							id="email"

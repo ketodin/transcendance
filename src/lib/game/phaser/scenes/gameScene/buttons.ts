@@ -1,6 +1,6 @@
 import { GameObjects } from 'phaser';
 
-export interface ButtonsCtx {
+interface ButtonsCtx {
 	fireBtn: GameObjects.Graphics;
 	fireBtnLabel: GameObjects.Text;
 	fireBtnCx: number;

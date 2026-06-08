@@ -73,17 +73,6 @@ export function setupUI(scene: GameScene) {
 		.setDepth(10)
 		.setVisible(false);
 
-	scene.add
-		.text(scene.fuelBarX + scene.fuelBarW / 2, scene.fuelBarY - scene.sh(18), 'FUEL', {
-			fontSize: `${Math.round(scene.sh(13))}px`,
-			color: COLOR_STRINGS.fuelHigh,
-			stroke: COLOR_STRINGS.navy,
-			strokeThickness: 3
-		})
-		.setOrigin(0.5, 0)
-		.setDepth(10)
-		.setVisible(false);
-
 	scene.healthBg = scene.add.graphics().setDepth(10);
 	scene.healthBg.fillStyle(COLORS.navy, 0.92);
 	scene.healthBg.fillRect(
@@ -306,7 +295,7 @@ export function initViews(scene: GameScene) {
 	const chatBarY = iconY + iSize / 2 + scene.sh(10);
 	scene.chatInput?.destroy();
 	scene.chatInput = new ChatInput(scene, chatBarY, (text: string) => {
-		scene.room!.send('chat', { text });
+		scene.room.send('chat', { text });
 		scene.chatInput.block(CHAT_BUBBLE_DURATION);
 	});
 	scene.projView = new ProjectileView(scene);
