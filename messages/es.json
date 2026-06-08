@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hello, {name} from es!",
 	"language_name": "Español",
 	"language_selector_tag": "Idioma:",
 	"login": "Iniciar sesión",
