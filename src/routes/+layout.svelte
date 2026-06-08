@@ -19,10 +19,11 @@
 	);
 
 	const is404 = $derived(page.status === 404);
+	const isGone = $derived(page.status == 410);
 
 	const baseTheme = $derived($shaderTheme === 'dark' ? 1 : 0);
 
-	const errorTheme = $derived(is404 ? 1 : 0);
+	const errorTheme = $derived(is404 || isGone ? 1 : 0);
 </script>
 
 <ModeWatcher />
