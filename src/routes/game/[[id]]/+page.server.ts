@@ -1,9 +1,20 @@
 import type { PageServerLoad } from './$types';
+import { error } from '@sveltejs/kit';
 import { matchMaker } from 'colyseus';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const reservation = params.id
-		? await matchMaker.joinById(params.id, {})
-		: await matchMaker.joinOrCreate('tank_room', {});
+	if (params.id) {
+		try {
+			const reservation = await matchMaker.joinById(params.id, {});
+			return { reservation };
+		} catch (e: any) {
+			const msg: string = e?.message ?? '';
+			if (msg.includes('not found')) {
+				error(410, 'Room no longer exists');
+			} else throw e;
+		}
+	}
+
+	const reservation = await matchMaker.joinOrCreate('tank_room', {});
 	return { reservation };
 };
