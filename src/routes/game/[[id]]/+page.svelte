@@ -36,27 +36,26 @@
 				});
 			} catch (err) {
 				if (err instanceof MatchMakeError) {
-					if (err.code == 400 && err.message.match(/room ".*" not found/)) {
+					if (err.code === 400 && err.message.match(/room ".*" not found/)) {
 						return await applyAction({
 							type: 'error',
 							status: 400,
 							error: { message: m.error_room_not_exist() }
 						});
 					}
-					if (err.message = 'ALREADY_IN_A_GAME') {
+					if (err.message === 'ALREADY_IN_A_GAME') {
 						return await applyAction({
 							type: 'error',
 							status: err.code,
 							error: { message: m.error_already_game() }
 						});
-					} else if (err.message = 'UNAUTHORIZED') {
+					} else if (err.message === 'UNAUTHORIZED') {
 						return await applyAction({
 							type: 'error',
 							status: err.code,
 							error: { message: m.error_not_auth() }
 						});
-					}
-					else {
+					} else {
 						return await applyAction({
 							type: 'error',
 							status: err.code,
