@@ -40,7 +40,7 @@
 						return await applyAction({
 							type: 'error',
 							status: 400,
-							error: { message: "Room doesn't exist" }
+							error: { message: m.error_room_not_exist() }
 						});
 					}
 					if (err.message = 'ALREADY_IN_A_GAME') {

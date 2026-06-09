@@ -92,6 +92,7 @@
 	"error_invalid_code": "Código incorrecto. Por favor, inténtelo de nuevo.",
 	"error_not_auth": "No autenticado.",
 	"error_already_game": "Ya estás en el juego.",
+	"error_room_not_exist": "La sala no existe",
 
 	"totp_backup_instruction": "Ingrese uno de sus códigos de respaldo.",
 	"totp_app_instruction": "Ingrese el código de 6 dígitos de su aplicación de autenticación.",

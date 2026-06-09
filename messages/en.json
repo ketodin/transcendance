@@ -92,6 +92,7 @@
 	"error_invalid_code": "Incorrect code. Please try again.",
 	"error_not_auth": "Not authenticated.",
 	"error_already_game": "Already in a game.",
+	"error_room_not_exist": "Room doesn't exist",
 
 	"totp_backup_instruction": "Enter one of your backup codes.",
 	"totp_app_instruction": "Enter the 6-digit code from your authenticator app.",
