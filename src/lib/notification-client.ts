@@ -14,15 +14,15 @@ export function attachNotificationListeners(room: Room) {
 	const NOTIF_FRIEND: string = 'notification_friend_request';
 	room.onMessage(`${NOTIF_FRIEND}_received`, () => {
 		void getFriendList().refresh();
-		toast.info(m.friend_request_received());
+		_toast.info(m.friend_request_received());
 	});
 	room.onMessage(`${NOTIF_FRIEND}_accepted`, ({ fromUserName }: { fromUserName: string }) => {
 		void getFriendList().refresh();
-		toast.success(m.friend_request_accepted({ name: fromUserName }));
+		_toast.success(m.friend_request_accepted({ name: fromUserName }));
 	});
 	room.onMessage(`${NOTIF_FRIEND}_denied`, ({ fromUserName }: { fromUserName: string }) => {
 		void getFriendList().refresh();
-		toast.warning(m.friend_request_denied({ name: fromUserName }));
+		_toast.warning(m.friend_request_denied({ name: fromUserName }));
 	});
 	room.onMessage(`${NOTIF_FRIEND}_removed`, () => void getFriendList().refresh());
 
