@@ -55,6 +55,7 @@
 	"friend_request_denied": "{name} declined your friend request",
 	"friend_request_deny": "Friend request denied",
 	"removed_friend": "Removed from friendlist",
+	"no_friend": "No one on the horizon yet...",
 	"accept": "Accept",
 	"deny": "Deny",
 

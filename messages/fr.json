@@ -55,6 +55,7 @@
 	"friend_request_denied": "{name} a refusé votre demande d'ami",
 	"friend_request_deny": "Demande d'ami refusée",
 	"removed_friend": "Retiré de la liste d'amis",
+	"no_friend": "Personne encore à l'horizon...",
 	"accept": "Accepter",
 	"deny": "Refuser",
 
