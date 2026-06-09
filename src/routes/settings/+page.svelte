@@ -57,7 +57,7 @@
 	let editing = $state(false);
 	async function handleDelete() {
 		await authClient.deleteUser();
-		await goto(resolve('/register'));
+		await goto(resolve('/register'), { invalidateAll: true });
 	}
 </script>
 
@@ -139,7 +139,7 @@
 				onclick={async () => {
 					await disconnectStatusRoom();
 					await signOut();
-					await goto(resolve('/login'));
+					await goto(resolve('/login'), { invalidateAll: true });
 				}}
 			>
 				{m.logout()}
