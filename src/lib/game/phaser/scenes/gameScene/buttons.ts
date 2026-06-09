@@ -1,6 +1,11 @@
 import { GameObjects } from 'phaser';
 
 interface ButtonsCtx {
+	leaveBtn: GameObjects.Graphics;
+	leaveBtnCx: number;
+	leaveBtnCy: number;
+	leaveBtnW: number;
+	leaveBtnH: number;
 	fireBtn: GameObjects.Graphics;
 	fireBtnLabel: GameObjects.Text;
 	fireBtnCx: number;
@@ -170,4 +175,35 @@ export function drawMoveButton(ctx: ButtonsCtx, side: 0 | 1, hovered: boolean, d
 	const shaftLeft = Math.min(baseX, shaftEndX);
 	const shaftRight = Math.max(baseX, shaftEndX);
 	g.fillRect(shaftLeft, cy - sw2, shaftRight - shaftLeft, sw2 * 2);
+}
+
+export function drawLeaveButton(ctx: ButtonsCtx, hovered: boolean) {
+	const g = ctx.leaveBtn;
+	g.clear();
+	const cx = ctx.leaveBtnCx;
+	const cy = ctx.leaveBtnCy;
+	const w = ctx.leaveBtnW;
+	const h = ctx.leaveBtnH;
+	const r = ctx.sw(5);
+
+	if (hovered) {
+		g.lineStyle(ctx.sw(4), 0xff2200, 0.18);
+		g.strokeRoundedRect(
+			cx - w / 2 - ctx.sw(2),
+			cy - h / 2 - ctx.sw(2),
+			w + ctx.sw(4),
+			h + ctx.sw(4),
+			r + ctx.sw(1)
+		);
+	}
+
+	g.fillStyle(hovered ? 0x2a0500 : 0x150200, 1);
+	g.fillRoundedRect(cx - w / 2, cy - h / 2, w, h, r);
+	g.lineStyle(ctx.sw(1.5), hovered ? 0xff3322 : 0x661100, 1);
+	g.strokeRoundedRect(cx - w / 2, cy - h / 2, w, h, r);
+	g.lineStyle(ctx.sw(1), 0xffffff, hovered ? 0.12 : 0.04);
+	g.beginPath();
+	g.moveTo(cx - w / 2 + r, cy - h / 2);
+	g.lineTo(cx + w / 2 - r, cy - h / 2);
+	g.strokePath();
 }

@@ -8,6 +8,7 @@ import { ProjectileView } from '../../../client/view/ProjectileView';
 import { SpeechBubble } from '../../../client/view/speechBubble';
 import { ChatInput } from '../../../client/view/ChatInput';
 import { CHAT_BUBBLE_DURATION } from '$lib/game/shared/chatConfig';
+import { showLeaveConfirm } from './hud';
 
 export function createBackground(scene: Scene) {
 	const { width, height } = scene.scale;
@@ -249,28 +250,38 @@ export function setupUI(scene: GameScene) {
 		.setDepth(10)
 		.setVisible(false);
 
-	const boxW = scene.sw(190);
-	const boxH = scene.sh(100);
-	const boxX = scene.scale.width - scene.sw(0) - boxW;
-	const boxY = scene.scale.height - scene.sh(0) - boxH;
-	scene.controlsBg = scene.add.graphics().setDepth(10);
-	scene.controlsBg.fillStyle(COLORS.navy, 0.82);
-	scene.controlsBg.fillRect(boxX, boxY, boxW, boxH);
-	scene.controlsBg.lineStyle(1, COLORS.neonGlow, 0.3);
-	scene.controlsBg.strokeRect(boxX, boxY, boxW, boxH);
-	scene.controlsBg.setVisible(false);
+	scene.leaveBtnW = scene.sw(80);
+	scene.leaveBtnH = scene.sh(28);
+	scene.leaveBtnCx = scene.scale.width - scene.sw(48);
+	scene.leaveBtnCy = scene.scale.height - scene.sh(22);
 
-	scene.controlsText = scene.add
-		.text(boxX + scene.sw(8), boxY + scene.sh(18), '', {
-			fontSize: `${Math.round(scene.sh(11))}px`,
-			color: COLOR_STRINGS.white,
+	scene.leaveBtn = scene.add.graphics().setDepth(11).setVisible(false);
+	scene.leaveBtnLabel = scene.add
+		.text(scene.leaveBtnCx, scene.leaveBtnCy, 'LEAVE', {
+			fontSize: `${Math.round(scene.sh(12))}px`,
+			color: '#ff6655',
+			fontStyle: 'bold',
 			stroke: COLOR_STRINGS.navy,
-			strokeThickness: 2,
-			lineSpacing: scene.sh(4)
+			strokeThickness: 2
 		})
-		.setOrigin(0, 0)
-		.setDepth(10)
+		.setOrigin(0.5)
+		.setDepth(12)
 		.setVisible(false);
+
+	const leaveBtnZone = scene.add
+		.zone(scene.leaveBtnCx, scene.leaveBtnCy, scene.leaveBtnW, scene.leaveBtnH)
+		.setDepth(12)
+		.setInteractive({ useHandCursor: true });
+
+	leaveBtnZone.on('pointerover', () => {
+		scene.leaveBtnHovered = true;
+	});
+	leaveBtnZone.on('pointerout', () => {
+		scene.leaveBtnHovered = false;
+	});
+	leaveBtnZone.on('pointerdown', () => {
+		if (!scene.showingLeaveConfirm && scene.localPhase !== 'OVER') showLeaveConfirm(scene);
+	});
 }
 
 export function initViews(scene: GameScene) {
@@ -311,12 +322,11 @@ export function showGameUI(scene: GameScene) {
 	scene.healthIcon.setVisible(true);
 	scene.weaponUiGfx.setVisible(true);
 	scene.weaponNameLabel.setVisible(true);
-	scene.controlsText.setText(`Mouse  Aim + Power`);
-	scene.controlsBg.setVisible(true);
-	scene.controlsText.setVisible(true);
 	scene.fireBtn.setVisible(true);
 	scene.fireBtnLabel.setVisible(true);
 	scene.chatBtn.setVisible(true);
 	scene.moveLeftBtn.setVisible(true);
 	scene.moveRightBtn.setVisible(true);
+	scene.leaveBtn.setVisible(true);
+	scene.leaveBtnLabel.setVisible(true);
 }
