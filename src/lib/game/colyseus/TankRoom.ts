@@ -100,8 +100,8 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 
 	async onAuth(_client: Client, _options: unknown, ctx: { headers: Headers }) {
 		const session = await auth.api.getSession({ headers: ctx.headers });
-		if (!session?.user) throw new ServerError(4001, 'Not authenticated');
-		if (activePlayers.has(session.user.id)) throw new ServerError(4002, 'Already in a game.');
+		if (!session?.user) throw new ServerError(4001, 'UNAUTHORIZED');
+		if (activePlayers.has(session.user.id)) throw new ServerError(4002, 'ALREADY_IN_A_GAME');
 		return session.user;
 	}
 
