@@ -16,8 +16,8 @@
 	import { untrack } from 'svelte';
 	import { toast } from '$lib/components/toast';
 	import { resolve } from '$app/paths';
-	import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
-	import { authClient } from "$lib/auth-client"
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+	import { authClient } from '$lib/auth-client';
 
 	let { data }: PageProps = $props();
 
@@ -57,7 +57,7 @@
 	let editing = $state(false);
 	async function handleDelete() {
 		await authClient.deleteUser();
-		await goto(resolve("/register"));
+		await goto(resolve('/register'));
 	}
 </script>
 
