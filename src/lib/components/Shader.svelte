@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	let { base = 1, error = 0 } = $props<{ base?: number; error?: number }>();
+	let { base = true, error = false } = $props<{ base?: boolean; error?: boolean }>();
 
 	let canvas: HTMLCanvasElement;
 	let animId: number;
