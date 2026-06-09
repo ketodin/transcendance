@@ -17,3 +17,14 @@ export const avatarSchema = z.strictObject({
 export const nameSchema = z.strictObject({
 	name: z.string().min(3).max(32).regex(/^\S+$/, { message: m.invalid_name() })
 });
+
+export const changePasswordSchema = z
+	.strictObject({
+		currentPassword: z.string().min(8).max(128),
+		newPassword: z.string().min(8).max(128),
+		confirmPassword: z.string().min(8).max(128)
+	})
+	.refine((data) => data.newPassword === data.confirmPassword, {
+		path: ['confirmPassword'],
+		message: m.invalid_repeat()
+	});

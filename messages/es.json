@@ -103,6 +103,9 @@
 	"change_password": "Cambiar contraseña",
 	"new_password": "Nueva contraseña",
 	"confirm_new_password": "Confirmar nueva contraseña",
+	"password_changed": "Contraseña cambiada con éxito",
+	"name_changed": "Nombre actualizado con éxito",
+	"avatar_changed": "Avatar actualizado con éxito",
 	"save": "Guardar",
 	"gameStartingIn": "La partida comienza en"
 }
