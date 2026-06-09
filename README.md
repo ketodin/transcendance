@@ -1,6 +1,5 @@
 # 42 Transcendance
 
-
 `git clone "URL" <project>`
 
 `cd <project>`
