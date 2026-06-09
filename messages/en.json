@@ -11,6 +11,7 @@
 	"private_game": "Private game",
 	"search_matchmaking": "Searching for a match",
 	"cancel": "Cancel",
+	"confirm": "Confirm",
 	"chat": "Messages",
 	"rank": "Ranking",
 	"profile": "Profile",
@@ -71,6 +72,9 @@
 	"privacy_policy": "Privacy Policy\nTranscendence Online Service\n\nLast updated: May 11, 2026\n\n1. Data Collection\nWe collect minimal data such as account info, gameplay statistics, and technical logs.\n\n2. Usage\nData is used only to operate and improve the service.\n\n3. Sharing\nWe do not sell personal data to third parties.\n\n4. Security\nWe apply reasonable security measures but cannot guarantee full protection.\n\n5. Retention\nData is kept only as long as necessary for service operation.\n\n6. Rights\nUsers may request access or deletion where applicable by law.",
 
 	"settings": "Settings",
+	"delete_account": "Delete account",
+	"confirm_delete": "Are you absolutely sure?",
+	"delete_speech": "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
 	"two_fa_enable_title": "Enable 2FA",
 	"two_fa_enable_description": "Scan the QR code with Google Authenticator or Authy.",
 	"current_password_placeholder": "Current password",
