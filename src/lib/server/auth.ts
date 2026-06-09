@@ -39,5 +39,10 @@ export const auth = betterAuth({
 				before: (user) => Promise.resolve({ data: { ...user, emailVerified: true } })
 			}
 		}
-	}
+	},
+    user: {
+        deleteUser: { 
+            enabled: true
+        } 
+    }
 });
