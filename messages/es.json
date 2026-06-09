@@ -10,6 +10,7 @@
 	"private_game": "Partida privada",
 	"search_matchmaking": "Buscando una partida",
 	"cancel": "Cancelar",
+	"confirm": "Confirmar",
 	"chat": "Mensajes",
 	"rank": "Clasificación",
 	"profile": "Profilo",
@@ -68,6 +69,9 @@
 	"privacy_policy": "Política de privacidad\nServicio en línea Transcendence\n\nÚltima actualización: 11 de mayo de 2026\n\n1. Datos recopilados\nRecopilamos datos mínimos como información de cuenta, estadísticas y registros técnicos.\n\n2. Uso\nLos datos se usan solo para operar y mejorar el servicio.\n\n3. Compartición\nNo vendemos datos personales.\n\n4. Seguridad\nAplicamos medidas razonables sin garantía total.\n\n5. Retención\nLos datos se conservan solo el tiempo necesario.\n\n6. Derechos\nLos usuarios pueden solicitar acceso o eliminación según la ley.",
 
 	"settings": "Configuración",
+	"delete_account": "eliminar cuenta",
+	"confirm_delete": "¿Estás completamente seguro?",
+	"delete_speech": "Esta acción no se puede deshacer. Esto eliminará permanentemente tu cuenta y borrará tus datos de nuestros servidores.",
 	"two_fa_enable_title": "Activar 2FA",
 	"two_fa_enable_description": "Escanee el código QR con Google Authenticator o Authy.",
 	"current_password_placeholder": "Contraseña actual",
