@@ -1,11 +1,13 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
 	import { m } from '$lib/paraglide/messages';
 	import Avatar from '$lib/components/Avatar.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Settings } from '@lucide/svelte';
 	import * as friends from '$lib/friends.remote';
+	import * as invite from '$lib/invite.remote';
 	import { toast } from '$lib/components/toast';
 
 	const { data }: PageProps = $props();
@@ -31,6 +33,14 @@
 	const userType: UserType = $derived(
 		data.user!.id === data.userProfile.id ? 'self' : isFriend ? 'friend' : 'someone'
 	);
+
+	async function handleInvite() {
+		const result = await invite.send(data.userProfile.id);
+		if (result?.roomId) {
+			toast.success(m.game_invite_sent());
+			await goto(resolve('/game/[[id]]', { id: result.roomId }), { invalidateAll: true });
+		}
+	}
 </script>
 
 <div class="glass h-full w-full p-6">
@@ -58,19 +68,9 @@
 				>
 					<p>{m.remove_friend()}</p>
 				</Button>
-				<form method="POST" action="?/invitePrivateGame">
-					<input hidden type="text" name="userId" value={data.userProfile.id} />
-					<Button
-						type="submit"
-						onclick={() => {
-							toast.success(m.game_invite_sent());
-						}}
-						class="glassbutton"
-						variant="outline"
-					>
-						{m.invite_play()}
-					</Button>
-				</form>
+				<Button type="submit" onclick={handleInvite} class="glassbutton" variant="outline">
+					{m.invite_play()}
+				</Button>
 			{:else if userType === 'someone'}
 				<Button
 					onclick={async () => {

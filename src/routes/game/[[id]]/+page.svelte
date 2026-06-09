@@ -3,13 +3,13 @@
 	import GameLobby from '$lib/components/GameLobby.svelte';
 	import { colyseusClient } from '$lib/colyseusClient';
 	import { onMount } from 'svelte';
-	import type { Room } from '@colyseus/sdk';
+	import { MatchMakeError, type Room } from '@colyseus/sdk';
 	import type { PageProps } from './$types';
+	import { applyAction } from '$app/forms';
 
 	const { params, data }: PageProps = $props();
 
 	let room: Room | null = $state(null);
-	let errorMsg: string = $state('');
 	let started = $state(false);
 
 	onMount(() => {
@@ -34,7 +34,25 @@
 					started = true;
 				});
 			} catch (err) {
-				if (!cancelled) errorMsg = err instanceof Error ? err.message : String(err);
+				if (err instanceof MatchMakeError) {
+					if (err.code == 400 && err.message.match(/room ".*" not found/)) {
+						return await applyAction({
+							type: 'error',
+							status: 400,
+							error: { message: "Room doesn't exist" }
+						});
+					}
+					return await applyAction({
+						type: 'error',
+						status: err.code,
+						error: { message: err.message }
+					});
+				}
+				return await applyAction({
+					type: 'error',
+					status: 400,
+					error: { message: err instanceof Error ? err.message : String(err) }
+				});
 			}
 		})();
 
@@ -57,9 +75,7 @@
 
 {#if !started}
 	<div class="flex h-full min-h-screen items-center justify-center">
-		{#if errorMsg}
-			<p class="font-bold text-red-500">Error: {errorMsg}</p>
-		{:else if room}
+		{#if room}
 			<GameLobby {room} user={data.user!} />
 		{:else}
 			<span class="text-sm tracking-widest uppercase opacity-40">Connexion...</span>
