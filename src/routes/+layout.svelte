@@ -11,8 +11,15 @@
 	import { shaderTheme } from '$lib/shader-theme';
 	import type { LayoutProps } from './$types';
 	import { getReactiveLocale } from '$lib/locale.svelte';
+	import { getTextDirection } from '$lib/paraglide/runtime';
 
 	let { children, data }: LayoutProps = $props();
+
+	$effect(() => {
+		const locale = getReactiveLocale();
+		document.documentElement.lang = locale;
+		document.documentElement.dir = getTextDirection(locale);
+	});
 
 	const isAuthRoute = $derived(
 		page.url.pathname.startsWith('/login') || page.url.pathname.startsWith('/register')

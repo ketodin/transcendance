@@ -28,7 +28,7 @@ export const actions: Actions = {
 		}
 
 		const redirectTo = url.searchParams.get('redirectTo');
-		const redirectUrl = redirectTo ? decodeURIComponent(redirectTo) : '/';
+		const redirectUrl = redirectTo ? decodeURIComponent(redirectTo) : '';
 
 		return redirect(303, '/' + redirectUrl);
 	}
