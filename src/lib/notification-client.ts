@@ -1,4 +1,5 @@
-import { toast } from '$lib/components/toast';
+import { toast } from 'svelte-sonner';
+import GameInviteToast from '$lib/components/GameInviteToast.svelte';
 import type { Room } from '@colyseus/sdk';
 import { m } from '$lib/paraglide/messages';
 import { list as getFriendList } from '$lib/friends.remote';
@@ -23,17 +24,15 @@ export function attachNotificationListeners(room: Room) {
 	const NOTIF_INVITE: string = 'notification_invite_request';
 	room.onMessage(
 		`${NOTIF_INVITE}_received`,
-		({ fromUserName, roomId }: { fromUserId: string; fromUserName: string; roomId: string }) => {
-			toast.info(m.game_invite_received() + fromUserName, {
-				action: {
-					label: ' ✔ ',
-					onClick: async () => {
+		({ fromUserName, roomId }: { fromUserName: string; roomId: string }) => {
+			const toastId = toast.custom(GameInviteToast, {
+				componentProps: {
+					message: m.game_invite_received() + fromUserName,
+					onAccept: async () => {
+						toast.dismiss(toastId);
 						await goto(resolve('/game/[[id]]', { id: roomId }), { invalidateAll: true });
-					}
-				},
-				cancel: {
-					label: ' ✖ ',
-					onClick: () => {}
+					},
+					onDeny: () => toast.dismiss(toastId)
 				}
 			});
 		}
