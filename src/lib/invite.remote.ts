@@ -35,6 +35,8 @@ export const accept = command(
 			statusHub.notify(toUserId, 'invite_request_accepted', {
 				fromUserName: locals.user.name
 			});
+		} else {
+			return error(410, 'Room no longer exists');
 		}
 
 		return { roomId };

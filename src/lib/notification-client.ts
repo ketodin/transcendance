@@ -5,6 +5,8 @@ import { list as getFriendList } from '$lib/friends.remote';
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 import * as invite from '$lib/invite.remote';
+import { applyAction } from '$app/forms';
+import type { HttpError } from '@sveltejs/kit';
 
 export function attachNotificationListeners(room: Room) {
 	const NOTIF_FRIEND: string = 'notification_friend_request';
@@ -38,7 +40,16 @@ export function attachNotificationListeners(room: Room) {
 				action: {
 					label: ' ✔ ',
 					onClick: async () => {
-						await invite.accept({ roomId, toUserId: fromUserId });
+						try {
+							await invite.accept({ roomId, toUserId: fromUserId });
+						} catch (err) {
+							const error = err as HttpError;
+							return await applyAction({
+								type: 'error',
+								status: error.status,
+								error: { message: error.body.message }
+							});
+						}
 						await goto(resolve('/game/[[id]]', { id: roomId }), { invalidateAll: true });
 					}
 				},
