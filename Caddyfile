@@ -1,4 +1,4 @@
-https://localhost {
+https://*.42lyon.fr, https://localhost {
     tls /etc/caddy/certs/cert.pem /etc/caddy/certs/key.pem
     encode gzip
     reverse_proxy transcendence:3000 {

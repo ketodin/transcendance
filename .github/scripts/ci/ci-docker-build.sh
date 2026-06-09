@@ -13,11 +13,7 @@ trap cleanup EXIT
 
 log_group "Preparing Docker inputs"
 mkdir -p data
-cat > .env.prod <<'EOF'
-BETTER_AUTH_SECRET=ci-not-for-production-secret-please-change
-ORIGIN=http://localhost:3000
-BETTER_AUTH_URL=http://localhost:3000
-EOF
+touch .env.docker
 log_end
 
 log_group "Validating compose configuration"
