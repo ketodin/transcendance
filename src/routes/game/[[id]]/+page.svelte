@@ -1,13 +1,11 @@
 <script lang="ts">
 	import GameWindow from '$lib/components/GameWindow.svelte';
 	import GameLobby from '$lib/components/GameLobby.svelte';
-	import { colyseusClient } from '$lib/colyseusClient';
 	import { onMount } from 'svelte';
-	import { MatchMakeError, type Room } from '@colyseus/sdk';
-	import type { PageProps } from './$types';
-	import { applyAction } from '$app/forms';
-	import { m } from '$lib/paraglide/messages';
 	import { browser } from '$app/environment';
+	import { connectToRoom } from './client';
+	import type { Room } from '@colyseus/sdk';
+	import type { PageProps } from './$types';
 
 	const { params, data }: PageProps = $props();
 
@@ -19,93 +17,25 @@
 		return () => document.body.classList.remove('game-mode');
 	});
 
-
-	const reconnectRoom = async () => {
-		const reconnectionToken = localStorage.getItem('reconnectionToken');
-		if (!reconnectionToken)
-			return null;
-		try {
-			const newRoom = await colyseusClient!.reconnect(reconnectionToken);
-			if (params.id && params.id !== newRoom.roomId) {
-				await newRoom.leave();
-				return null;
-			}
-			return newRoom;
-		}
-		catch {
-			localStorage.removeItem('reconnectionToken');
-			return null;
-		}
-	}
-
 	$effect(() => {
 		if (!browser) return;
-		let cancelled = false;
 
-		void (async () => {
-			try {
+		connectToRoom(params.id).then((result) => {
+			room = result;
+			if (!room) return;
+			room.onMessage('game_start', () => {
+				started = true;
+			});
 
-				const reconnectedRoom = await reconnectRoom();
-
-				const newRoom = reconnectedRoom ? reconnectedRoom : (params.id
-					? await colyseusClient!.joinById(params.id, {})
-					: await colyseusClient!.joinOrCreate('tank_room', {}));
-
-				if (cancelled) {
-					void newRoom.leave();
-					return;
-				}
-				room = newRoom;
-				newRoom.onMessage('game_start', () => {
-					started = true;
-				});
-
-				localStorage.setItem('reconnectionToken', newRoom.reconnectionToken);
-
-			} catch (err) {
-				if (err instanceof MatchMakeError) {
-					if (err.code === 400 && err.message.match(/room ".*" not found/)) {
-						return await applyAction({
-							type: 'error',
-							status: 400,
-							error: { message: m.error_room_not_exist() }
-						});
-					}
-					if (err.message === 'ALREADY_IN_A_GAME') {
-						return await applyAction({
-							type: 'error',
-							status: err.code,
-							error: { message: m.error_already_game() }
-						});
-					} else if (err.message === 'UNAUTHORIZED') {
-						return await applyAction({
-							type: 'error',
-							status: err.code,
-							error: { message: m.error_not_auth() }
-						});
-					} else {
-						return await applyAction({
-							type: 'error',
-							status: err.code,
-							error: { message: err.message }
-						});
-					}
-				}
-				return await applyAction({
-					type: 'error',
-					status: 400,
-					error: { message: err instanceof Error ? err.message : String(err) }
-				});
-			}
-		})();
+		}).catch(() => {}); // already handled in the function
 
 		return () => {
-			cancelled = true;
 			void room?.leave();
 			room = null;
 			started = false;
 		};
-	});
+
+	})
 </script>
 
 {#key room}
