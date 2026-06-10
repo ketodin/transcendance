@@ -13,13 +13,19 @@ DOCKER_ENVFILE	= .env.docker
 
 all: up
 
-setup: $(CERTS) $(DOCKER_ENVFILE)
+setup: $(CERTS) envfile
+
+setup-update:
 
 $(CERTS):
 	@rm -rf $(CERTS_DIR)
 	@echo "Generating certificates..."
 	@sh $(SCRIPTS_DIR)/create-certs.sh
 	@echo "Certificates created in $(CERTS_DIR)/"
+
+envfile: $(DOCKER_ENVFILE)
+	@sed -i 's/ORIGIN=.*/ORIGIN=$(shell hostname)/' .env.docker
+	@sed -i 's/BETTER_AUTH_URL=.*/BETTER_AUTH_URL=$(shell hostname)/' .env.docker
 
 $(DOCKER_ENVFILE):
 	@echo "Generating env file..."
@@ -41,4 +47,4 @@ prune: fclean
 
 re: fclean all
 
-.PHONY: all setup up down fclean re setup prune
+.PHONY: all setup up down fclean re setup prune envfile
