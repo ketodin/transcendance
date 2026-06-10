@@ -18,7 +18,7 @@
 				onclick={() => friendListOpen.update((v) => !v)}
 				aria-label="Toggle friends list"
 			>
-				<Users size={20} class="hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition"/>
+				<Users size={20} class="transition hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
 			</button>
 			<a href={resolve('/')} class="flex">
 				<img src="/favicon.png" alt="Logo" class="logo" />

@@ -16,12 +16,18 @@
 
 	let sortedFriends = $derived(
 		[...friendList].sort((a, b) => {
-			const aScore = a.friendRequestStatus === 'ACCEPTED'
-				? ($presenceById[a.id] ? 3 : 2)
-				: statusOrder[a.friendRequestStatus];
-			const bScore = b.friendRequestStatus === 'ACCEPTED'
-				? ($presenceById[b.id] ? 3 : 2)
-				: statusOrder[b.friendRequestStatus];
+			const aScore =
+				a.friendRequestStatus === 'ACCEPTED'
+					? $presenceById[a.id]
+						? 3
+						: 2
+					: statusOrder[a.friendRequestStatus];
+			const bScore =
+				b.friendRequestStatus === 'ACCEPTED'
+					? $presenceById[b.id]
+						? 3
+						: 2
+					: statusOrder[b.friendRequestStatus];
 			return bScore - aScore;
 		})
 	);
@@ -62,7 +68,7 @@
 	<div class="relative mb-4 flex items-center justify-center">
 		<h2 class="text-base font-semibold tracking-[0.08em] uppercase opacity-60">{m.friends()}</h2>
 		<button
-			class="absolute right-0 flex cursor-pointer items-center justify-center rounded-[4px] border-0 bg-transparent p-[2px] text-inherit opacity-50 transition-[opacity,background-color] duration-200 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition hover:opacity-100"
+			class="absolute right-0 flex cursor-pointer items-center justify-center rounded-[4px] border-0 bg-transparent p-[2px] text-inherit opacity-50 transition transition-[opacity,background-color] duration-200 hover:opacity-100 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]"
 			onclick={() => (showAddFriend = !showAddFriend)}
 			title="Add a friend"
 		>
@@ -75,7 +81,9 @@
 	{#if showAddFriend}
 		<form
 			transition:slide={{ duration: 300 }}
-			class="glass mb-3 flex flex-col gap-[0.4rem] p-[0.6rem]" {...friends.send}>
+			class="glass mb-3 flex flex-col gap-[0.4rem] p-[0.6rem]"
+			{...friends.send}
+		>
 			<Input {...friends.send.fields.email.as('text')} placeholder={m.mail_place_holder()} />
 			{#each friends.send.fields.email.issues() as issue (issue.message)}
 				<p class="text-xs text-red-400">{issue.message}</p>
@@ -96,11 +104,11 @@
 		--layout-gap: 1rem;
 		--sidebar-width: 240px;
 	}
-.add-btn-icon {
-    transition: transform 0.3s ease;
-}
+	.add-btn-icon {
+		transition: transform 0.3s ease;
+	}
 
-.add-btn-icon.rotated {
-    transform: rotate(45deg);
-}
+	.add-btn-icon.rotated {
+		transform: rotate(45deg);
+	}
 </style>

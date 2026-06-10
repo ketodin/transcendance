@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Check from '$lib/components/Check.svelte'
-	import X from '$lib/components/X.svelte'
+	import Check from '$lib/components/Check.svelte';
+	import X from '$lib/components/X.svelte';
 
 	let {
 		message,
@@ -13,8 +13,9 @@
 	} = $props();
 </script>
 
-<div class="glass flex items-center justify-between gap-4 px-4 py-3"
-				style="animation: breathe 2.2s ease-in-out infinite;"
+<div
+	class="glass flex items-center justify-between gap-4 px-4 py-3"
+	style="animation: breathe 2.2s ease-in-out infinite;"
 >
 	<span>{message}</span>
 	<div class="flex gap-4">
