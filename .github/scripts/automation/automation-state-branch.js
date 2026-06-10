@@ -1,4 +1,4 @@
-import core from '@actions/core';
+import { core } from '@actions/core';
 import * as github from '@actions/github';
 import log from '../utils/log.js';
 import makeUtils from './automation-utils.js';
