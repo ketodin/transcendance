@@ -76,6 +76,7 @@ export default class GameScene extends Scene {
 	leaveBtnH = 0;
 	leaveBtnHovered = false;
 	showingLeaveConfirm = false;
+	dismissLeaveConfirm: (() => void) | null = null;
 	fuelBg!: GameObjects.Graphics;
 	fuelFill!: GameObjects.Graphics;
 	fuelIcon!: GameObjects.Text;

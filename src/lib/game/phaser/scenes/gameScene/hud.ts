@@ -25,45 +25,74 @@ export function updateHealthBar(scene: GameScene, health: number) {
 }
 
 export function showGameOver(scene: GameScene, winner: number) {
+	// If the player had the leave-confirm window open, close it so the two
+	// modals don't overlap when the opponent leaves / the game ends.
+	scene.dismissLeaveConfirm?.();
+
+	const w = scene.scale.width;
+	const h = scene.scale.height;
+
+	const overlay = scene.add.graphics().setDepth(30);
+	overlay.fillStyle(0x000000, 0.65);
+	overlay.fillRect(0, 0, w, h);
+
+	// Block clicks from reaching the game behind the overlay.
 	scene.add
-		.graphics()
-		.setDepth(20)
-		.fillStyle(COLORS.navy, 0.88)
-		.fillRect(
-			scene.scale.width / 2 - scene.sw(350),
-			scene.scale.height / 2 - scene.sh(110),
-			scene.sw(700),
-			scene.sh(220)
-		);
+		.zone(w / 2, h / 2, w, h)
+		.setDepth(30)
+		.setInteractive();
+
+	const panelW = scene.sw(420);
+	const panelH = scene.sh(220);
+	const px = w / 2 - panelW / 2;
+	const py = h / 2 - panelH / 2;
+
+	const panel = scene.add.graphics().setDepth(31);
+	panel.fillStyle(COLORS.navy, 0.97);
+	panel.fillRoundedRect(px, py, panelW, panelH, scene.sw(8));
+	panel.lineStyle(1, COLORS.neonGlow, 0.35);
+	panel.strokeRoundedRect(px, py, panelW, panelH, scene.sw(8));
 
 	scene.add
-		.text(
-			scene.scale.width / 2,
-			scene.scale.height / 2 - scene.sh(70),
-			`${scene.playerNames[winner]} Wins!`,
-			{
-				fontSize: `${Math.round(scene.sh(52))}px`,
-				color: COLOR_STRINGS.gold,
-				stroke: COLOR_STRINGS.navy,
-				strokeThickness: 6
-			}
-		)
-		.setOrigin(0.5)
-		.setDepth(21);
-
-	scene.add
-		.text(scene.scale.width / 2, scene.scale.height / 2 + scene.sh(20), 'Press R to play again', {
-			fontSize: `${Math.round(scene.sh(22))}px`,
-			color: COLOR_STRINGS.neonGlow,
+		.text(w / 2, py + scene.sh(85), `${scene.playerNames[winner]} Wins!`, {
+			fontSize: `${Math.round(scene.sh(46))}px`,
+			color: COLOR_STRINGS.gold,
 			stroke: COLOR_STRINGS.navy,
-			strokeThickness: 4
+			strokeThickness: 6
 		})
 		.setOrigin(0.5)
-		.setDepth(21);
+		.setDepth(32);
 
-	scene.input.keyboard!.once('keydown-R', () => {
-		scene.returningToLobby = true;
+	const btnW = scene.sw(190);
+	const btnH = scene.sh(48);
+	const btnCx = w / 2;
+	const btnY = py + scene.sh(160);
+
+	const homeGfx = scene.add.graphics().setDepth(32);
+	homeGfx.fillStyle(0x0a1430, 1);
+	homeGfx.fillRoundedRect(btnCx - btnW / 2, btnY - btnH / 2, btnW, btnH, scene.sw(5));
+	homeGfx.lineStyle(scene.sw(1.5), COLORS.neonGlow, 1);
+	homeGfx.strokeRoundedRect(btnCx - btnW / 2, btnY - btnH / 2, btnW, btnH, scene.sw(5));
+
+	scene.add
+		.text(btnCx, btnY, 'RETURN HOME', {
+			fontSize: `${Math.round(scene.sh(16))}px`,
+			color: COLOR_STRINGS.neonGlow,
+			fontStyle: 'bold',
+			stroke: COLOR_STRINGS.navy,
+			strokeThickness: 3
+		})
+		.setOrigin(0.5)
+		.setDepth(33);
+
+	const homeZone = scene.add
+		.zone(btnCx, btnY, btnW, btnH)
+		.setDepth(33)
+		.setInteractive({ useHandCursor: true });
+
+	homeZone.on('pointerdown', async () => {
 		void scene.room?.leave();
+		await goto(resolve('/'));
 	});
 }
 
@@ -176,7 +205,9 @@ export function showLeaveConfirm(scene: GameScene) {
 		stayZone.destroy();
 		leaveZone.destroy();
 		scene.showingLeaveConfirm = false;
+		scene.dismissLeaveConfirm = null;
 	};
+	scene.dismissLeaveConfirm = dismiss;
 
 	stayZone.on('pointerdown', dismiss);
 	leaveZone.on('pointerdown', async () => {
