@@ -6,6 +6,7 @@
 	import { MatchMakeError, type Room } from '@colyseus/sdk';
 	import type { PageProps } from './$types';
 	import { applyAction } from '$app/forms';
+	import { m } from '$lib/paraglide/messages';
 
 	const { params, data }: PageProps = $props();
 
@@ -35,18 +36,32 @@
 				});
 			} catch (err) {
 				if (err instanceof MatchMakeError) {
-					if (err.code == 400 && err.message.match(/room ".*" not found/)) {
+					if (err.code === 400 && err.message.match(/room ".*" not found/)) {
 						return await applyAction({
 							type: 'error',
 							status: 400,
-							error: { message: "Room doesn't exist" }
+							error: { message: m.error_room_not_exist() }
 						});
 					}
-					return await applyAction({
-						type: 'error',
-						status: err.code,
-						error: { message: err.message }
-					});
+					if (err.message === 'ALREADY_IN_A_GAME') {
+						return await applyAction({
+							type: 'error',
+							status: err.code,
+							error: { message: m.error_already_game() }
+						});
+					} else if (err.message === 'UNAUTHORIZED') {
+						return await applyAction({
+							type: 'error',
+							status: err.code,
+							error: { message: m.error_not_auth() }
+						});
+					} else {
+						return await applyAction({
+							type: 'error',
+							status: err.code,
+							error: { message: err.message }
+						});
+					}
 				}
 				return await applyAction({
 					type: 'error',

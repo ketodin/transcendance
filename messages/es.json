@@ -55,6 +55,7 @@
 	"friend_request_denied": "{name} ha rechazado tu solicitud de amistad",
 	"friend_request_deny": "Solicitud de amistad rechazada",
 	"removed_friend": "Eliminado de la lista de amigos",
+	"no_friend": "Nadie en el horizonte aún...",
 	"accept": "Aceptar",
 	"deny": "Rechazar",
 
@@ -90,6 +91,9 @@
 	"error_generic": "Ocurrió un error. Por favor, inténtelo de nuevo.",
 	"error_session_expired": "Sesión expirada, por favor empiece de nuevo.",
 	"error_invalid_code": "Código incorrecto. Por favor, inténtelo de nuevo.",
+	"error_not_auth": "No autenticado.",
+	"error_already_game": "Ya estás en el juego.",
+	"error_room_not_exist": "La sala no existe",
 
 	"totp_backup_instruction": "Ingrese uno de sus códigos de respaldo.",
 	"totp_app_instruction": "Ingrese el código de 6 dígitos de su aplicación de autenticación.",

@@ -43,7 +43,7 @@
 			<form method="POST" action="?/newPrivateGame">
 				<button
 					type="submit"
-					class="glassbutton flex items-center justify-center px-6 py-4 text-lg font-bold tracking-widest uppercase opacity-30 sm:px-10 sm:py-5 sm:text-xl lg:px-16 lg:py-6 lg:text-2xl"
+					class="glassbutton flex items-center justify-center px-6 py-4 text-lg font-bold tracking-widest uppercase sm:px-10 sm:py-5 sm:text-xl lg:px-16 lg:py-6 lg:text-2xl"
 				>
 					{m.private_game()}
 				</button>

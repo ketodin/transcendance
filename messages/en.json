@@ -55,6 +55,7 @@
 	"friend_request_denied": "{name} declined your friend request",
 	"friend_request_deny": "Friend request denied",
 	"removed_friend": "Removed from friendlist",
+	"no_friend": "No one on the horizon yet...",
 	"accept": "Accept",
 	"deny": "Deny",
 
@@ -90,6 +91,9 @@
 	"error_generic": "An error occurred. Please try again.",
 	"error_session_expired": "Session expired, please start over.",
 	"error_invalid_code": "Incorrect code. Please try again.",
+	"error_not_auth": "Not authenticated.",
+	"error_already_game": "Already in a game.",
+	"error_room_not_exist": "Room doesn't exist",
 
 	"totp_backup_instruction": "Enter one of your backup codes.",
 	"totp_app_instruction": "Enter the 6-digit code from your authenticator app.",

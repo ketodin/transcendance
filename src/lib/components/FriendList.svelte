@@ -77,6 +77,8 @@
 
 	{#each sortedFriends as friend (friend.id)}
 		<FriendCard {friend} online={$presenceById[friend.id] ?? false} />
+	{:else}
+		<p class="text-center text-sm opacity-50">{m.no_friend()}</p>
 	{/each}
 </div>
 
