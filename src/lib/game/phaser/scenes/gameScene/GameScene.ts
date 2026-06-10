@@ -15,7 +15,7 @@ import { createBackground, setupUI } from './setup';
 import { connectToServer } from './server';
 import { drawLastShotTrail, drawTrajectory } from './effects';
 import { updateWeaponUI } from './weaponUI';
-import { drawFireButton, drawChatButton, drawMoveButton } from './buttons';
+import { drawFireButton, drawChatButton, drawMoveButton, drawLeaveButton } from './buttons';
 import { updateFuelBar, updateHealthBar } from './hud';
 
 export default class GameScene extends Scene {
@@ -68,14 +68,20 @@ export default class GameScene extends Scene {
 	chatBtnW = 0;
 	chatBtnH = 0;
 	chatBtnHovered = false;
+	leaveBtn!: GameObjects.Graphics;
+	leaveBtnLabel!: GameObjects.Text;
+	leaveBtnCx = 0;
+	leaveBtnCy = 0;
+	leaveBtnW = 0;
+	leaveBtnH = 0;
+	leaveBtnHovered = false;
+	showingLeaveConfirm = false;
 	fuelBg!: GameObjects.Graphics;
 	fuelFill!: GameObjects.Graphics;
 	fuelIcon!: GameObjects.Text;
 	healthBg!: GameObjects.Graphics;
 	healthFill!: GameObjects.Graphics;
 	healthIcon!: GameObjects.Text;
-	controlsBg!: GameObjects.Graphics;
-	controlsText!: GameObjects.Text;
 	trajectoryGfx!: GameObjects.Graphics;
 	weaponUiGfx!: GameObjects.Graphics;
 	weaponNameLabel!: GameObjects.Text;
@@ -278,6 +284,7 @@ export default class GameScene extends Scene {
 		drawChatButton(this, this.chatBtnHovered);
 		drawMoveButton(this, 0, this.moveLeftBtnHovered && isMyTurn, !isMyTurn);
 		drawMoveButton(this, 1, this.moveRightBtnHovered && isMyTurn, !isMyTurn);
+		drawLeaveButton(this, this.leaveBtnHovered);
 
 		if (phase === 'AIMING' && currentPlayer === this.myPlayerIndex) {
 			const tankForTraj = { ...data.tanks[currentPlayer], turretAngle: this.localTurretAngle };
@@ -291,7 +298,7 @@ export default class GameScene extends Scene {
 			this.trajectoryGfx.clear();
 		}
 
-		if (phase !== 'OVER' && currentPlayer === this.myPlayerIndex) {
+		if (phase !== 'OVER' && currentPlayer === this.myPlayerIndex && !this.showingLeaveConfirm) {
 			this.handleInput(phase);
 		}
 	}
