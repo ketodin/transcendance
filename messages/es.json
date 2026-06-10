@@ -109,5 +109,8 @@
 	"new_password": "Nueva contraseña",
 	"confirm_new_password": "Confirmar nueva contraseña",
 	"save": "Guardar",
-	"gameStartingIn": "La partida comienza en"
+	"gameStartingIn": "La partida comienza en",
+	"name_changed": "Nombre de usuario cambiado",
+	"avatar_changed": "Avatar cambiado",
+	"password_changed": "Contraseña cambiada"
 }

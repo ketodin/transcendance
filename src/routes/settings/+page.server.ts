@@ -4,7 +4,7 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth } from '$lib/server/auth';
 import db from '$lib/server/db';
 import { enableSchema, verifySchema, disableSchema } from '$lib/components/totp/schema';
-import { avatarSchema, nameSchema } from './schema';
+import { avatarSchema, nameSchema, changePasswordSchema } from './schema';
 import { m } from '$lib/paraglide/messages';
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -20,6 +20,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		hasPassword: credentialAccount !== null,
 		nameForm: await superValidate({ name: locals.user!.name }, zod4(nameSchema)),
 		avatarForm: await superValidate(zod4(avatarSchema)),
+		changePasswordForm: await superValidate(zod4(changePasswordSchema)),
 		enableForm: await superValidate(zod4(enableSchema)),
 		verifyForm: await superValidate(zod4(verifySchema)),
 		disableForm: await superValidate(zod4(disableSchema))
@@ -52,6 +53,30 @@ export const actions: Actions = {
 		});
 		return message(form, 'Updated Name');
 	},
+	changePassword: async ({ request }) => {
+		const form = await superValidate(request, zod4(changePasswordSchema));
+		if (!form.valid) return fail(400, { form });
+
+		try {
+			await auth.api.changePassword({
+				body: {
+					currentPassword: form.data.currentPassword,
+					newPassword: form.data.newPassword,
+					revokeOtherSessions: true
+				},
+				headers: request.headers
+			});
+		} catch (error: unknown) {
+			const code = (error as { body?: { code?: string } })?.body?.code;
+			if (code === 'INVALID_PASSWORD') {
+				return setError(form, 'currentPassword', m.error_invalid_password());
+			}
+			return setError(form, 'currentPassword', m.error_generic());
+		}
+
+		return message(form, 'Password changed');
+	},
+
 	enable: async ({ request }) => {
 		const form = await superValidate(request, zod4(enableSchema));
 		if (!form.valid) return fail(400, { form });
