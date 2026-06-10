@@ -20,7 +20,6 @@ import { updateFuelBar, updateHealthBar } from './hud';
 
 export default class GameScene extends Scene {
 	room: Room<GameRoomState>;
-	returningToLobby = false;
 	myPlayerIndex: 0 | 1 = 0;
 
 	roomReady = false;
@@ -76,6 +75,7 @@ export default class GameScene extends Scene {
 	leaveBtnH = 0;
 	leaveBtnHovered = false;
 	showingLeaveConfirm = false;
+	dismissLeaveConfirm: (() => void) | null = null;
 	fuelBg!: GameObjects.Graphics;
 	fuelFill!: GameObjects.Graphics;
 	fuelIcon!: GameObjects.Text;
