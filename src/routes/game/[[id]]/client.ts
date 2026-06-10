@@ -5,8 +5,7 @@ import { m } from '$lib/paraglide/messages';
 
 const reconnectRoom = async (roomId?: string) => {
 	const reconnectionToken = localStorage.getItem('reconnectionToken');
-	if (!reconnectionToken)
-		return null;
+	if (!reconnectionToken) return null;
 	try {
 		const newRoom = await colyseusClient!.reconnect(reconnectionToken);
 		if (roomId && roomId !== newRoom.roomId) {
@@ -14,12 +13,11 @@ const reconnectRoom = async (roomId?: string) => {
 			return null;
 		}
 		return newRoom;
-	}
-	catch {
+	} catch {
 		localStorage.removeItem('reconnectionToken');
 		return null;
 	}
-}
+};
 
 const handleMatchMakeError = (err: MatchMakeError) => {
 	let message: string;
@@ -35,17 +33,20 @@ const handleMatchMakeError = (err: MatchMakeError) => {
 	return { status: err.code, error: { message: message } };
 };
 
-export const connectToRoom = async (roomId?: string ) => {
+export const connectToRoom = async (roomId?: string) => {
 	try {
-		const room = await reconnectRoom(roomId) ?? (roomId
-			? await colyseusClient!.joinById(roomId, {})
-			: await colyseusClient!.joinOrCreate('tank_room', {}));
+		const room =
+			(await reconnectRoom(roomId)) ??
+			(roomId
+				? await colyseusClient!.joinById(roomId, {})
+				: await colyseusClient!.joinOrCreate('tank_room', {}));
 		localStorage.setItem('reconnectionToken', room.reconnectionToken);
 		return room;
 	} catch (err) {
-		const msg = err instanceof MatchMakeError
-		? handleMatchMakeError(err)
-		: { status: 400,  error: { message: err instanceof Error ? err.message : String(err) } };
+		const msg =
+			err instanceof MatchMakeError
+				? handleMatchMakeError(err)
+				: { status: 400, error: { message: err instanceof Error ? err.message : String(err) } };
 		await applyAction({ type: 'error', ...msg });
 		return null;
 	}

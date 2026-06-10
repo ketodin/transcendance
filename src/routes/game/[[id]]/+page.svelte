@@ -20,22 +20,22 @@
 	$effect(() => {
 		if (!browser) return;
 
-		connectToRoom(params.id).then((result) => {
-			room = result;
-			if (!room) return;
-			room.onMessage('game_start', () => {
-				started = true;
-			});
-
-		}).catch(() => {}); // already handled in the function
+		connectToRoom(params.id)
+			.then((result) => {
+				room = result;
+				if (!room) return;
+				room.onMessage('game_start', () => {
+					started = true;
+				});
+			})
+			.catch(() => {}); // already handled in the function
 
 		return () => {
 			void room?.leave();
 			room = null;
 			started = false;
 		};
-
-	})
+	});
 </script>
 
 {#key room}
