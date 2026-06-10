@@ -8,7 +8,7 @@ const StartGame = (parent: string, room: Room<GameRoomState>) => {
 	return new Game({
 		...commonGameConfig,
 		scene: [new GameScene({ room: room })],
-		parent,
+		parent
 	});
 };
 
