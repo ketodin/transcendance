@@ -12,12 +12,10 @@
 	import * as Form from '$lib/components/ui/form';
 	import { superForm, fileProxy } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
-	import { avatarSchema, nameSchema } from './schema';
+	import { avatarSchema, nameSchema, changePasswordSchema } from './schema';
 	import { untrack } from 'svelte';
 	import { toast } from '$lib/components/toast';
 	import { resolve } from '$app/paths';
-	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import { authClient } from '$lib/auth-client';
 
 	let { data }: PageProps = $props();
 
@@ -29,6 +27,7 @@
 				if (form.valid) {
 					nameForm.reset({ data: { name: form.data.name } });
 					editing = false;
+					toast.success(m.name_changed());
 				}
 			}
 		}
@@ -44,21 +43,36 @@
 				if (!form.valid && form.errors.file) {
 					toast.error(form.errors.file?.[0]);
 				}
+				if (form.valid) {
+					avatarForm.reset();
+					toast.success(m.avatar_changed());
+				}
 			}
 		}
 	);
 
 	const { enhance: avatarEnhance } = avatarForm;
 
+	const passwordForm = superForm(
+		untrack(() => data.changePasswordForm),
+		{
+			validators: zod4Client(changePasswordSchema),
+			onUpdated({ form }) {
+				if (form.valid) {
+					passwordForm.reset();
+					toast.success(m.password_changed());
+				}
+			}
+		}
+	);
+
+	const { form: passwordData, enhance: passwordEnhance } = passwordForm;
+
 	const file = fileProxy(avatarForm, 'file');
 
 	let fileInput: HTMLInputElement;
 	let nameFormEl: HTMLFormElement | undefined = $state();
 	let editing = $state(false);
-	async function handleDelete() {
-		await authClient.deleteUser();
-		await goto(resolve('/register'), { invalidateAll: true });
-	}
 </script>
 
 <form
@@ -139,31 +153,12 @@
 				onclick={async () => {
 					await disconnectStatusRoom();
 					await signOut();
-					await goto(resolve('/login'), { invalidateAll: true });
+					await goto(resolve('/login'));
 				}}
 			>
 				{m.logout()}
 				<LogOut class="text-red-400 transition-colors group-hover:text-white" />
 			</Button>
-			<AlertDialog.Root>
-				<AlertDialog.Trigger class="glassbutton px-6 py-1 text-red-400">
-					{m.delete_account()}
-				</AlertDialog.Trigger>
-				<AlertDialog.Content class="glass">
-					<AlertDialog.Header>
-						<AlertDialog.Title>{m.confirm_delete()}</AlertDialog.Title>
-						<AlertDialog.Description>
-							{m.delete_speech()}
-						</AlertDialog.Description>
-					</AlertDialog.Header>
-					<AlertDialog.Footer>
-						<AlertDialog.Cancel class="glassbutton">{m.cancel()}</AlertDialog.Cancel>
-						<Button class="glassbutton text-red-400" onclick={handleDelete}>
-							{m.confirm()}
-						</Button>
-					</AlertDialog.Footer>
-				</AlertDialog.Content>
-			</AlertDialog.Root>
 		</div>
 	</div>
 	{#if data.hasPassword}
@@ -172,33 +167,61 @@
 				<KeyRound size={18} />
 				{m.change_password()}
 			</h2>
-			<div class="password-fields">
-				<div class="field">
-					<label for="currentPassword">{m.current_password_placeholder()}</label>
-					<Input
-						id="currentPassword"
-						type="password"
-						name="currentPassword"
-						autocomplete="current-password"
-					/>
+			<form method="POST" action="?/changePassword" use:passwordEnhance>
+				<div class="password-fields">
+					<Form.Field form={passwordForm} name="currentPassword">
+						<Form.Control>
+							{#snippet children({ props })}
+								<div class="field">
+									<Form.Label>{m.current_password_placeholder()}</Form.Label>
+									<Input
+										{...props}
+										type="password"
+										autocomplete="current-password"
+										bind:value={$passwordData.currentPassword}
+									/>
+								</div>
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field form={passwordForm} name="newPassword">
+						<Form.Control>
+							{#snippet children({ props })}
+								<div class="field">
+									<Form.Label>{m.new_password()}</Form.Label>
+									<Input
+										{...props}
+										type="password"
+										autocomplete="new-password"
+										bind:value={$passwordData.newPassword}
+									/>
+								</div>
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field form={passwordForm} name="confirmPassword">
+						<Form.Control>
+							{#snippet children({ props })}
+								<div class="field">
+									<Form.Label>{m.confirm_new_password()}</Form.Label>
+									<Input
+										{...props}
+										type="password"
+										autocomplete="new-password"
+										bind:value={$passwordData.confirmPassword}
+									/>
+								</div>
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Button type="submit" class="glassbutton self-end" variant="outline">
+						{m.save()}
+					</Button>
 				</div>
-				<div class="field">
-					<label for="newPassword">{m.new_password()}</label>
-					<Input id="newPassword" type="password" name="newPassword" autocomplete="new-password" />
-				</div>
-				<div class="field">
-					<label for="confirmPassword">{m.confirm_new_password()}</label>
-					<Input
-						id="confirmPassword"
-						type="password"
-						name="confirmPassword"
-						autocomplete="new-password"
-					/>
-				</div>
-				<Button type="button" class="glassbutton self-end" variant="outline">
-					{m.save()}
-				</Button>
-			</div>
+			</form>
 		</div>
 
 		<div class="glass p-6">

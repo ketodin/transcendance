@@ -1,4 +1,4 @@
-const { getOctokit } = require('@actions/github');
+import { getOctokit } from '@actions/github';
 
 const CLOSING_ISSUES_QUERY = `
   query($owner: String!, $repo: String!, $pr: Int!) {
@@ -19,7 +19,7 @@ const CLOSING_ISSUES_QUERY = `
  * @param {string} token   - GitHub token from core.getInput('token')
  * @param {object} context - @actions/github context object
  */
-module.exports = (token, context) => {
+export default (token, context) => {
 	const octokit = getOctokit(token);
 	const { owner, repo } = context.repo;
 

@@ -6,7 +6,10 @@ import { formSchema } from './schema';
 import { m } from '$lib/paraglide/messages';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ locals }) => {
+	if (locals.user) {
+		return redirect(303, '/');
+	}
 	return { form: await superValidate(zod4(formSchema)) };
 };
 
