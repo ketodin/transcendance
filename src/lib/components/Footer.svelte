@@ -9,13 +9,13 @@
 >
 	<a
 		href={resolve('/legal/privacy')}
-		class="text-[0.7rem] whitespace-nowrap no-underline transition-colors duration-200 hover:text-white"
+		class="text-[0.7rem] whitespace-nowrap no-underline duration-200 opacity-70 hover:opacity-100 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition"
 	>
 		{m.privacy()}
 	</a>
 	<a
 		href={resolve('/legal/terms')}
-		class="text-[0.7rem] whitespace-nowrap no-underline transition-colors duration-200 hover:text-white"
+		class="text-[0.7rem] whitespace-nowrap no-underline duration-200 opacity-70 hover:opacity-100 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition"
 	>
 		{m.terms()}
 	</a>

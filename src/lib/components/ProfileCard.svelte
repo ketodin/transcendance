@@ -29,7 +29,7 @@
 >
 	<a
 		href={resolve('/settings')}
-		class="settings-link flex items-center justify-center rounded-[6px] p-1 text-inherit no-underline opacity-50 transition-[opacity,background-color] duration-150 hover:bg-white/10 hover:opacity-100"
+		class="flex items-center justify-center rounded-[6px] p-1 text-inherit no-underline opacity-50 duration-150 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition hover:opacity-100"
 	>
 		<Settings size={20} />
 	</a>

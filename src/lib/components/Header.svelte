@@ -11,7 +11,7 @@
 </script>
 
 <header class="fixed top-0 right-0 left-0 z-50 flex">
-	<div class="glass flex h-16 w-full justify-between !rounded-none px-5">
+	<div class="glass flex h-16 w-full justify-between rounded-none! px-5">
 		<div class="flex items-center gap-3">
 			<button
 				class="flex cursor-pointer rounded-md p-1.5 opacity-70 transition hover:bg-white/10 hover:opacity-100 lg:hidden"
@@ -25,7 +25,7 @@
 				<p class="text text-4xl font-bold">Transcendence</p>
 			</a>
 		</div>
-		<div class="flex items-center gap-2">
+		<div class="flex items-center gap-4">
 			<LanguagePicker />
 			<ThemeToggle />
 			<ProfileCard {user} />

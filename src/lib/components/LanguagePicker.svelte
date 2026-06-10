@@ -28,7 +28,7 @@
 <svelte:window onclick={handleClickOutside} />
 
 <div class="lang-picker relative flex items-center">
-	<button onclick={() => (open = !open)} class="glassbutton h-9 w-9 text-xl active:scale-95">
+	<button onclick={() => (open = !open)} class="items-center justify-center active:scale-95 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition">
 		{currentLang.flag}
 	</button>
 

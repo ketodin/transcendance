@@ -39,6 +39,7 @@ export function attachNotificationListeners(room: Room) {
 			roomId: string;
 		}) => {
 			const toastId = toast.custom(GameInviteToast, {
+				duration: Infinity,
 				componentProps: {
 					message: m.game_invite_received({ name: fromUserName }),
 					onAccept: async () => {
