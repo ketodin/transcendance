@@ -29,12 +29,23 @@
 >
 	<a
 		href={resolve('/settings')}
-		class="settings-link flex items-center justify-center rounded-[6px] p-1 text-inherit no-underline opacity-50 transition-[opacity,background-color] duration-150 hover:bg-white/10 hover:opacity-100"
+		class="flex items-center justify-center rounded-[6px] p-1 text-inherit no-underline opacity-50 transition duration-150 hover:opacity-100 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]"
 	>
 		<Settings size={20} />
 	</a>
-	<span class="hidden text-[13px] font-semibold whitespace-nowrap lg:inline">
-		{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}
+	<span class="hidden text-[13px] font-semibold whitespace-nowrap md:inline lg:inline">
+		<div class:fade-end={user.name.length > 15}>{user.name.slice(0, 15)}</div>
 	</span>
 	<Avatar {...user} size="2.0rem" />
 </div>
+
+<style>
+	.fade-end {
+		white-space: nowrap;
+		overflow: hidden;
+
+		mask-image: linear-gradient(to right, black 0%, black 80%, transparent 100%);
+
+		-webkit-mask-image: linear-gradient(to right, black 0%, black 80%, transparent 100%);
+	}
+</style>

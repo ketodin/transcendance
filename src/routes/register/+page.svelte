@@ -36,9 +36,9 @@
 			<h1 class="text-3xl font-semibold">
 				{m.register()}
 			</h1>
-			<div class="flex gap-3">
-				<ThemeToggle />
+			<div class="flex gap-4">
 				<LanguagePicker />
+				<ThemeToggle />
 			</div>
 		</div>
 		<form method="POST" use:enhance class="space-y-5">

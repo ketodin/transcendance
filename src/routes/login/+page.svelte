@@ -97,9 +97,9 @@
 			<h1 class="text-3xl font-semibold">
 				{m.login()}
 			</h1>
-			<div class="flex gap-3">
-				<ThemeToggle />
+			<div class="flex gap-4">
 				<LanguagePicker />
+				<ThemeToggle />
 			</div>
 		</div>
 
