@@ -6,7 +6,6 @@ import { createProjectile, stepProjectile, getTurretTip } from '$lib/game/shared
 import { PROJECTILE_TYPES, AIRSTRIKE_TYPE_INDEX } from '$lib/game/shared/projectileTypes';
 import type { GameState } from '$lib/game/shared/state/GameState';
 import type { TankState } from '$lib/game/shared/state/TankState';
-// import chat handler
 import { registerChatHandler } from '$lib/game/colyseus/handlers/chatHandler';
 
 const activePlayers = new Set<string>();
@@ -28,6 +27,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	private inputs = new Map<string, InputState>();
 	private tickCount = 0;
 	private _nextTurnPending = false;
+	private gameStarted = false;
 	private player0Name = 'Player 1';
 	private player1Name = 'Player 2';
 	private playerIds: [string, string] = ['', ''];
@@ -83,12 +83,17 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		this.onMessage('ready', (client) => {
 			const idx = this.getPlayerIndex(client);
 			if (idx !== undefined) this.playersReady[idx] = true;
+
 			if (this.playersReady.every((v) => v)) {
-				try {
-					this.initGame();
-					console.log('[TankRoom] initGame() OK, phase =', this.state.phase);
-				} catch (e) {
-					console.error('[TankRoom] initGame() threw:', e);
+				if (this.gameStarted) {
+					this.sendGameStartOnReconnect(client);
+				} else {
+					try {
+						console.log('[TankRoom] initGame() OK, phase =', this.state.phase);
+						this.initGame();
+					} catch (e) {
+						console.error('[TankRoom] initGame() threw:', e);
+					}
 				}
 			}
 		});
@@ -145,6 +150,27 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	onDrop(client: Client) {
 		const idx = this.getPlayerIndex(client);
 		if (idx !== undefined && this.playerIds[idx]) activePlayers.delete(this.playerIds[idx]);
+		this.allowReconnection(client, 10);
+	}
+
+	private sendGameStartOnReconnect(client: Client) {
+		client.send('game_start', {
+			player0Id: this.state.player0Id,
+			player1Id: this.state.player1Id,
+			currentPlayer: this.state.currentPlayer,
+			terrain: {
+				heights: Array.from(this.physicsState.terrain.heights),
+				cols: this.physicsState.terrain.cols,
+				floorY: this.physicsState.terrain.floorY,
+				sceneWidth: this.physicsState.terrain.sceneWidth,
+				sceneHeight: this.physicsState.terrain.sceneHeight
+			},
+			tanks: this.physicsState.tanks.map((t) => ({ ...t })),
+			fuel: this.state.fuel,
+			weaponIndex: this.state.weaponIndex,
+			turnTimeLeft: this.state.turnTimeLeft,
+			weaponCooldowns: this.physicsState.weaponCooldowns
+		});
 	}
 
 	private initGame() {
@@ -180,6 +206,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		this.state.turnTimeLeft = 30;
 		this.state.winner = -1;
 		this.state.projectile.active = false;
+		this.gameStarted = true;
 		this.broadcast('game_start', {
 			player0Id: this.state.player0Id,
 			player1Id: this.state.player1Id,
