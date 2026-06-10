@@ -3,7 +3,7 @@ import { m } from '$lib/paraglide/messages';
 
 export const formSchema = z
 	.strictObject({
-		name: z.string().min(3).max(32).regex(/^\S+$/, { message: m.invalid_name() }),
+		name: z.string().min(3).max(32),
 
 		email: z.email(),
 

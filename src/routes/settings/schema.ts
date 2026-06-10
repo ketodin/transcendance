@@ -10,10 +10,21 @@ export const avatarSchema = z.strictObject({
 			message: m.please_upload_file()
 		})
 		.refine((f) => f.size > 0, 'File is required')
-		.refine((f) => f.size <= MAX_FILE_SIZE, m.max_upload_size())
-		.refine((f) => ACCEPTED_TYPES.includes(f.type), m.unknow_upload_file())
+		.refine((f) => f.size <= MAX_FILE_SIZE, { error: m.max_upload_size })
+		.refine((f) => ACCEPTED_TYPES.includes(f.type), { error: m.unknow_upload_file })
 });
 
 export const nameSchema = z.strictObject({
-	name: z.string().min(3).max(32).regex(/^\S+$/, { message: m.invalid_name() })
+	name: z.string().min(3).max(32)
 });
+
+export const changePasswordSchema = z
+	.strictObject({
+		currentPassword: z.string().min(8).max(128),
+		newPassword: z.string().min(8).max(128),
+		confirmPassword: z.string().min(8).max(128)
+	})
+	.refine((data) => data.newPassword === data.confirmPassword, {
+		path: ['confirmPassword'],
+		error: m.invalid_repeat
+	});
