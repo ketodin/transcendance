@@ -14,11 +14,11 @@
 	<div class="glass flex h-16 w-full justify-between rounded-none! px-5">
 		<div class="flex items-center gap-3">
 			<button
-				class="flex cursor-pointer rounded-md p-1.5 opacity-70 transition hover:bg-white/10 hover:opacity-100 lg:hidden"
+				class="flex cursor-pointer rounded-md p-1.5 opacity-70 transition hover:opacity-100 lg:hidden"
 				onclick={() => friendListOpen.update((v) => !v)}
 				aria-label="Toggle friends list"
 			>
-				<Users size={20} />
+				<Users size={20} class="hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition"/>
 			</button>
 			<a href={resolve('/')} class="flex">
 				<img src="/favicon.png" alt="Logo" class="logo" />

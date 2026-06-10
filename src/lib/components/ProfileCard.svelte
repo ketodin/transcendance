@@ -33,8 +33,29 @@
 	>
 		<Settings size={20} />
 	</a>
-	<span class="hidden text-[13px] font-semibold whitespace-nowrap lg:inline">
-		{user.name && user.name.length > 12 ? user.name.slice(0, 9) + '...' : user.name}
+	<span class="hidden text-[13px] font-semibold whitespace-nowrap lg:inline md:inline">
+		<div class:fade-end={user.name.length > 15}>{user.name.slice(0, 15)}</div>
 	</span>
 	<Avatar {...user} size="2.0rem" />
 </div>
+
+<style>
+.fade-end {
+	white-space: nowrap;
+	overflow: hidden;
+
+	mask-image: linear-gradient(
+		to right,
+		black 0%,
+		black 80%,
+		transparent 100%
+	);
+
+	-webkit-mask-image: linear-gradient(
+		to right,
+		black 0%,
+		black 80%,
+		transparent 100%
+	);
+}
+</style>
