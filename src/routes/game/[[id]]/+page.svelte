@@ -7,6 +7,7 @@
 	import type { PageProps } from './$types';
 	import { applyAction } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
+	import { browser } from '$app/environment';
 
 	const { params, data }: PageProps = $props();
 
@@ -18,14 +19,38 @@
 		return () => document.body.classList.remove('game-mode');
 	});
 
+
+	const reconnectRoom = async () => {
+		const reconnectionToken = localStorage.getItem('reconnectionToken');
+		if (!reconnectionToken)
+			return null;
+		try {
+			const newRoom = await colyseusClient!.reconnect(reconnectionToken);
+			if (params.id && params.id !== newRoom.roomId) {
+				await newRoom.leave();
+				return null;
+			}
+			return newRoom;
+		}
+		catch {
+			localStorage.removeItem('reconnectionToken');
+			return null;
+		}
+	}
+
 	$effect(() => {
+		if (!browser) return;
 		let cancelled = false;
 
 		void (async () => {
 			try {
-				const newRoom = params.id
+
+				const reconnectedRoom = await reconnectRoom();
+
+				const newRoom = reconnectedRoom ? reconnectedRoom : (params.id
 					? await colyseusClient!.joinById(params.id, {})
-					: await colyseusClient!.joinOrCreate('tank_room', {});
+					: await colyseusClient!.joinOrCreate('tank_room', {}));
+
 				if (cancelled) {
 					void newRoom.leave();
 					return;
@@ -34,6 +59,9 @@
 				newRoom.onMessage('game_start', () => {
 					started = true;
 				});
+
+				localStorage.setItem('reconnectionToken', newRoom.reconnectionToken);
+
 			} catch (err) {
 				if (err instanceof MatchMakeError) {
 					if (err.code === 400 && err.message.match(/room ".*" not found/)) {
