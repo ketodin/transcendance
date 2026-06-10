@@ -63,12 +63,7 @@ function setupRoomHandlers(scene: GameScene, room: Room<GameRoomState>) {
 	});
 
 	room.onLeave.once(() => {
-		if (scene.returningToLobby) {
-			scene.returningToLobby = false;
-			scene.scene.restart();
-		} else {
-			scene.statusText.setText('Disconnected').setVisible(true);
-		}
+		scene.statusText.setText('Disconnected').setVisible(true);
 	});
 
 	room.onMessage('chat', (data: { playerIndex: number; text: string }) => {
@@ -79,7 +74,6 @@ function setupRoomHandlers(scene: GameScene, room: Room<GameRoomState>) {
 
 export function connectToServer(scene: GameScene) {
 	scene.roomReady = false;
-	scene.returningToLobby = false;
 	scene.tankSprites = null;
 	scene.terrainView = null;
 	scene.projView = null;
@@ -181,12 +175,7 @@ export function connectToServer(scene: GameScene) {
 		});
 
 		room.onLeave.once(() => {
-			if (scene.returningToLobby) {
-				scene.returningToLobby = false;
-				scene.scene.restart();
-			} else {
-				scene.statusText.setText('Disconnected').setVisible(true);
-			}
+			scene.statusText.setText('Disconnected').setVisible(true);
 		});
 
 		setupRoomHandlers(scene, room);
