@@ -1,10 +1,7 @@
-import core from '@actions/core';
-import * as github from '@actions/github';
-import log from '../utils/log.js';
-import makeUtils from './automation-utils.js';
-
-const _log = log('automation-label-issue');
-const utils = makeUtils(core.getInput('token'), github.context);
+const core = require('@actions/core');
+const github = require('@actions/github');
+const log = require('../utils/log')('automation-label-issue');
+const utils = require('./automation-utils')(core.getInput('token'), github.context);
 
 const SCOPE_MAP = {
 	frontend: 'scope: frontend',
@@ -27,32 +24,32 @@ function parseScopeFromBody(body) {
 async function run() {
 	const issue = github.context.payload.issue;
 	if (!issue) {
-		_log.warn('No issue in payload, skipping');
+		log.warn('No issue in payload, skipping');
 		return;
 	}
 
-	_log.group(`Issue #${issue.number}`);
+	log.group(`Issue #${issue.number}`);
 
 	const scopeValue = parseScopeFromBody(issue.body);
 	if (!scopeValue) {
-		_log.warn('No scope section found in issue body, skipping');
-		_log.end();
+		log.warn('No scope section found in issue body, skipping');
+		log.end();
 		return;
 	}
 
 	const label = SCOPE_MAP[scopeValue];
 	if (!label) {
-		_log.warn(`Unknown scope value "${scopeValue}", skipping`);
-		_log.end();
+		log.warn(`Unknown scope value "${scopeValue}", skipping`);
+		log.end();
 		return;
 	}
 
 	await utils.applyLabel(issue.number, label);
-	_log.info(`Applied "${label}"`);
-	_log.end();
+	log.info(`Applied "${label}"`);
+	log.end();
 }
 
 run().catch((err) => {
-	_log.error(err.message);
+	log.error(err.message);
 	process.exit(1);
 });
