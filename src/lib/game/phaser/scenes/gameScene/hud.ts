@@ -1,5 +1,7 @@
 import type GameScene from './GameScene';
 import { COLORS, COLOR_STRINGS } from '../../colors';
+import { resolve } from '$app/paths';
+import { goto } from '$app/navigation';
 
 export function updateFuelBar(scene: GameScene, fuel: number) {
 	scene.fuelFill.clear();
@@ -177,9 +179,9 @@ export function showLeaveConfirm(scene: GameScene) {
 	};
 
 	stayZone.on('pointerdown', dismiss);
-	leaveZone.on('pointerdown', () => {
+	leaveZone.on('pointerdown', async () => {
 		dismiss();
 		void scene.room?.leave();
-		window.location.href = '/';
+		await goto(resolve('/'));
 	});
 }
