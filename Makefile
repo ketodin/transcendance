@@ -15,8 +15,6 @@ all: up
 
 setup: $(CERTS) envfile
 
-setup-update:
-
 $(CERTS):
 	@rm -rf $(CERTS_DIR)
 	@echo "Generating certificates..."
@@ -24,8 +22,8 @@ $(CERTS):
 	@echo "Certificates created in $(CERTS_DIR)/"
 
 envfile: $(DOCKER_ENVFILE)
-	@sed -i 's/ORIGIN=.*/ORIGIN=$(shell hostname)/' .env.docker
-	@sed -i 's/BETTER_AUTH_URL=.*/BETTER_AUTH_URL=$(shell hostname)/' .env.docker
+	@sed -i 's/ORIGIN=.*/ORIGIN=https\:\/\/$(shell hostname)\:4443/' .env.docker
+	@sed -i 's/BETTER_AUTH_URL=.*/BETTER_AUTH_URL=https\:\/\/$(shell hostname)\:4443/' .env.docker
 
 $(DOCKER_ENVFILE):
 	@echo "Generating env file..."
