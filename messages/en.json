@@ -109,5 +109,8 @@
 	"new_password": "New password",
 	"confirm_new_password": "Confirm new password",
 	"save": "Save",
-	"gameStartingIn": "Game starting in"
+	"gameStartingIn": "Game starting in",
+	"name_changed": "Username changed",
+	"avatar_changed": "Avatar changed",
+	"password_changed": "Password changed"
 }
