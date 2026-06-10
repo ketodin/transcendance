@@ -20,7 +20,6 @@ import { updateFuelBar, updateHealthBar } from './hud';
 
 export default class GameScene extends Scene {
 	room: Room<GameRoomState>;
-	returningToLobby = false;
 	myPlayerIndex: 0 | 1 = 0;
 
 	roomReady = false;
