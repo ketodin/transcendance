@@ -148,14 +148,36 @@ body.game-mode main {
 	overflow: hidden !important;
 }
 
-.glassdeep {
-	background: rgba(var(--color-background), 0.15);
-	/* autoprefixer: off */
-	-webkit-backdrop-filter: blur(64px);
-	backdrop-filter: blur(64px);
-	/* autoprefixer: on */
-	border-radius: var(--radius-xl);
-	box-shadow:
-		0 4px 16px rgba(0, 0, 0, 0.25),
-		inset 0 1px 0 rgba(255, 255, 255, 0.12);
+@keyframes breathe-red {
+	0% {
+		transform: scale(1);
+		box-shadow: 0 0 10px rgba(239, 68, 68, 0.35);
+	}
+
+	50% {
+		transform: scale(1.05);
+		box-shadow: 0 0 18px rgba(239, 68, 68, 0.65);
+	}
+
+	100% {
+		transform: scale(1);
+		box-shadow: 0 0 10px rgba(239, 68, 68, 0.35);
+	}
+}
+
+@keyframes breathe {
+	0% {
+		transform: scale(1);
+		box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+	}
+
+	50% {
+		transform: scale(1.05);
+		box-shadow: 0 0 18px rgba(255, 255, 255, 0.65);
+	}
+
+	100% {
+		transform: scale(1);
+		box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+	}
 }

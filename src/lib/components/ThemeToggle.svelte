@@ -15,13 +15,18 @@
 	}
 </script>
 
-<button
-	onclick={toggleTheme}
-	class="glassbutton flex h-9 w-9 items-center justify-center active:scale-95"
->
-	{#if $shaderTheme === 'dark'}
+{#if $shaderTheme === 'dark'}
+	<button
+		onclick={toggleTheme}
+		class="cursor-pointer items-center justify-center opacity-70 transition hover:opacity-100 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] active:scale-95"
+	>
 		<MoonIcon size="20px" />
-	{:else}
+	</button>
+{:else}
+	<button
+		onclick={toggleTheme}
+		class="cursor-pointer items-center justify-center opacity-70 transition hover:opacity-100 hover:drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] active:scale-95"
+	>
 		<SunIcon size="20px" />
-	{/if}
-</button>
+	</button>
+{/if}
