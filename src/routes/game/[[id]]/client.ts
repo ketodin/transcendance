@@ -2,6 +2,8 @@ import { colyseusClient } from '$lib/colyseusClient';
 import { MatchMakeError } from '@colyseus/sdk';
 import { applyAction } from '$app/forms';
 import { m } from '$lib/paraglide/messages';
+import type { Room } from '@colyseus/sdk';
+import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 
 const reconnectRoom = async (roomId?: string) => {
 	const reconnectionToken = localStorage.getItem('reconnectionToken');
@@ -12,7 +14,7 @@ const reconnectRoom = async (roomId?: string) => {
 			await newRoom.leave();
 			return null;
 		}
-		return newRoom;
+		return newRoom as Room<GameRoomState>;
 	} catch {
 		localStorage.removeItem('reconnectionToken');
 		return null;

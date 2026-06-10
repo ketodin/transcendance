@@ -6,10 +6,11 @@
 	import { connectToRoom } from './client';
 	import type { Room } from '@colyseus/sdk';
 	import type { PageProps } from './$types';
+	import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 
 	const { params, data }: PageProps = $props();
 
-	let room: Room | null = $state(null);
+	let room: Room<GameRoomState> | null = $state(null);
 	let started = $state(false);
 
 	onMount(() => {
