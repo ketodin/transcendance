@@ -16,6 +16,8 @@
 	import { untrack } from 'svelte';
 	import { toast } from '$lib/components/toast';
 	import { resolve } from '$app/paths';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+	import { authClient } from '$lib/auth-client';
 
 	let { data }: PageProps = $props();
 
@@ -73,6 +75,10 @@
 	let fileInput: HTMLInputElement;
 	let nameFormEl: HTMLFormElement | undefined = $state();
 	let editing = $state(false);
+	async function handleDelete() {
+		await authClient.deleteUser();
+		await goto(resolve('/register'), { invalidateAll: true });
+	}
 </script>
 
 <form
@@ -153,12 +159,31 @@
 				onclick={async () => {
 					await disconnectStatusRoom();
 					await signOut();
-					await goto(resolve('/login'));
+					await goto(resolve('/login'), { invalidateAll: true });
 				}}
 			>
 				{m.logout()}
 				<LogOut class="text-red-400 transition-colors group-hover:text-white" />
 			</Button>
+			<AlertDialog.Root>
+				<AlertDialog.Trigger class="glassbutton px-6 py-1 text-red-400">
+					{m.delete_account()}
+				</AlertDialog.Trigger>
+				<AlertDialog.Content class="glass">
+					<AlertDialog.Header>
+						<AlertDialog.Title>{m.confirm_delete()}</AlertDialog.Title>
+						<AlertDialog.Description>
+							{m.delete_speech()}
+						</AlertDialog.Description>
+					</AlertDialog.Header>
+					<AlertDialog.Footer>
+						<AlertDialog.Cancel class="glassbutton">{m.cancel()}</AlertDialog.Cancel>
+						<Button class="glassbutton text-red-400" onclick={handleDelete}>
+							{m.confirm()}
+						</Button>
+					</AlertDialog.Footer>
+				</AlertDialog.Content>
+			</AlertDialog.Root>
 		</div>
 	</div>
 	{#if data.hasPassword}
