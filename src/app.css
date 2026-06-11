@@ -22,10 +22,10 @@
 	--secondary: #27272a;
 	--secondary-foreground: #fafafa;
 	--muted: #27272a;
-	--muted-foreground: #a1a1aa;
+	--muted-foreground: #343434;
 	--accent: #27272a;
 	--accent-foreground: #fafafa;
-	--destructive: #f87171;
+	--destructive: #fa4141;
 	--border: #ffffff1a;
 	--input: #ffffff26;
 	--ring: #71717a;
@@ -63,6 +63,8 @@
 .dark {
 	--background: var(--950);
 	--foreground: var(--50);
+	--muted-foreground: #a1a1aa;
+	--destructive: #f87171;
 	--game-aiming: #ffffff; /* aiming cone + range disk */
 }
 
