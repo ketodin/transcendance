@@ -6,17 +6,23 @@ import type { Room } from '@colyseus/sdk';
 import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 
 const reconnectRoom = async (roomId?: string) => {
+	const paramsId = localStorage.getItem('reconnectionTokenParamsId');
 	const reconnectionToken = localStorage.getItem('reconnectionToken');
-	if (!reconnectionToken) return null;
+	if (!paramsId || !reconnectionToken) {
+		localStorage.removeItem('reconnectionToken');
+		localStorage.removeItem('reconnectionTokenParamsId');
+		return null;
+	}
+	if (paramsId !== (roomId ?? '')) {
+		localStorage.removeItem('reconnectionToken');
+		localStorage.removeItem('reconnectionTokenParamsId');
+		return null;
+	}
 	try {
-		const newRoom = await colyseusClient!.reconnect(reconnectionToken);
-		if (roomId && roomId !== newRoom.roomId) {
-			await newRoom.leave();
-			return null;
-		}
-		return newRoom as Room<GameRoomState>;
+		return (await colyseusClient!.reconnect(reconnectionToken)) as Room<GameRoomState>;
 	} catch {
 		localStorage.removeItem('reconnectionToken');
+		localStorage.removeItem('reconnectionTokenParamsId');
 		return null;
 	}
 };
@@ -43,6 +49,7 @@ export const connectToRoom = async (roomId?: string) => {
 				? await colyseusClient!.joinById(roomId, {})
 				: await colyseusClient!.joinOrCreate('tank_room', {}));
 		localStorage.setItem('reconnectionToken', room.reconnectionToken);
+		localStorage.setItem('reconnectionTokenParamsId', roomId ?? '');
 		return room;
 	} catch (err) {
 		const msg =

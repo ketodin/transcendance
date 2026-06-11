@@ -34,6 +34,7 @@
 		return () => {
 			void room?.leave();
 			localStorage.removeItem('reconnectionToken');
+			localStorage.removeItem('reconnectionTokenParamsId');
 			room = null;
 			started = false;
 		};
