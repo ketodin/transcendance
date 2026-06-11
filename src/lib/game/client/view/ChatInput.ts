@@ -1,4 +1,5 @@
 import { COLOR_STRINGS } from '$lib/game/phaser/colors';
+import { m } from '$lib/paraglide/messages';
 
 type OnSendCallback = (text: string) => void;
 
@@ -27,7 +28,7 @@ export class ChatInput {
 		this.input = document.createElement('input');
 		this.input.type = 'text';
 		this.input.maxLength = 80;
-		this.input.placeholder = 'Say something...';
+		this.input.placeholder = m.chat_placeholder();
 		Object.assign(this.input.style, {
 			background: COLOR_STRINGS.navy,
 			color: COLOR_STRINGS.white,
@@ -39,7 +40,12 @@ export class ChatInput {
 		});
 		this.container.appendChild(this.input);
 
-		document.body.appendChild(this.container);
+		// Parent to the game canvas container (not document.body) so the input is
+		// removed together with the canvas when the game view unmounts, instead of
+		// lingering on the page. It stays position:fixed, so the parent doesn't
+		// affect where it renders.
+		const host = this.scene.game.canvas.parentElement ?? document.body;
+		host.appendChild(this.container);
 
 		this.scene.scale.on('resize', this.reposition, this);
 
@@ -111,7 +117,7 @@ export class ChatInput {
 	}
 
 	destroy() {
-		this.scene.scale.off('resize', this.reposition, this);
+		this.scene.scale?.off('resize', this.reposition, this);
 		this.container.remove();
 	}
 }

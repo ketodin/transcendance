@@ -7,6 +7,7 @@ import { initViews, showGameUI } from './setup';
 import { showGameOver } from './hud';
 import type { Room } from '@colyseus/sdk';
 import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
+import { m } from '$lib/paraglide/messages';
 
 // TODO remove duplicate message handlers  //
 
@@ -63,7 +64,7 @@ function setupRoomHandlers(scene: GameScene, room: Room<GameRoomState>) {
 	});
 
 	room.onLeave.once(() => {
-		scene.statusText.setText('Disconnected').setVisible(true);
+		scene.statusText.setText(m.game_disconnected()).setVisible(true);
 	});
 
 	room.onMessage('chat', (data: { playerIndex: number; text: string }) => {
@@ -175,11 +176,11 @@ export function connectToServer(scene: GameScene) {
 		});
 
 		room.onLeave.once(() => {
-			scene.statusText.setText('Disconnected').setVisible(true);
+			scene.statusText.setText(m.game_disconnected()).setVisible(true);
 		});
 
 		setupRoomHandlers(scene, room);
-		scene.statusText.setText('Waiting for Player 2...');
+		scene.statusText.setText(m.game_waiting_player2());
 		room.onMessage('chat', (data: { playerIndex: number; text: string }) => {
 			const tank = scene.localGameData!.tanks[data.playerIndex];
 			scene.speechBubbles[data.playerIndex].setText(data.text, tank);

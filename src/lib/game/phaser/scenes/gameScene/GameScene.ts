@@ -17,6 +17,7 @@ import { drawLastShotTrail, drawTrajectory } from './effects';
 import { updateWeaponUI } from './weaponUI';
 import { drawFireButton, drawChatButton, drawMoveButton, drawLeaveButton } from './buttons';
 import { updateFuelBar, updateHealthBar } from './hud';
+import { m } from '$lib/paraglide/messages';
 
 export default class GameScene extends Scene {
 	room: Room<GameRoomState>;
@@ -44,7 +45,7 @@ export default class GameScene extends Scene {
 	selectableWeaponIndices: number[] = [];
 	weaponCooldowns: [boolean[], boolean[]] = [[], []];
 	hoveredWeaponTypeIdx = -1;
-	playerNames: [string, string] = ['Player 1', 'Player 2'];
+	playerNames: [string, string] = [m.game_player1(), m.game_player2()];
 
 	lastInput: InputSnapshot = { moveLeft: false, moveRight: false };
 	localTurretAngle = 90;
@@ -273,7 +274,7 @@ export default class GameScene extends Scene {
 			const color =
 				secs > 10 ? COLOR_STRINGS.neonGlow : secs > 5 ? COLOR_STRINGS.yellow : COLOR_STRINGS.red;
 			this.timerText.setText(`${secs}s`).setColor(color);
-			this.turnText.setText(`${this.playerNames[currentPlayer]}'s Turn`);
+			this.turnText.setText(m.game_turn({ name: this.playerNames[currentPlayer] }));
 		}
 
 		const isMyTurn = currentPlayer === this.myPlayerIndex && phase === 'AIMING';

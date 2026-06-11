@@ -2,6 +2,7 @@ import type GameScene from './GameScene';
 import { COLORS, COLOR_STRINGS } from '../../colors';
 import { resolve } from '$app/paths';
 import { goto } from '$app/navigation';
+import { m } from '$lib/paraglide/messages';
 
 export function updateFuelBar(scene: GameScene, fuel: number) {
 	scene.fuelFill.clear();
@@ -54,7 +55,7 @@ export function showGameOver(scene: GameScene, winner: number) {
 	panel.strokeRoundedRect(px, py, panelW, panelH, scene.sw(8));
 
 	scene.add
-		.text(w / 2, py + scene.sh(85), `${scene.playerNames[winner]} Wins!`, {
+		.text(w / 2, py + scene.sh(85), m.game_winner({ name: scene.playerNames[winner] }), {
 			fontSize: `${Math.round(scene.sh(46))}px`,
 			color: COLOR_STRINGS.gold,
 			stroke: COLOR_STRINGS.navy,
@@ -75,7 +76,7 @@ export function showGameOver(scene: GameScene, winner: number) {
 	homeGfx.strokeRoundedRect(btnCx - btnW / 2, btnY - btnH / 2, btnW, btnH, scene.sw(5));
 
 	scene.add
-		.text(btnCx, btnY, 'RETURN HOME', {
+		.text(btnCx, btnY, m.game_return_home(), {
 			fontSize: `${Math.round(scene.sh(16))}px`,
 			color: COLOR_STRINGS.neonGlow,
 			fontStyle: 'bold',
@@ -123,7 +124,7 @@ export function showLeaveConfirm(scene: GameScene) {
 	panel.strokeRoundedRect(px, py, panelW, panelH, scene.sw(8));
 
 	const title = scene.add
-		.text(w / 2, py + scene.sh(50), 'Leave the game?', {
+		.text(w / 2, py + scene.sh(50), m.game_leave_confirm_title(), {
 			fontSize: `${Math.round(scene.sh(26))}px`,
 			color: COLOR_STRINGS.white,
 			stroke: COLOR_STRINGS.navy,
@@ -133,7 +134,7 @@ export function showLeaveConfirm(scene: GameScene) {
 		.setDepth(32);
 
 	const subtitle = scene.add
-		.text(w / 2, py + scene.sh(95), 'You will forfeit the match.', {
+		.text(w / 2, py + scene.sh(95), m.game_leave_confirm_body(), {
 			fontSize: `${Math.round(scene.sh(16))}px`,
 			color: COLOR_STRINGS.red,
 			stroke: COLOR_STRINGS.navy,
@@ -155,7 +156,7 @@ export function showLeaveConfirm(scene: GameScene) {
 	stayGfx.strokeRoundedRect(stayCx - btnW / 2, btnY - btnH / 2, btnW, btnH, scene.sw(5));
 
 	const stayLabel = scene.add
-		.text(stayCx, btnY, 'STAY', {
+		.text(stayCx, btnY, m.game_stay(), {
 			fontSize: `${Math.round(scene.sh(16))}px`,
 			color: '#22cc55',
 			fontStyle: 'bold',
@@ -172,7 +173,7 @@ export function showLeaveConfirm(scene: GameScene) {
 	leaveGfx.strokeRoundedRect(leaveCx - btnW / 2, btnY - btnH / 2, btnW, btnH, scene.sw(5));
 
 	const leaveConfirmLabel = scene.add
-		.text(leaveCx, btnY, 'LEAVE', {
+		.text(leaveCx, btnY, m.game_leave(), {
 			fontSize: `${Math.round(scene.sh(16))}px`,
 			color: '#ff4433',
 			fontStyle: 'bold',

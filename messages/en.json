@@ -112,5 +112,27 @@
 	"gameStartingIn": "Game starting in",
 	"name_changed": "Username changed",
 	"avatar_changed": "Avatar changed",
-	"password_changed": "Password changed"
+	"password_changed": "Password changed",
+
+	"game_turn": "{name}'s Turn",
+	"game_winner": "{name} Wins!",
+	"game_fire": "FIRE",
+	"game_leave": "LEAVE",
+	"game_stay": "STAY",
+	"game_return_home": "RETURN HOME",
+	"game_leave_confirm_title": "Leave the game?",
+	"game_leave_confirm_body": "You will forfeit the match.",
+	"game_disconnected": "Disconnected",
+	"game_waiting_player2": "Waiting for Player 2...",
+	"game_connecting": "Connecting...",
+	"chat_placeholder": "Say something...",
+	"game_player1": "Player 1",
+	"game_player2": "Player 2",
+	"game_weapon_used": "{name} (USED)",
+	"weapon_shell": "Shell",
+	"weapon_heavy": "Heavy",
+	"weapon_bouncer": "Bouncer",
+	"weapon_split": "Split",
+	"weapon_airstrike": "Airstrike",
+	"weapon_sniper": "Sniper"
 }
