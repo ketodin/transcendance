@@ -9,6 +9,7 @@ import { SpeechBubble } from '../../../client/view/speechBubble';
 import { ChatInput } from '../../../client/view/ChatInput';
 import { CHAT_BUBBLE_DURATION } from '$lib/game/shared/chatConfig';
 import { showLeaveConfirm } from './hud';
+import { m } from '$lib/paraglide/messages';
 
 export function createBackground(scene: Scene) {
 	const { width, height } = scene.scale;
@@ -23,7 +24,7 @@ export function createBackground(scene: Scene) {
 
 export function setupUI(scene: GameScene) {
 	scene.statusText = scene.add
-		.text(scene.scale.width / 2, scene.scale.height / 2, 'Connecting...', {
+		.text(scene.scale.width / 2, scene.scale.height / 2, m.game_connecting(), {
 			fontSize: `${Math.round(scene.sh(28))}px`,
 			color: COLOR_STRINGS.neonGlow,
 			stroke: COLOR_STRINGS.navy,
@@ -186,7 +187,7 @@ export function setupUI(scene: GameScene) {
 
 	scene.fireBtn = scene.add.graphics().setDepth(11).setVisible(false);
 	scene.fireBtnLabel = scene.add
-		.text(scene.fireBtnCx, scene.fireBtnCy, 'FIRE', {
+		.text(scene.fireBtnCx, scene.fireBtnCy, m.game_fire(), {
 			fontSize: `${Math.round(scene.sh(14))}px`,
 			color: '#ffffff',
 			fontStyle: 'bold',
@@ -257,7 +258,7 @@ export function setupUI(scene: GameScene) {
 
 	scene.leaveBtn = scene.add.graphics().setDepth(11).setVisible(false);
 	scene.leaveBtnLabel = scene.add
-		.text(scene.leaveBtnCx, scene.leaveBtnCy, 'LEAVE', {
+		.text(scene.leaveBtnCx, scene.leaveBtnCy, m.game_leave(), {
 			fontSize: `${Math.round(scene.sh(12))}px`,
 			color: '#ff6655',
 			fontStyle: 'bold',

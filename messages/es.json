@@ -112,5 +112,27 @@
 	"gameStartingIn": "La partida comienza en",
 	"name_changed": "Nombre de usuario cambiado",
 	"avatar_changed": "Avatar cambiado",
-	"password_changed": "Contraseña cambiada"
+	"password_changed": "Contraseña cambiada",
+
+	"game_turn": "Turno de {name}",
+	"game_winner": "¡{name} gana!",
+	"game_fire": "DISPARAR",
+	"game_leave": "SALIR",
+	"game_stay": "QUEDARSE",
+	"game_return_home": "INICIO",
+	"game_leave_confirm_title": "¿Salir de la partida?",
+	"game_leave_confirm_body": "Perderás la partida.",
+	"game_disconnected": "Desconectado",
+	"game_waiting_player2": "Esperando al jugador 2...",
+	"game_connecting": "Conectando...",
+	"chat_placeholder": "Di algo...",
+	"game_player1": "Jugador 1",
+	"game_player2": "Jugador 2",
+	"game_weapon_used": "{name} (USADO)",
+	"weapon_shell": "Proyectil",
+	"weapon_heavy": "Pesado",
+	"weapon_bouncer": "Rebote",
+	"weapon_split": "División",
+	"weapon_airstrike": "Ataque aéreo",
+	"weapon_sniper": "Francotirador"
 }

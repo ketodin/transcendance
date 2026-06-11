@@ -24,7 +24,10 @@
 			// Scale.FIT alone doesn't pick up.
 			const container = document.getElementById('game-container');
 			if (container) {
-				resizeObserver = new ResizeObserver(() => game?.scale.refresh());
+				resizeObserver = new ResizeObserver(() => {
+					// Only refit once the renderer is live; refreshing during boot crashes.
+					if (game?.isRunning) game.scale.refresh();
+				});
 				resizeObserver.observe(container);
 			}
 
@@ -38,7 +41,6 @@
 		return () => {
 			themeObserver?.disconnect();
 			resizeObserver?.disconnect();
-			game?.destroy(true);
 		};
 	});
 </script>

@@ -112,5 +112,27 @@
 	"gameStartingIn": "La partie commence dans",
 	"name_changed": "Pseudo modifié",
 	"avatar_changed": "Avatar modifié",
-	"password_changed": "Mot de passe modifié"
+	"password_changed": "Mot de passe modifié",
+
+	"game_turn": "Tour de {name}",
+	"game_winner": "{name} gagne !",
+	"game_fire": "TIRER",
+	"game_leave": "QUITTER",
+	"game_stay": "RESTER",
+	"game_return_home": "ACCUEIL",
+	"game_leave_confirm_title": "Quitter la partie ?",
+	"game_leave_confirm_body": "Vous déclarerez forfait.",
+	"game_disconnected": "Déconnecté",
+	"game_waiting_player2": "En attente du joueur 2...",
+	"game_connecting": "Connexion...",
+	"chat_placeholder": "Dis quelque chose...",
+	"game_player1": "Joueur 1",
+	"game_player2": "Joueur 2",
+	"game_weapon_used": "{name} (UTILISÉ)",
+	"weapon_shell": "Obus",
+	"weapon_heavy": "Lourd",
+	"weapon_bouncer": "Rebond",
+	"weapon_split": "Éclats",
+	"weapon_airstrike": "Frappe aérienne",
+	"weapon_sniper": "Sniper"
 }

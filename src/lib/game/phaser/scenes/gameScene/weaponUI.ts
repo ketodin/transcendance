@@ -1,5 +1,19 @@
 import { PROJECTILE_TYPES } from '../../../shared/projectileTypes';
 import { GameObjects } from 'phaser';
+import { m as msg } from '$lib/paraglide/messages';
+
+const WEAPON_NAME_MESSAGES: Record<string, () => string> = {
+	Shell: msg.weapon_shell,
+	Heavy: msg.weapon_heavy,
+	Bouncer: msg.weapon_bouncer,
+	Split: msg.weapon_split,
+	Airstrike: msg.weapon_airstrike,
+	Sniper: msg.weapon_sniper
+};
+
+function weaponDisplayName(name: string): string {
+	return (WEAPON_NAME_MESSAGES[name] ?? (() => name))();
+}
 
 interface WeaponUICtx {
 	weaponUiGfx: GameObjects.Graphics;
@@ -96,9 +110,10 @@ export function updateWeaponUI(ctx: WeaponUICtx, activeIndex: number, isMyTurn =
 		}
 
 		if (active) {
+			const label = weaponDisplayName(type.name).toUpperCase();
 			ctx.weaponNameLabel
 				.setPosition(cx, cy - half - ctx.sh(10))
-				.setText(onCooldown ? `${type.name.toUpperCase()} (USED)` : type.name.toUpperCase())
+				.setText(onCooldown ? msg.game_weapon_used({ name: label }) : label)
 				.setFontSize(Math.round(ctx.sh(11)));
 		}
 
