@@ -5,7 +5,8 @@ import { m } from '$lib/paraglide/messages';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const user = await db.user.findUnique({
-		where: { id: params.id }
+		where: { id: params.id },
+		omit: { twoFactorEnabled: true, emailVerified: true },
 	});
 	if (!user) return error(404, m.no_user());
 	return { userProfile: user };
