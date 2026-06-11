@@ -8,7 +8,7 @@ import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 const reconnectRoom = async (roomId?: string) => {
 	const paramsId = localStorage.getItem('reconnectionTokenParamsId');
 	const reconnectionToken = localStorage.getItem('reconnectionToken');
-	if (!paramsId || !reconnectionToken) {
+	if (paramsId == null || reconnectionToken == null) {
 		localStorage.removeItem('reconnectionToken');
 		localStorage.removeItem('reconnectionTokenParamsId');
 		return null;
