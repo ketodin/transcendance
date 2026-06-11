@@ -45,7 +45,8 @@ function colyseusVitePlugin() {
 						joinOrCreate: (r: string, o: any) => matchMaker.joinOrCreate(r, o),
 						join: (r: string, o: any) => matchMaker.join(r, o),
 						create: (r: string, o: any) => matchMaker.create(r, o),
-						joinById: (r: string, o: any) => matchMaker.joinById(r, o)
+						joinById: (r: string, o: any) => matchMaker.joinById(r, o),
+						reconnect: (r: string, o: any) => matchMaker.reconnect(r, o)
 					};
 
 					if (!methods[method]) {
@@ -81,7 +82,7 @@ function colyseusVitePlugin() {
 
 				httpServer.on('upgrade', (req, socket, head) => {
 					const url = req.url ?? '';
-					if (url.includes('token=')) {
+					if (url.includes('?token=')) {
 						for (const fn of viteUpgradeListeners) (fn as Function)(req, socket, head);
 					} else {
 						for (const fn of colyseusUpgradeListeners) (fn as Function)(req, socket, head);

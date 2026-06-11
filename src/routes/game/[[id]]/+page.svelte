@@ -1,16 +1,16 @@
 <script lang="ts">
 	import GameWindow from '$lib/components/GameWindow.svelte';
 	import GameLobby from '$lib/components/GameLobby.svelte';
-	import { colyseusClient } from '$lib/colyseusClient';
 	import { onMount } from 'svelte';
-	import { MatchMakeError, type Room } from '@colyseus/sdk';
+	import { browser } from '$app/environment';
+	import { connectToRoom } from './client';
+	import type { Room } from '@colyseus/sdk';
 	import type { PageProps } from './$types';
-	import { applyAction } from '$app/forms';
-	import { m } from '$lib/paraglide/messages';
+	import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 
 	const { params, data }: PageProps = $props();
 
-	let room: Room | null = $state(null);
+	let room: Room<GameRoomState> | null = $state(null);
 	let started = $state(false);
 
 	onMount(() => {
@@ -19,61 +19,22 @@
 	});
 
 	$effect(() => {
-		let cancelled = false;
+		if (!browser) return;
 
-		void (async () => {
-			try {
-				const newRoom = params.id
-					? await colyseusClient!.joinById(params.id, {})
-					: await colyseusClient!.joinOrCreate('tank_room', {});
-				if (cancelled) {
-					void newRoom.leave();
-					return;
-				}
-				room = newRoom;
-				newRoom.onMessage('game_start', () => {
+		connectToRoom(params.id)
+			.then((result) => {
+				room = result;
+				if (!room) return;
+				room.onMessage('game_start', () => {
 					started = true;
 				});
-			} catch (err) {
-				if (err instanceof MatchMakeError) {
-					if (err.code === 400 && err.message.match(/room ".*" not found/)) {
-						return await applyAction({
-							type: 'error',
-							status: 400,
-							error: { message: m.error_room_not_exist() }
-						});
-					}
-					if (err.message === 'ALREADY_IN_A_GAME') {
-						return await applyAction({
-							type: 'error',
-							status: err.code,
-							error: { message: m.error_already_game() }
-						});
-					} else if (err.message === 'UNAUTHORIZED') {
-						return await applyAction({
-							type: 'error',
-							status: err.code,
-							error: { message: m.error_not_auth() }
-						});
-					} else {
-						return await applyAction({
-							type: 'error',
-							status: err.code,
-							error: { message: err.message }
-						});
-					}
-				}
-				return await applyAction({
-					type: 'error',
-					status: 400,
-					error: { message: err instanceof Error ? err.message : String(err) }
-				});
-			}
-		})();
+			})
+			.catch(() => {}); // already handled in the function
 
 		return () => {
-			cancelled = true;
 			void room?.leave();
+			localStorage.removeItem('reconnectionToken');
+			localStorage.removeItem('reconnectionTokenParamsId');
 			room = null;
 			started = false;
 		};
