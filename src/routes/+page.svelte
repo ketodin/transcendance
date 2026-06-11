@@ -2,6 +2,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
+	import { enhance } from '$app/forms';
 	import { syncFromCSS } from '$lib/game/phaser/colors';
 
 	onMount(() => {
@@ -40,7 +41,7 @@
 			>
 				{m.public_game()}
 			</a>
-			<form method="POST" action="?/newPrivateGame">
+			<form method="POST" action="?/newPrivateGame" use:enhance>
 				<button
 					type="submit"
 					class="glassbutton flex items-center justify-center px-6 py-4 text-lg font-bold tracking-widest uppercase sm:px-10 sm:py-5 sm:text-xl lg:px-16 lg:py-6 lg:text-2xl"
