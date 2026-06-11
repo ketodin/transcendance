@@ -144,18 +144,18 @@
 
 		<div class="action">
 			{#if editing}
-				<Button class="glassbutton group" onclick={() => nameFormEl?.requestSubmit()}>
-					<Save size={16} />
+				<Button class="glassbutton group min-h-10" onclick={() => nameFormEl?.requestSubmit()}>
 					{m.save()}
+					<Save size={16} />
 				</Button>
 			{:else}
-				<Button class="glassbutton group" onclick={() => (editing = true)}>
+				<Button class="glassbutton group min-h-10" onclick={() => (editing = true)}>
 					<Pencil size={16} />
 					{m.edit()}
 				</Button>
 			{/if}
 			<Button
-				class="glassbutton group"
+				class="glassbutton group min-h-10"
 				onclick={async () => {
 					await disconnectStatusRoom();
 					await signOut();
@@ -166,7 +166,9 @@
 				<LogOut class="text-red-400 transition-colors group-hover:text-white" />
 			</Button>
 			<AlertDialog.Root>
-				<AlertDialog.Trigger class="glassbutton px-6 py-1 text-red-400">
+				<AlertDialog.Trigger
+					class="glassbutton inline-flex min-h-10 items-center justify-center px-6 text-sm text-red-400"
+				>
 					{m.delete_account()}
 				</AlertDialog.Trigger>
 				<AlertDialog.Content class="glass">
