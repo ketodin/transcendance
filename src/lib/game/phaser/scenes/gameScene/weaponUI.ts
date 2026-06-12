@@ -39,6 +39,9 @@ export function updateWeaponUI(ctx: WeaponUICtx, activeIndex: number, isMyTurn =
 
 	const myCooldowns = ctx.weaponCooldowns[ctx.myPlayerIndex] ?? [];
 
+	const labelTypeIdx = isMyTurn ? ctx.hoveredWeaponTypeIdx : -1;
+	if (labelTypeIdx === -1) ctx.weaponNameLabel.setText('');
+
 	ctx.selectableWeaponIndices.forEach((typeIdx, si) => {
 		const cx = startX + si * (iSize + iGap) + half;
 		const cy = iconY;
@@ -109,12 +112,12 @@ export function updateWeaponUI(ctx: WeaponUICtx, activeIndex: number, isMyTurn =
 			ctx.weaponUiGfx.strokePath();
 		}
 
-		if (active) {
+		if (typeIdx === labelTypeIdx) {
 			const label = weaponDisplayName(type.name).toUpperCase();
 			ctx.weaponNameLabel
-				.setPosition(cx, cy - half - ctx.sh(10))
+				.setPosition(cx, cy - half - ctx.sh(30))
 				.setText(onCooldown ? msg.game_weapon_used({ name: label }) : label)
-				.setFontSize(Math.round(ctx.sh(11)));
+				.setFontSize(Math.round(ctx.sh(14)));
 		}
 
 		if (!isMyTurn) {
