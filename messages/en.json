@@ -116,6 +116,8 @@
 
 	"game_turn": "{name}'s Turn",
 	"game_winner": "{name} Wins!",
+	"game_you_won": "You Won!",
+	"game_opponent_left": "Your opponent left the game",
 	"game_fire": "FIRE",
 	"game_leave": "LEAVE",
 	"game_stay": "STAY",

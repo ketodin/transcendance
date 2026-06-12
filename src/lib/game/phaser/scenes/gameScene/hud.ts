@@ -25,7 +25,7 @@ export function updateHealthBar(scene: GameScene, health: number) {
 	);
 }
 
-export function showGameOver(scene: GameScene, winner: number) {
+export function showGameOver(scene: GameScene, winner: number, reason?: string) {
 	// If the player had the leave-confirm window open, close it so the two
 	// modals don't overlap when the opponent leaves / the game ends.
 	scene.dismissLeaveConfirm?.();
@@ -54,8 +54,13 @@ export function showGameOver(scene: GameScene, winner: number) {
 	panel.lineStyle(1, COLORS.neonGlow, 0.35);
 	panel.strokeRoundedRect(px, py, panelW, panelH, scene.sw(8));
 
-	scene.add
-		.text(w / 2, py + scene.sh(85), m.game_winner({ name: scene.playerNames[winner] }), {
+	const wonByForfeit = reason === 'forfeit' && winner === scene.myPlayerIndex;
+	const title = wonByForfeit
+		? m.game_you_won()
+		: m.game_winner({ name: scene.playerNames[winner] });
+
+	const titleText = scene.add
+		.text(w / 2, py + scene.sh(85), title, {
 			fontSize: `${Math.round(scene.sh(46))}px`,
 			color: COLOR_STRINGS.gold,
 			stroke: COLOR_STRINGS.navy,
@@ -63,6 +68,22 @@ export function showGameOver(scene: GameScene, winner: number) {
 		})
 		.setOrigin(0.5)
 		.setDepth(32);
+
+	// Long titles (e.g. French "Vous avez gagné !") must not overflow the panel
+	const maxTitleW = panelW - scene.sw(30);
+	if (titleText.width > maxTitleW) titleText.setScale(maxTitleW / titleText.width);
+
+	if (wonByForfeit) {
+		scene.add
+			.text(w / 2, py + scene.sh(38), m.game_opponent_left(), {
+				fontSize: `${Math.round(scene.sh(16))}px`,
+				color: COLOR_STRINGS.neonGlow,
+				stroke: COLOR_STRINGS.navy,
+				strokeThickness: 3
+			})
+			.setOrigin(0.5)
+			.setDepth(32);
+	}
 
 	const btnW = scene.sw(190);
 	const btnH = scene.sh(48);

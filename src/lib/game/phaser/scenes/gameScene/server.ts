@@ -19,7 +19,7 @@ function setupRoomHandlers(scene: GameScene, room: Room<GameRoomState>) {
 
 	room.onMessage(
 		'phase_change',
-		(data: { phase: string; currentPlayer: number; winner?: number }) => {
+		(data: { phase: string; currentPlayer: number; winner?: number; reason?: string }) => {
 			scene.localPhase = data.phase;
 			scene.localCurrentPlayer = data.currentPlayer;
 			if (data.phase === 'AIMING') {
@@ -34,7 +34,7 @@ function setupRoomHandlers(scene: GameScene, room: Room<GameRoomState>) {
 				}
 			}
 			if (data.winner !== undefined) scene.localWinner = data.winner;
-			if (data.phase === 'OVER') showGameOver(scene, scene.localWinner);
+			if (data.phase === 'OVER') showGameOver(scene, scene.localWinner, data.reason);
 		}
 	);
 
@@ -131,7 +131,7 @@ export function connectToServer(scene: GameScene) {
 
 		room.onMessage(
 			'phase_change',
-			(data: { phase: string; currentPlayer: number; winner?: number }) => {
+			(data: { phase: string; currentPlayer: number; winner?: number; reason?: string }) => {
 				scene.localPhase = data.phase;
 				scene.localCurrentPlayer = data.currentPlayer;
 				if (data.phase === 'AIMING') {
@@ -146,7 +146,7 @@ export function connectToServer(scene: GameScene) {
 					}
 				}
 				if (data.winner !== undefined) scene.localWinner = data.winner;
-				if (data.phase === 'OVER') showGameOver(scene, scene.localWinner);
+				if (data.phase === 'OVER') showGameOver(scene, scene.localWinner, data.reason);
 			}
 		);
 
