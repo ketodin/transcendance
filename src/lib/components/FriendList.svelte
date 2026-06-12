@@ -43,8 +43,19 @@
 			.catch((e) => {
 				console.error(e);
 			});
+		const handleClickOutside = (e: MouseEvent) => {
+			const sidebar = document.getElementById('friend-sidebar');
+			const target = e.target as Node;
+			if (sidebar && !sidebar.contains(target)) {
+				friendListOpen.set(false);
+			}
+		};
+
+		document.addEventListener('click', handleClickOutside, true);
+
 		return () => {
 			disconnect();
+			document.removeEventListener('click', handleClickOutside, true);
 		};
 	});
 </script>
