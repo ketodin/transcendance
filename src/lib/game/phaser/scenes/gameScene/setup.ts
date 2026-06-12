@@ -242,8 +242,8 @@ export function setupUI(scene: GameScene) {
 	scene.weaponUiGfx = scene.add.graphics().setDepth(10).setVisible(false);
 	scene.weaponNameLabel = scene.add
 		.text(0, 0, '', {
-			fontSize: `${Math.round(scene.sh(11))}px`,
-			color: COLOR_STRINGS.yellow,
+			fontSize: `${Math.round(scene.sh(14))}px`,
+			color: COLOR_STRINGS.white,
 			stroke: COLOR_STRINGS.navy,
 			strokeThickness: 3
 		})

@@ -141,7 +141,8 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			this.broadcast('phase_change', {
 				phase: 'OVER',
 				currentPlayer: this.physicsState.currentPlayer,
-				winner
+				winner,
+				reason: 'forfeit'
 			});
 			void this.lock();
 		}

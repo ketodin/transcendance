@@ -36,7 +36,15 @@ export const auth = betterAuth({
 	databaseHooks: {
 		user: {
 			create: {
-				before: (user) => Promise.resolve({ data: { ...user, emailVerified: true } })
+				before: async (user) => {
+					let name = (user.name ?? user.email.split('@')[0]).replace(/\s+/g, '_');
+					const existing = await db.user.findUnique({ where: { name } });
+					if (existing) {
+						const suffix = crypto.randomUUID().replace(/-/g, '').substring(0, 8);
+						name = `_tmp_${suffix}`;
+					}
+					return { data: { ...user, name, emailVerified: true } };
+				}
 			}
 		}
 	},
