@@ -3,7 +3,7 @@ import { auth } from '$lib/server/auth';
 import db from '$lib/server/db';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals, url }) => {
+export const load: PageServerLoad = ({ locals, url }) => {
 	const redirectTo = url.searchParams.get('redirectTo') ?? '/';
 
 	if (!locals.user) redirect(303, '/login');
