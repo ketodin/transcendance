@@ -15,7 +15,11 @@ export const avatarSchema = z.strictObject({
 });
 
 export const nameSchema = z.strictObject({
-	name: z.string().min(3).max(32)
+	name: z
+		.string()
+		.min(3)
+		.max(32)
+		.regex(/^[a-zA-Z0-9_-]+$/, { error: m.invalid_name })
 });
 
 export const changePasswordSchema = z

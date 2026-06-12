@@ -87,7 +87,16 @@
 		useBackup = false;
 	}
 	async function signInWithGoogle() {
-		await authClient.signIn.social({ provider: 'google', callbackURL: redirectUrl });
+		error = '';
+		await authClient.signIn.social({
+			provider: 'google',
+			callbackURL: `/setup-username?redirectTo=${encodeURIComponent(redirectUrl)}`,
+			fetchOptions: {
+				onError: (ctx) => {
+					error = ctx.error.message;
+				}
+			}
+		});
 	}
 </script>
 
