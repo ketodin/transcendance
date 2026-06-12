@@ -1,5 +1,7 @@
 import type { Room, Client } from 'colyseus';
 import { CHAT_BUBBLE_DURATION } from '$lib/game/shared/chatConfig';
+import { ChatSchema } from '$lib/game/colyseus/messageSchemas';
+import { validated } from '$lib/game/colyseus/validateMessage';
 
 export function registerChatHandler(
 	room: Room,
@@ -7,8 +9,9 @@ export function registerChatHandler(
 ) {
 	const lastMessage = new Map<string, number>(); // anti-spam
 
-	room.onMessage('chat', (client: Client, data: { text: string }) => {
-		try {
+	room.onMessage(
+		'chat',
+		validated(ChatSchema, (client, data) => {
 			const playerIndex = getPlayerIndex(client);
 			if (playerIndex === undefined) return;
 
@@ -16,14 +19,9 @@ export function registerChatHandler(
 			const last = lastMessage.get(client.sessionId) ?? 0;
 			if (now - last < CHAT_BUBBLE_DURATION) return;
 
-			const text = String(data.text).trim().slice(0, 80);
-			if (!text) return;
-
 			lastMessage.set(client.sessionId, now);
 
-			room.broadcast('chat', { playerIndex, text });
-		} catch (err) {
-			console.error('[chatHandler] error:', err);
-		}
-	});
+			room.broadcast('chat', { playerIndex, text: data.text });
+		})
+	);
 }

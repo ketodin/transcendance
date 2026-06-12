@@ -7,6 +7,16 @@ import { PROJECTILE_TYPES, AIRSTRIKE_TYPE_INDEX } from '$lib/game/shared/project
 import type { GameState } from '$lib/game/shared/state/GameState';
 import type { TankState } from '$lib/game/shared/state/TankState';
 import { registerChatHandler } from '$lib/game/colyseus/handlers/chatHandler';
+import {
+	InputSchema,
+	FireDirectSchema,
+	SetTurretAngleSchema,
+	SelectWeaponSchema,
+	ReadySchema,
+	RoomOptionsSchema,
+	type InputMessage as InputState
+} from '$lib/game/colyseus/messageSchemas';
+import { validated } from '$lib/game/colyseus/validateMessage';
 
 const activePlayers = new Set<string>();
 
@@ -16,11 +26,6 @@ const MOVE_SPEED = 100;
 const MAX_SLOPE_ANGLE = 80;
 const MAX_FUEL_DISTANCE = 200;
 const TANK_X: [number, number] = [180, 1740];
-
-type InputState = {
-	moveLeft: boolean;
-	moveRight: boolean;
-};
 
 export class TankRoom extends Room<{ state: GameRoomState }> {
 	private physicsState!: GameState;
@@ -33,70 +38,86 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	private playerIds: [string, string] = ['', ''];
 	private playersReady: [boolean, boolean] = [false, false];
 
-	async onCreate(options: { private: boolean } = { private: false }) {
+	async onCreate(options: unknown = {}) {
 		this.maxClients = 2;
 		this.patchRate = 16;
 		this.setState(new GameRoomState());
 
-		if (options.private) {
+		const opts = RoomOptionsSchema.safeParse(options);
+		if (opts.success && opts.data.private) {
 			await this.setPrivate();
 		}
 
-		this.onMessage<InputState>('input', (client, data) => {
-			if (this.isCurrentPlayer(client)) {
-				this.inputs.set(client.sessionId, data);
-			}
-		});
+		this.onMessage(
+			'input',
+			validated(InputSchema, (client, data) => {
+				if (this.isCurrentPlayer(client)) {
+					this.inputs.set(client.sessionId, data);
+				}
+			})
+		);
 
-		this.onMessage('fire_direct', (client, data: { angle: number; power: number }) => {
-			if (!this.isCurrentPlayer(client)) return;
-			if (this.physicsState?.phase !== 'AIMING') return;
-			const p = this.physicsState.currentPlayer;
-			if (this.physicsState.weaponCooldowns[p][this.physicsState.weaponIndex]) return;
-			const tank = this.physicsState.tanks[p];
-			tank.turretAngle = data.angle;
-			this.clampTurretAngle(p);
-			this.physicsState.power = Math.max(0, Math.min(100, data.power));
-			this.fireProjectile();
-		});
+		this.onMessage(
+			'fire_direct',
+			validated(FireDirectSchema, (client, data) => {
+				if (!this.isCurrentPlayer(client)) return;
+				if (this.physicsState?.phase !== 'AIMING') return;
+				const p = this.physicsState.currentPlayer;
+				if (this.physicsState.weaponCooldowns[p][this.physicsState.weaponIndex]) return;
+				const tank = this.physicsState.tanks[p];
+				tank.turretAngle = data.angle;
+				this.clampTurretAngle(p);
+				this.physicsState.power = Math.max(0, Math.min(100, data.power));
+				this.fireProjectile();
+			})
+		);
 
-		this.onMessage('set_turret_angle', (client, data: { angle: number }) => {
-			if (!this.isCurrentPlayer(client)) return;
-			if (this.physicsState?.phase !== 'AIMING') return;
-			const p = this.physicsState.currentPlayer;
-			const tank = this.physicsState.tanks[p];
-			tank.turretAngle = data.angle;
-			this.clampTurretAngle(p);
-		});
+		this.onMessage(
+			'set_turret_angle',
+			validated(SetTurretAngleSchema, (client, data) => {
+				if (!this.isCurrentPlayer(client)) return;
+				if (this.physicsState?.phase !== 'AIMING') return;
+				const p = this.physicsState.currentPlayer;
+				const tank = this.physicsState.tanks[p];
+				tank.turretAngle = data.angle;
+				this.clampTurretAngle(p);
+			})
+		);
 
-		this.onMessage('select_weapon', (client, data: { index: number }) => {
-			if (!this.isCurrentPlayer(client)) return;
-			if (this.physicsState?.phase !== 'AIMING') return;
-			const p = this.physicsState.currentPlayer;
-			const type = PROJECTILE_TYPES[data.index];
-			if (!type || type.selectable === false) return;
-			if (this.physicsState.weaponCooldowns[p][data.index]) return;
-			this.physicsState.weaponIndex = data.index;
-			this.state.weaponIndex = data.index;
-		});
+		this.onMessage(
+			'select_weapon',
+			validated(SelectWeaponSchema, (client, data) => {
+				if (!this.isCurrentPlayer(client)) return;
+				if (this.physicsState?.phase !== 'AIMING') return;
+				const p = this.physicsState.currentPlayer;
+				const type = PROJECTILE_TYPES[data.index];
+				if (!type || type.selectable === false) return;
+				if (this.physicsState.weaponCooldowns[p][data.index]) return;
+				this.physicsState.weaponIndex = data.index;
+				this.state.weaponIndex = data.index;
+			})
+		);
 
-		this.onMessage('ready', (client) => {
-			const idx = this.getPlayerIndex(client);
-			if (idx !== undefined) this.playersReady[idx] = true;
+		this.onMessage(
+			'ready',
+			validated(ReadySchema, (client) => {
+				const idx = this.getPlayerIndex(client);
+				if (idx !== undefined) this.playersReady[idx] = true;
 
-			if (this.playersReady.every((v) => v)) {
-				if (this.gameStarted) {
-					this.sendGameStartOnReconnect(client);
-				} else {
-					try {
-						console.log('[TankRoom] initGame() OK, phase =', this.state.phase);
-						this.initGame();
-					} catch (e) {
-						console.error('[TankRoom] initGame() threw:', e);
+				if (this.playersReady.every((v) => v)) {
+					if (this.gameStarted) {
+						this.sendGameStartOnReconnect(client);
+					} else {
+						try {
+							console.log('[TankRoom] initGame() OK, phase =', this.state.phase);
+							this.initGame();
+						} catch (e) {
+							console.error('[TankRoom] initGame() threw:', e);
+						}
 					}
 				}
-			}
-		});
+			})
+		);
 
 		this.setSimulationInterval((dt) => this.tick(dt), 1000 / 60);
 		// register chat handler
