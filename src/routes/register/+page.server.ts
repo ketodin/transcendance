@@ -2,6 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import { superValidate, setError, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth } from '$lib/server/auth';
+import db from '$lib/server/db';
 import { formSchema } from './schema';
 import { m } from '$lib/paraglide/messages';
 import type { Actions, PageServerLoad } from './$types';
@@ -19,6 +20,11 @@ export const actions: Actions = {
 
 		if (!form.valid) {
 			return fail(400, { form });
+		}
+
+		const existingName = await db.user.findUnique({ where: { name: form.data.name } });
+		if (existingName) {
+			return setError(form, 'name', m.error_username_taken());
 		}
 
 		try {

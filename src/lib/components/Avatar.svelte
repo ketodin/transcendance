@@ -15,7 +15,13 @@
 </script>
 
 {#if image && !imgFailed}
-	<img src={image} alt={initial} style="width: {size}" onerror={handleImageError} />
+	<img
+		src={image}
+		alt={initial}
+		style="width: {size}"
+		onerror={handleImageError}
+		referrerpolicy="no-referrer"
+	/>
 {:else}
 	<div class="avatar" style="width: {size}">
 		{initial}

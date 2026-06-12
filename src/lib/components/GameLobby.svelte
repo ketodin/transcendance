@@ -9,8 +9,7 @@
 
 	let { room, user }: { room: Room<GameRoomState>; user: User } = $props();
 
-	let opponentJoined = $state(false);
-	let opponentName = $state('');
+	let opponent = $state<{ name: string; image: string | null } | null>(null);
 	let readySent = $state(false);
 	let countdown = $state(3);
 
@@ -20,8 +19,10 @@
 		const handler = (state: GameRoomState) => {
 			if (state.player0Id && state.player1Id && !readySent) {
 				readySent = true;
-				opponentJoined = true;
-				opponentName = isPlayer0 ? state.player1Name : state.player0Name;
+				opponent = {
+					name: isPlayer0 ? state.player1Name : state.player0Name,
+					image: (isPlayer0 ? state.player1Image : state.player0Image) || null
+				};
 			}
 		};
 		room.onStateChange(handler);
@@ -29,7 +30,7 @@
 	});
 
 	$effect(() => {
-		if (!opponentJoined) return;
+		if (!opponent) return;
 		const interval = setInterval(() => {
 			countdown -= 1;
 			if (countdown <= 0) {
@@ -59,14 +60,9 @@
 		<div
 			class="glass flex min-w-40 flex-col items-center justify-center gap-3 rounded-2xl px-8 py-6"
 		>
-			{#if opponentJoined}
-				<!-- Opponent connected -->
-				<div
-					class="flex size-16 items-center justify-center rounded-full border-2 border-white/10 bg-white/10 text-2xl font-bold"
-				>
-					{opponentName.charAt(0).toUpperCase()}
-				</div>
-				<span class="max-w-28 truncate font-semibold">{opponentName}</span>
+			{#if opponent}
+				<Avatar image={opponent.image} name={opponent.name} size="4rem" />
+				<span class="max-w-28 truncate font-semibold">{opponent.name}</span>
 			{:else}
 				<!-- Skeleton waiting state -->
 				<div class="size-16 animate-pulse rounded-full bg-white/10"></div>
@@ -84,7 +80,7 @@
 	</div>
 
 	<!-- Bottom action area -->
-	{#if opponentJoined}
+	{#if opponent}
 		<div class="flex flex-col items-center gap-2">
 			<span class="text-sm tracking-widest uppercase opacity-40">{m.gameStartingIn()}</span>
 			<span

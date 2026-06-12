@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { m } from '$lib/paraglide/messages';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 500 * 1024;
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg'];
 
 export const avatarSchema = z.strictObject({

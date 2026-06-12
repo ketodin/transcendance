@@ -36,7 +36,7 @@
 	"google": "Continuar con Google",
 
 	"please_upload_file": "Por favor, suba una imagen",
-	"max_upload_size": "Tamaño máximo de subida: 5 MB",
+	"max_upload_size": "Tamaño máximo de subida: 500 Ko",
 	"unknow_upload_file": "Solo se permiten los formatos PNG y JPEG",
 
 	"name_place_holder": "Esteban",

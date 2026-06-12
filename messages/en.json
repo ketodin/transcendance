@@ -36,7 +36,7 @@
 	"google": "Continue with Google",
 
 	"please_upload_file": "Please upload an image",
-	"max_upload_size": "Max 5MB upload size",
+	"max_upload_size": "Max 500 Ko upload size",
 	"unknow_upload_file": "Only PNG and JPEG images are allowed",
 
 	"name_place_holder": "Steve",

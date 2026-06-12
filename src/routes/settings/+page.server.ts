@@ -8,6 +8,7 @@ import { avatarSchema, nameSchema, changePasswordSchema } from './schema';
 import { m } from '$lib/paraglide/messages';
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { randomInt } from 'crypto';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -33,11 +34,11 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		const filePath = path.join(path.resolve('static/avatar'), locals.user!.id);
+		const filePath = path.join(path.resolve('static/uploads'), locals.user!.id);
 		const buffer = Buffer.from(await form.data.file.arrayBuffer());
 		await writeFile(filePath, buffer);
 		await auth.api.updateUser({
-			body: { image: `/avatar/${locals.user!.id}` },
+			body: { image: `/avatar/${locals.user!.id}?k=${randomInt(0, 4096)}` },
 			headers: request.headers
 		});
 		return message(form, 'Updated Avatar');

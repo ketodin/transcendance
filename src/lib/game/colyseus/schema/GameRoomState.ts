@@ -14,4 +14,6 @@ export class GameRoomState extends Schema {
 	@type('string') player1Id: string = '';
 	@type('string') player0Name: string = '';
 	@type('string') player1Name: string = '';
+	@type('string') player0Image: string = '';
+	@type('string') player1Image: string = '';
 }
