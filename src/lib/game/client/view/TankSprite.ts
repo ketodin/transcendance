@@ -18,7 +18,7 @@ export class TankSprite {
 		this.healthGfx = scene.add.graphics();
 		this.nameLabel = scene.add
 			.text(state.x, state.y - 48, state.name, {
-				fontSize: '12px',
+				fontSize: '16px',
 				color: COLOR_STRINGS.white,
 				stroke: COLOR_STRINGS.black,
 				strokeThickness: 3
@@ -41,7 +41,7 @@ export class TankSprite {
 		const hx = x + HULL_H * Math.sin(slope);
 		const hy = y - HULL_H * Math.cos(slope);
 
-		this.nameLabel.setPosition(hx, hy - 31);
+		this.nameLabel.setPosition(hx, hy - 56);
 		this.drawBody(x, y, color, facing, slope);
 		this.drawBarrel(hx, hy, color, turretAngle);
 		this.drawHealth(hx, hy, health);
@@ -226,7 +226,7 @@ export class TankSprite {
 		const w = 44,
 			h = 5;
 		const bx = hx - w / 2,
-			by = hy - 22;
+			by = hy - 42;
 		this.healthGfx.fillStyle(COLORS.black, 0.6);
 		this.healthGfx.fillRect(bx - 1, by - 1, w + 2, h + 2);
 		const pct = health / 100;
