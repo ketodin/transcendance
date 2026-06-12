@@ -11,7 +11,7 @@ import { TankRoom } from '$lib/game/colyseus/TankRoom';
 import { StatusRoom } from '$lib/game/colyseus/StatusRoom';
 
 let gameServer: ColyseusServer | null = null;
-const PUBLIC_ROUTES = ['/login', '/register', '/legal/terms', '/legal/privacy', 'favicon.png'];
+const PUBLIC_ROUTES = ['/login', '/register', 'favicon.png'];
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
