@@ -110,7 +110,11 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		return session.user;
 	}
 
-	onJoin(client: Client, _options: unknown, user: { id: string; name: string; image?: string | null }) {
+	onJoin(
+		client: Client,
+		_options: unknown,
+		user: { id: string; name: string; image?: string | null }
+	) {
 		const idx = this.clients.length - 1;
 		activePlayers.add(user.id);
 		console.log(`[TankRoom] onJoin — idx=${idx}, sessionId=${client.sessionId}`);
