@@ -33,7 +33,7 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		const filePath = path.join(path.resolve('static/avatar'), locals.user!.id);
+		const filePath = path.join(path.resolve('static/uploads'), locals.user!.id);
 		const buffer = Buffer.from(await form.data.file.arrayBuffer());
 		await writeFile(filePath, buffer);
 		await auth.api.updateUser({
