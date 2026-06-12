@@ -116,6 +116,8 @@
 
 	"game_turn": "Turno de {name}",
 	"game_winner": "¡{name} gana!",
+	"game_you_won": "¡Has ganado!",
+	"game_opponent_left": "Tu oponente abandonó la partida",
 	"game_fire": "DISPARAR",
 	"game_leave": "SALIR",
 	"game_stay": "QUEDARSE",
