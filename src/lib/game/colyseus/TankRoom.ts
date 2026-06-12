@@ -110,19 +110,21 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		return session.user;
 	}
 
-	onJoin(client: Client, _options: unknown, user: { id: string; name: string }) {
+	onJoin(client: Client, _options: unknown, user: { id: string; name: string; image?: string | null }) {
 		const idx = this.clients.length - 1;
 		activePlayers.add(user.id);
 		console.log(`[TankRoom] onJoin — idx=${idx}, sessionId=${client.sessionId}`);
 		if (idx === 0) {
 			this.state.player0Id = client.sessionId;
 			this.state.player0Name = user.name;
+			this.state.player0Image = user.image ?? '';
 			this.player0Name = user.name;
 			this.playerIds[0] = user.id;
 			console.log('[TankRoom] Player 1 registered, waiting for Player 2...');
 		} else if (idx === 1) {
 			this.state.player1Id = client.sessionId;
 			this.state.player1Name = user.name;
+			this.state.player1Image = user.image ?? '';
 			this.player1Name = user.name;
 			this.playerIds[1] = user.id;
 			console.log('[TankRoom] Player 2 joined — starting game...');
