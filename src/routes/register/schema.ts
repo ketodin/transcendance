@@ -3,7 +3,11 @@ import { m } from '$lib/paraglide/messages';
 
 export const formSchema = z
 	.strictObject({
-		name: z.string().min(3).max(32),
+		name: z
+			.string()
+			.min(3)
+			.max(32)
+			.regex(/^[a-zA-Z0-9_-]+$/, { error: m.invalid_name }),
 
 		email: z.email(),
 
