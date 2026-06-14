@@ -34,7 +34,7 @@
 
 	let showAddFriend = $state(false);
 
-	let disconnect: (() => void | Promise<void>) = () => {};
+	let disconnect: () => void | Promise<void> = () => {};
 	onMount(() => {
 		connectStatusRoom()
 			.then((fn) => {
@@ -54,7 +54,7 @@
 		document.addEventListener('click', handleClickOutside, true);
 
 		return () => {
-			disconnect();
+			void disconnect();
 			document.removeEventListener('click', handleClickOutside, true);
 		};
 	});
