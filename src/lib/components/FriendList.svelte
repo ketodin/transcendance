@@ -34,11 +34,11 @@
 
 	let showAddFriend = $state(false);
 
-	let disconnect = () => {};
+	let disconnect: (() => void | Promise<void>) = () => {};
 	onMount(() => {
 		connectStatusRoom()
 			.then((fn) => {
-				disconnect = fn;
+				disconnect = fn!;
 			})
 			.catch((e) => {
 				console.error(e);
