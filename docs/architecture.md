@@ -4,16 +4,16 @@ SvelteKit + Colyseus + Prisma monorepo for a multiplayer browser game.
 
 ## Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | SvelteKit 2, Svelte 5 (runes), TailwindCSS 4, shadcn-svelte |
-| Game engine | Phaser 4 |
-| Multiplayer | Colyseus 0.17 (authoritative server, in-process with SvelteKit) |
-| Auth | Better-Auth |
-| Database | Prisma 7 + SQLite (better-sqlite3) |
-| i18n | Paraglide JS |
-| Package manager | pnpm 10.33.0 |
-| Runtime | Node 24.15.0 |
+| Layer           | Technology                                                      |
+| --------------- | --------------------------------------------------------------- |
+| Frontend        | SvelteKit 2, Svelte 5 (runes), TailwindCSS 4, shadcn-svelte     |
+| Game engine     | Phaser 4                                                        |
+| Multiplayer     | Colyseus 0.17 (authoritative server, in-process with SvelteKit) |
+| Auth            | Better-Auth                                                     |
+| Database        | Prisma 7 + SQLite (better-sqlite3)                              |
+| i18n            | Paraglide JS                                                    |
+| Package manager | pnpm 10.33.0                                                    |
+| Runtime         | Node 24.15.0                                                    |
 
 ## Process Model
 
@@ -27,10 +27,10 @@ Colyseus runs inside the same Node.js process as SvelteKit — **not** as a sepa
 
 `compose.yaml` defines two services:
 
-| Service | Role | Port |
-|---------|------|------|
-| transcendance | SvelteKit + Colyseus app | 3000 (internal) |
-| caddy | Reverse proxy with TLS termination | 4443 (external) |
+| Service       | Role                               | Port            |
+| ------------- | ---------------------------------- | --------------- |
+| transcendance | SvelteKit + Colyseus app           | 3000 (internal) |
+| caddy         | Reverse proxy with TLS termination | 4443 (external) |
 
 Caddy handles TLS certificate provisioning. Clients connect to `https://<host>:4443`.
 
@@ -110,25 +110,25 @@ src/lib/game/
 
 Two Colyseus room types are registered in `hooks.server.ts`:
 
-| Room type | Class | Purpose |
-|-----------|-------|---------|
-| `tank_room` | `TankRoom` | Main game room — tank combat, chat, state sync |
-| `status` | `StatusRoom` | Online presence tracking for friend list |
+| Room type   | Class        | Purpose                                        |
+| ----------- | ------------ | ---------------------------------------------- |
+| `tank_room` | `TankRoom`   | Main game room — tank combat, chat, state sync |
+| `status`    | `StatusRoom` | Online presence tracking for friend list       |
 
 Room types are defined once via `globalThis.gameServer` guard to survive HMR reloads.
 
 ## Scope Map
 
-| Scope | Covers |
-|-------|--------|
-| `frontend` | SvelteKit routes, Svelte components, shadcn-svelte, Vite config |
-| `backend` | Server-side services, API routes, hooks.server.ts |
-| `auth` | OAuth 42, Google OAuth, JWT, TOTP, session injection |
-| `game` | Phaser engine, Colyseus rooms, schemas, game logic |
-| `db` | Prisma schema, migrations, database client, queries |
-| `shared` | Code in `src/lib/game/shared/` used by both client and Colyseus server |
-| `infra` | Docker, compose.yaml, Caddy, deployment, .github |
-| `i18n` | Paraglide translations, messages.json |
+| Scope      | Covers                                                                 |
+| ---------- | ---------------------------------------------------------------------- |
+| `frontend` | SvelteKit routes, Svelte components, shadcn-svelte, Vite config        |
+| `backend`  | Server-side services, API routes, hooks.server.ts                      |
+| `auth`     | OAuth 42, Google OAuth, JWT, TOTP, session injection                   |
+| `game`     | Phaser engine, Colyseus rooms, schemas, game logic                     |
+| `db`       | Prisma schema, migrations, database client, queries                    |
+| `shared`   | Code in `src/lib/game/shared/` used by both client and Colyseus server |
+| `infra`    | Docker, compose.yaml, Caddy, deployment, .github                       |
+| `i18n`     | Paraglide translations, messages.json                                  |
 
 `auth` is intentionally separate from `backend`: auth issues are security-sensitive, span the frontend/backend boundary, and require a distinct resolution path.
 
@@ -136,14 +136,14 @@ Room types are defined once via `globalThis.gameServer` guard to survive HMR rel
 
 6 required status checks on `main`:
 
-| Check | What it runs |
-|-------|-------------|
-| `ci-lint-eslint` | `pnpm lint:eslint` |
-| `ci-lint-prettier` | `pnpm lint:prettier` |
-| `ci-lint-prisma` | `prisma format --check` |
-| `ci-typecheck-game-server` | `pnpm typecheck` (svelte-check + tsc --noEmit, unified) |
-| `ci-docker-build` | Build Dockerfile via `compose.yaml` (no push) |
-| `ci-docs-deploy` | Docusaurus deploy to GitHub Pages (main only, on docs/docusaurus changes) |
+| Check                      | What it runs                                                              |
+| -------------------------- | ------------------------------------------------------------------------- |
+| `ci-lint-eslint`           | `pnpm lint:eslint`                                                        |
+| `ci-lint-prettier`         | `pnpm lint:prettier`                                                      |
+| `ci-lint-prisma`           | `prisma format --check`                                                   |
+| `ci-typecheck-game-server` | `pnpm typecheck` (svelte-check + tsc --noEmit, unified)                   |
+| `ci-docker-build`          | Build Dockerfile via `compose.yaml` (no push)                             |
+| `ci-docs-deploy`           | Docusaurus deploy to GitHub Pages (main only, on docs/docusaurus changes) |
 
 Squash-merge only. All checks must pass. 1 required approval minimum.
 

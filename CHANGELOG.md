@@ -10,6 +10,7 @@ This project does not use versioned releases yet — changes are grouped by cate
 ## [Unreleased]
 
 ### Infrastructure
+
 - CI/CD pipeline with 10 required status checks (lint, typecheck, test, docker build)
 - GitHub Actions automation: labels, branch status, PR state tracking
 - 29 labels across type, scope, status, and priority categories
@@ -20,6 +21,7 @@ This project does not use versioned releases yet — changes are grouped by cate
 - Docusaurus documentation site deployed on GitHub Pages
 
 ### Authentication
+
 - Better-Auth with SvelteKit integration
 - OAuth 2.0 via 42 intranet
 - Google OAuth provider with username collision handling
@@ -30,6 +32,7 @@ This project does not use versioned releases yet — changes are grouped by cate
 - Security: sensitive fields omitted from public profile API
 
 ### Frontend
+
 - Svelte 5 (runes mode) with SvelteKit 2
 - TailwindCSS 4 with shadcn-svelte component library (accordion, alert-dialog, badge, button, card, checkbox, dialog, form, input, label, separator, sheet, skeleton, sonner, tabs, tooltip)
 - Dark/light theme with shader-based transitions
@@ -45,6 +48,7 @@ This project does not use versioned releases yet — changes are grouped by cate
 - Change password from settings
 
 ### Game
+
 - Phaser 4 engine embedded in SvelteKit via a game window component
 - Colyseus 0.17 authoritative multiplayer server (in-process, shared port 3000)
 - Tank-based combat: movement, aiming, projectiles with balanced damage and trajectories
@@ -67,6 +71,7 @@ This project does not use versioned releases yet — changes are grouped by cate
 - Colyseus message payloads validated with Zod
 
 ### Backend
+
 - Express 5 + SvelteKit in single process (index.ts)
 - Prisma 7 ORM with SQLite (better-sqlite3)
 - Database schema: User, Session, Account, Verification, FriendRequest, TwoFactor
@@ -76,6 +81,7 @@ This project does not use versioned releases yet — changes are grouped by cate
 - Database seeding script
 
 ### Shared
+
 - Realtime notification system between users (Colyseus-based)
 - Online presence/status tracking
 - Game state, physics, and terrain logic shared across client and server
@@ -84,6 +90,7 @@ This project does not use versioned releases yet — changes are grouped by cate
 - Game invite notification delivery
 
 ### Developer Experience
+
 - pnpm workspace with strict engine and build allowlist
 - ESLint (recommendedTypeChecked) + Prettier (tabs, single quotes, trailing comma none)
 - Prisma format in lint pipeline

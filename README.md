@@ -2,16 +2,16 @@
 
 Multiplayer browser game — SvelteKit + Colyseus + Phaser 4.
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | SvelteKit 2, Svelte 5 (runes), TailwindCSS 4, shadcn-svelte |
-| Game engine | Phaser 4 |
-| Multiplayer | Colyseus 0.17 (in-process, shared port 3000) |
-| Auth | Better-Auth |
-| Database | Prisma 7 + SQLite (better-sqlite3) |
-| i18n | Paraglide JS |
-| Package manager | pnpm 10.33.0 |
-| Runtime | Node 24.15.0 |
+| Layer           | Technology                                                  |
+| --------------- | ----------------------------------------------------------- |
+| Frontend        | SvelteKit 2, Svelte 5 (runes), TailwindCSS 4, shadcn-svelte |
+| Game engine     | Phaser 4                                                    |
+| Multiplayer     | Colyseus 0.17 (in-process, shared port 3000)                |
+| Auth            | Better-Auth                                                 |
+| Database        | Prisma 7 + SQLite (better-sqlite3)                          |
+| i18n            | Paraglide JS                                                |
+| Package manager | pnpm 10.33.0                                                |
+| Runtime         | Node 24.15.0                                                |
 
 ## Quickstart
 

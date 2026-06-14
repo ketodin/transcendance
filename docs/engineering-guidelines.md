@@ -378,11 +378,11 @@ Every workflow:
 
 ### 7.2 CI Triggers by Branch Prefix
 
-| Branch prefix          | CI on push                  |
-| ---------------------- | --------------------------- |
-| `feat`, `fix`, `chore` | Lint, typecheck             |
-| `ci`, `infra`          | Docker build                |
-| All other prefixes     | Full CI on PR to `main`     |
+| Branch prefix          | CI on push              |
+| ---------------------- | ----------------------- |
+| `feat`, `fix`, `chore` | Lint, typecheck         |
+| `ci`, `infra`          | Docker build            |
+| All other prefixes     | Full CI on PR to `main` |
 
 Full CI runs on every PR to `main`.
 
@@ -467,14 +467,14 @@ clampExpiry(duration, MAX_TOKEN_EXPIRY_MS);
 
 ### 9.2 Required Documents
 
-| File                             | Purpose                                              |
-| -------------------------------- | ---------------------------------------------------- |
-| `README.md`                      | Project description, setup instructions, stack, links |
+| File                             | Purpose                                                    |
+| -------------------------------- | ---------------------------------------------------------- |
+| `README.md`                      | Project description, setup instructions, stack, links      |
 | `docs/architecture.md`           | High-level architecture, file trees, scope map, hook chain |
-| `docs/engineering-guidelines.md` | This file                                            |
-| `docs/runbook.md`                | Operational procedures                               |
-| `docs/adr/`                      | Architecture Decision Records                        |
-| `CHANGELOG.md`                   | Notable changes per release                          |
+| `docs/engineering-guidelines.md` | This file                                                  |
+| `docs/runbook.md`                | Operational procedures                                     |
+| `docs/adr/`                      | Architecture Decision Records                              |
+| `CHANGELOG.md`                   | Notable changes per release                                |
 
 ### 9.3 What to Document
 
