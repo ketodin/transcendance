@@ -151,6 +151,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 				reason: 'forfeit'
 			});
 			void this.lock();
+			void this.disconnect();
 		}
 	}
 
@@ -422,6 +423,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 				winner
 			});
 			void this.lock();
+			void this.disconnect();
 			return true;
 		}
 		return false;
