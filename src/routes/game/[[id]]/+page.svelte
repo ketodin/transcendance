@@ -29,7 +29,7 @@
 					started = true;
 				});
 			})
-			.catch(() => {}); // already handled in the function
+			.catch(() => {});
 
 		return () => {
 			void room?.leave();
@@ -43,9 +43,6 @@
 
 {#key room}
 	{#if room}
-		<!-- Kept laid out (full size) but hidden until the match starts, so Phaser
-		     boots against a correctly-sized container. `absolute inset-0` keeps it
-		     out of flow so the lobby underneath is unaffected. -->
 		<div class="absolute inset-0 {!started ? 'invisible' : ''}">
 			<GameWindow {room} />
 		</div>
