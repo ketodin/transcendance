@@ -18,6 +18,7 @@
 	import { resolve } from '$app/paths';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { authClient } from '$lib/auth-client';
+	import * as friends from '$lib/friends.remote';
 
 	let { data }: PageProps = $props();
 
@@ -75,7 +76,9 @@
 	let fileInput: HTMLInputElement;
 	let nameFormEl: HTMLFormElement | undefined = $state();
 	let editing = $state(false);
+
 	async function handleDelete() {
+		await friends.notifyRemoval();
 		await authClient.deleteUser();
 		await goto(resolve('/register'), { invalidateAll: true });
 	}
