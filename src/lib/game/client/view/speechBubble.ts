@@ -29,7 +29,6 @@ export class SpeechBubble {
 		this.label.setText(text);
 		this.sync(tank);
 
-		// Reset timer if message are display
 		if (this.timer) this.timer.destroy();
 
 		this.timer = this.scene.time.addEvent({
@@ -55,14 +54,13 @@ export class SpeechBubble {
 		const h = this.label.height + pad * 2;
 		const tailH = 10;
 
-		this.bg.fillStyle(COLORS.white, 0.88); // Background
+		this.bg.fillStyle(COLORS.white, 0.88);
 		this.bg.fillRoundedRect(bx - w / 2, by - h / 2, w, h, 8);
-		this.bg.lineStyle(1.5, COLORS.black, 1); // Stroke chatbox
+		this.bg.lineStyle(1.5, COLORS.black, 1);
 		this.bg.strokeRoundedRect(bx - w / 2, by - h / 2, w, h, 8);
-		this.bg.fillStyle(COLORS.white, 0.88); // Arrow background
+		this.bg.fillStyle(COLORS.white, 0.88);
 		this.bg.fillTriangle(bx - 7, by + h / 2, bx + 7, by + h / 2, bx, by + h / 2 + tailH);
 
-		// Text center
 		this.label.setPosition(bx, by);
 	}
 	destroy(): void {

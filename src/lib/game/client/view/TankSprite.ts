@@ -4,7 +4,7 @@ import { getHeightAt } from '../../shared/logic/terrain';
 import { GameObjects } from 'phaser';
 import { COLORS, COLOR_STRINGS } from '../../phaser/colors';
 
-const HULL_H = 17; // height from terrain contact to hull top
+const HULL_H = 17;
 
 export class TankSprite {
 	private bodyGfx: GameObjects.Graphics;
@@ -37,7 +37,6 @@ export class TankSprite {
 			slope = Math.atan2(ry - ly, 30);
 		}
 
-		// Hull-top world position after rotation (for barrel pivot + UI)
 		const hx = x + HULL_H * Math.sin(slope);
 		const hy = y - HULL_H * Math.cos(slope);
 
@@ -54,7 +53,6 @@ export class TankSprite {
 		return (r << 16) | (g << 8) | b;
 	}
 
-	// Hull + turret body drawn at local origin, rotated with terrain slope
 	private drawBody(x: number, y: number, color: number, facing: 1 | -1, slope: number): void {
 		this.bodyGfx.clear();
 		this.bodyGfx.setPosition(x, y);
@@ -64,7 +62,6 @@ export class TankSprite {
 		const dark = TankSprite.shade(color, 0.45);
 		const mid = TankSprite.shade(color, 0.68);
 
-		// === TRACKS ===
 		this.bodyGfx.fillStyle(0x141414);
 		this.bodyGfx.fillRoundedRect(-28, -9, 56, 11, 3);
 
@@ -98,7 +95,6 @@ export class TankSprite {
 		this.bodyGfx.fillStyle(0x4e4e4e);
 		this.bodyGfx.fillCircle(-f * 26, -2, 2);
 
-		// === HULL ===
 		this.bodyGfx.fillStyle(dark);
 		this.bodyGfx.fillRect(-25, -13, 50, 4);
 
@@ -114,14 +110,11 @@ export class TankSprite {
 		this.bodyGfx.fillStyle(0xffffff, 0.07);
 		this.bodyGfx.fillRect(-23, -HULL_H, 46, 1);
 
-		// === TURRET BODY (local coords: turret base at (0, -HULL_H)) ===
-		const lty = -HULL_H; // turret base in local space
+		const lty = -HULL_H;
 
-		// Turret ring
 		this.bodyGfx.fillStyle(dark);
 		this.bodyGfx.fillRect(-15, lty - 1, 30, 2);
 
-		// Hexagonal turret body
 		this.bodyGfx.fillStyle(color);
 		this.bodyGfx.beginPath();
 		this.bodyGfx.moveTo(-15, lty);
@@ -133,7 +126,6 @@ export class TankSprite {
 		this.bodyGfx.closePath();
 		this.bodyGfx.fillPath();
 
-		// Lower band shading
 		this.bodyGfx.fillStyle(mid);
 		this.bodyGfx.beginPath();
 		this.bodyGfx.moveTo(-15, lty);
@@ -143,7 +135,6 @@ export class TankSprite {
 		this.bodyGfx.closePath();
 		this.bodyGfx.fillPath();
 
-		// Rear ammo bustle
 		const bustleX = f > 0 ? -22 : 17;
 		this.bodyGfx.fillStyle(dark);
 		this.bodyGfx.fillRect(bustleX, lty - 14, 5, 12);
@@ -156,7 +147,6 @@ export class TankSprite {
 			this.bodyGfx.strokePath();
 		}
 
-		// Smoke dischargers (front of turret)
 		for (let i = 0; i < 3; i++) {
 			const sx = f > 0 ? 17 + i * 3 : -(17 + i * 3);
 			this.bodyGfx.fillStyle(0x2a2a2a);
@@ -165,7 +155,6 @@ export class TankSprite {
 			this.bodyGfx.fillCircle(sx, lty - 5 - i * 0.5, 1);
 		}
 
-		// Commander's cupola
 		const cupolaX = f > 0 ? -7 : -4;
 		this.bodyGfx.fillStyle(mid);
 		this.bodyGfx.fillRect(cupolaX, lty - 20, 11, 5);
@@ -174,7 +163,6 @@ export class TankSprite {
 		this.bodyGfx.fillStyle(0x1a2a3a);
 		this.bodyGfx.fillRect(cupolaX + 2, lty - 19, 7, 2);
 
-		// Top highlight
 		this.bodyGfx.fillStyle(0xffffff, 0.07);
 		this.bodyGfx.beginPath();
 		this.bodyGfx.moveTo(-13, lty - 16);
@@ -185,7 +173,6 @@ export class TankSprite {
 		this.bodyGfx.fillPath();
 	}
 
-	// Barrel only — drawn in world space, always upright
 	private drawBarrel(hx: number, hy: number, color: number, turretAngle: number): void {
 		this.turretGfx.clear();
 		const dark = TankSprite.shade(color, 0.45);
@@ -195,25 +182,21 @@ export class TankSprite {
 		const bx = hx;
 		const by = hy - 7;
 
-		// Mantlet
 		this.turretGfx.fillStyle(dark);
 		this.turretGfx.fillEllipse(bx + Math.cos(rad) * 13, by - Math.sin(rad) * 13, 14, 11);
 
-		// Barrel base
 		this.turretGfx.lineStyle(5, mid);
 		this.turretGfx.beginPath();
 		this.turretGfx.moveTo(bx + Math.cos(rad) * 11, by - Math.sin(rad) * 11);
 		this.turretGfx.lineTo(bx + Math.cos(rad) * 21, by - Math.sin(rad) * 21);
 		this.turretGfx.strokePath();
 
-		// Thermal sleeve
 		this.turretGfx.lineStyle(4, TankSprite.shade(color, 0.58));
 		this.turretGfx.beginPath();
 		this.turretGfx.moveTo(bx + Math.cos(rad) * 21, by - Math.sin(rad) * 21);
 		this.turretGfx.lineTo(bx + Math.cos(rad) * 32, by - Math.sin(rad) * 32);
 		this.turretGfx.strokePath();
 
-		// Barrel tip
 		this.turretGfx.lineStyle(2, TankSprite.shade(color, 0.5));
 		this.turretGfx.beginPath();
 		this.turretGfx.moveTo(bx + Math.cos(rad) * 32, by - Math.sin(rad) * 32);

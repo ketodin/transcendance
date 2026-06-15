@@ -50,7 +50,6 @@
 	<p class="text-xs tracking-widest uppercase opacity-30">#{room.roomId}</p>
 
 	<div class="flex items-stretch gap-6">
-		<!-- Local player card -->
 		<div
 			class="glass flex min-w-40 flex-col items-center justify-center gap-3 rounded-2xl px-8 py-6"
 		>
@@ -60,7 +59,6 @@
 
 		<span class="self-center text-2xl font-bold opacity-30">VS</span>
 
-		<!-- Opponent card -->
 		<div
 			class="glass flex min-w-40 flex-col items-center justify-center gap-3 rounded-2xl px-8 py-6"
 		>
@@ -68,7 +66,6 @@
 				<Avatar image={opponent.image} name={opponent.name} size="4rem" />
 				<span class="max-w-28 truncate font-semibold">{opponent.name}</span>
 			{:else}
-				<!-- Skeleton waiting state -->
 				<div class="size-16 animate-pulse rounded-full bg-white/10"></div>
 				<div class="h-4 w-20 animate-pulse rounded-md bg-white/10"></div>
 				<div class="flex gap-1">
@@ -83,7 +80,6 @@
 		</div>
 	</div>
 
-	<!-- Bottom action area -->
 	{#if opponent}
 		<div class="flex flex-col items-center gap-2">
 			<span class="text-sm tracking-widest uppercase opacity-40">{m.gameStartingIn()}</span>

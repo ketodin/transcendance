@@ -120,7 +120,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		);
 
 		this.setSimulationInterval((dt) => this.tick(dt), 1000 / 60);
-		// register chat handler
 		registerChatHandler(this, (client) => this.getPlayerIndex(client));
 	}
 
@@ -391,7 +390,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 			wi
 		);
 
-		// Mark weapon as used for this player
 		this.physicsState.weaponCooldowns[p][wi] = true;
 		const selectable = PROJECTILE_TYPES.map((t, i) => (t.selectable !== false ? i : -1)).filter(
 			(i) => i !== -1
@@ -520,7 +518,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		this.physicsState.fuel = 100;
 		this.physicsState.turnTimeLeft = 30;
 
-		// Ensure the current weapon is available for the new active player
 		const p = this.physicsState.currentPlayer;
 		const selectable = PROJECTILE_TYPES.map((t, i) => (t.selectable !== false ? i : -1)).filter(
 			(i) => i !== -1

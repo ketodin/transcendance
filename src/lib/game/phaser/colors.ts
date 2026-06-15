@@ -1,7 +1,6 @@
 function cssHex(varName: string): number {
 	const val = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
 	const hex = val.replace('#', '').trim();
-	// Production CSS minifies #ffffff → #fff; expand shorthand before parsing
 	const full = hex.length === 3 ? hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2] : hex;
 	return parseInt(full, 16);
 }
@@ -10,7 +9,6 @@ function cssStr(varName: string): string {
 	return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
 }
 
-// ─── Theme-linked — driven by --game-* CSS variables in app.css ──────────
 export const COLORS = {
 	navy: 0x0e0e24,
 	terrain: 0x3d7a52,
@@ -28,7 +26,6 @@ export const COLORS = {
 	black: 0x000000,
 	aiming: 0xffffff,
 
-	// ─── Game-inherent — hardcoded, never affected by theme ──────────────
 	craterOuter: 0xff6600,
 	craterMid: 0xffcc00,
 	craterStone: 0x5a4a30,
@@ -55,7 +52,6 @@ export const COLORS = {
 };
 
 export const COLOR_STRINGS = {
-	// Theme-linked
 	navy: '#0e0e24',
 	neonGlow: '#88e8a0',
 	white: '#ffffff',
@@ -66,7 +62,6 @@ export const COLOR_STRINGS = {
 };
 
 export function syncFromCSS(): void {
-	// Only theme-linked — game-inherent stay hardcoded above
 	COLORS.navy = cssHex('--game-navy');
 	COLORS.aiming = cssHex('--game-aiming');
 	COLORS.terrain = cssHex('--game-terrain');

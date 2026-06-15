@@ -53,8 +53,6 @@ export default defineConfig(
 		}
 	},
 	{
-		// Override or add rule settings here, such as:
-		// 'svelte/button-has-type': 'error'
 		rules: {
 			'svelte/no-top-level-browser-globals': 'error',
 			'svelte/block-lang': ['error', { script: ['ts'] }]

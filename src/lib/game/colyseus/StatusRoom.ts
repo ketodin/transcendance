@@ -20,7 +20,7 @@ export class StatusRoom extends Room<{ state: StatusState }> {
 		this.userId = auth.id;
 		statusHub.bind(this.userId, this);
 
-		const friends = await getFriendList(this.userId); // need to use this instead of non realtime sveltekit `query`
+		const friends = await getFriendList(this.userId);
 
 		for (const friend of friends) {
 			if (friend.friendRequestStatus !== 'ACCEPTED') continue;

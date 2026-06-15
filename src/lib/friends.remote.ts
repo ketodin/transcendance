@@ -8,27 +8,22 @@ import { statusHub } from '$lib/game/colyseus/statusHub';
 import { m } from '$lib/paraglide/messages';
 
 async function sendOrAccept(me: User, other: User) {
-	/// check for reverse request, accepted or not, and set it accepted if found
 	const updates = await db.friendRequest.updateMany({
 		where: { senderId: other.id, receiverId: me.id },
 		data: { status: 'ACCEPTED' }
 	});
-	/// if found any reverse request, stop
 	if (updates.count > 0) {
 		statusHub.friendAccepted(me.id, other.id);
 		statusHub.notify(other.id, 'friend_request_accepted', { fromUserName: me.name });
 		return;
 	}
-	/// create a pending request if not already friend
 	try {
 		await db.friendRequest.create({
 			data: { senderId: me.id, receiverId: other.id, status: 'PENDING' }
 		});
 		statusHub.notify(other.id, 'friend_request_received', {});
 	} catch (e) {
-		if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
-			// ignore if already exist
-		} else {
+		if (!(e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002')) {
 			throw e;
 		}
 	}
