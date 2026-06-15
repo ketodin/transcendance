@@ -28,6 +28,7 @@
 				room.onMessage('game_start', () => {
 					started = true;
 				});
+				room.onMessage('game_update', () => {});
 			})
 			.catch(() => {}); // already handled in the function
 
