@@ -10,7 +10,7 @@ Multiplayer browser game — SvelteKit + Colyseus + Phaser 4.
 | Auth            | Better-Auth                                                 |
 | Database        | Prisma 7 + SQLite (better-sqlite3)                          |
 | i18n            | Paraglide JS                                                |
-| Package manager | pnpm 10.33.0                                                |
+| Package manager | pnpm 11.4.0                                                 |
 | Runtime         | Node 24.15.0                                                |
 
 ## Quickstart

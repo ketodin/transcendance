@@ -1,3 +1,4 @@
+import { Prisma } from '$lib/server/prisma/client';
 import { redirect } from '@sveltejs/kit';
 import { superValidate, setError, message, fail } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -34,13 +35,17 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		const filePath = path.join(path.resolve('static/uploads'), locals.user!.id);
-		const buffer = Buffer.from(await form.data.file.arrayBuffer());
-		await writeFile(filePath, buffer);
-		await auth.api.updateUser({
-			body: { image: `/avatar/${locals.user!.id}?k=${randomInt(0, 4096)}` },
-			headers: request.headers
-		});
+		try {
+			const filePath = path.join(path.resolve('static/uploads'), locals.user!.id);
+			const buffer = Buffer.from(await form.data.file.arrayBuffer());
+			await writeFile(filePath, buffer);
+			await auth.api.updateUser({
+				body: { image: `/avatar/${locals.user!.id}?k=${randomInt(0, 4096)}` },
+				headers: request.headers
+			});
+		} catch {
+			return setError(form, 'file', m.error_generic());
+		}
 		return message(form, 'Updated Avatar');
 	},
 	changeName: async ({ request }) => {
@@ -54,9 +59,8 @@ export const actions: Actions = {
 				headers: request.headers
 			});
 		} catch (error: unknown) {
-			const body = (error as { body?: { message?: string } })?.body;
-			if (body?.message?.includes('Unique constraint')) {
-				return setError(form, 'name', 'This name is already taken');
+			if (error instanceof Prisma.PrismaClientKnownRequestError && error.code == 'P2002') {
+				return setError(form, 'name', m.error_username_taken());
 			}
 			return setError(form, 'name', m.error_generic());
 		}
