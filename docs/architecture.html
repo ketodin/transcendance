@@ -1,4 +1,202 @@
-<!doctype html><html lang=en dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-docs/architecture" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.1"><title data-rh=true>architecture | Transcendence documentation</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:image content=https://ketodin.github.io/transcendance/img/docusaurus-social-card.jpg /><meta data-rh=true name=twitter:image content=https://ketodin.github.io/transcendance/img/docusaurus-social-card.jpg /><meta data-rh=true property=og:url content=https://ketodin.github.io/transcendance/docs/architecture /><meta data-rh=true property=og:locale content=en /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="architecture | Transcendence documentation"/><link data-rh=true rel=icon href=/transcendance/img/favicon.ico /><link data-rh=true rel=canonical href=https://ketodin.github.io/transcendance/docs/architecture /><link data-rh=true rel=alternate href=https://ketodin.github.io/transcendance/docs/architecture hreflang=en /><link data-rh=true rel=alternate href=https://ketodin.github.io/transcendance/docs/architecture hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://ketodin.github.io/transcendance/docs/architecture","name":"Architecture Overview","position":1}]}</script><link rel=stylesheet href=/transcendance/assets/css/styles.d187f224.css /><script src=/transcendance/assets/js/runtime~main.67245abf.js defer></script><script src=/transcendance/assets/js/main.3fd39572.js defer></script></head><body><svg style="display: none;"><defs>
+<!doctype html><html lang=en dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-docs/architecture" data-has-hydrated=false><head><meta charset=UTF-8><meta name=generator content="Docusaurus v3.10.1"><title data-rh=true>Architecture Overview | Transcendence documentation</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"/><meta data-rh=true name=twitter:card content=summary_large_image /><meta data-rh=true property=og:image content=https://ketodin.github.io/transcendance/img/docusaurus-social-card.jpg /><meta data-rh=true name=twitter:image content=https://ketodin.github.io/transcendance/img/docusaurus-social-card.jpg /><meta data-rh=true property=og:url content=https://ketodin.github.io/transcendance/docs/architecture /><meta data-rh=true property=og:locale content=en /><meta data-rh=true name=docusaurus_locale content=en /><meta data-rh=true name=docsearch:language content=en /><meta data-rh=true name=docusaurus_version content=current /><meta data-rh=true name=docusaurus_tag content=docs-default-current /><meta data-rh=true name=docsearch:version content=current /><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current /><meta data-rh=true property=og:title content="Architecture Overview | Transcendence documentation"/><meta data-rh=true name=description content="SvelteKit + Colyseus + Prisma monorepo for a multiplayer browser game."/><meta data-rh=true property=og:description content="SvelteKit + Colyseus + Prisma monorepo for a multiplayer browser game."/><link data-rh=true rel=icon href=/transcendance/img/favicon.ico /><link data-rh=true rel=canonical href=https://ketodin.github.io/transcendance/docs/architecture /><link data-rh=true rel=alternate href=https://ketodin.github.io/transcendance/docs/architecture hreflang=en /><link data-rh=true rel=alternate href=https://ketodin.github.io/transcendance/docs/architecture hreflang=x-default /><script data-rh=true type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://ketodin.github.io/transcendance/docs/architecture","name":"Architecture Overview","position":1}]}</script><link rel=stylesheet href=/transcendance/assets/css/styles.d187f224.css /><script src=/transcendance/assets/js/runtime~main.8184dbf7.js defer></script><script src=/transcendance/assets/js/main.3fd39572.js defer></script></head><body><svg style="display: none;"><defs>
 <symbol id=theme-svg-external-link viewBox="0 0 24 24"><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
-<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-b79")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><link rel=preload as=image href=/transcendance/img/logo.svg /><div role=region aria-label="Skip to main content"><a class=skipToContent_YBAt href=#__docusaurus_skipToContent_fallback>Skip to main content</a></div><nav aria-label=Main class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/transcendance/><div class=navbar__logo><img src=/transcendance/img/logo.svg alt="My Site Logo" class="themedComponent_tCrN themedComponent--light_rWo0"/><img src=/transcendance/img/logo.svg alt="My Site Logo" class="themedComponent_tCrN themedComponent--dark_sfVh"/></div><b class="navbar__title text--truncate">Transcendence docs</b></a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/transcendance/docs/runbook>Documentation</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><div class="toggle_ctWG colorModeToggle_bOb0"><button class="clean-btn toggleButton_WKZM toggleButtonDisabled_NKDR" type=button disabled title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_uVPn lightToggleIcon_slJX"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_uVPn darkToggleIcon_z2Iw"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_uVPn systemToggleIcon_fFWq"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_RVnt></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_Z3ik"><div class=docsWrapper_cQgC><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_tnwo" type=button></button><div class=docRoot_yFus><aside class="theme-doc-sidebar-container docSidebarContainer_pFir"><div class=sidebarViewport_qgvH><div class=sidebar_NntE><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_jkx6"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/transcendance/docs/runbook><span title="How to Run" class=linkLabel_WycX>How to Run</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/transcendance/docs/engineering-guidelines><span title="Engineering Guidelines" class=linkLabel_WycX>Engineering Guidelines</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/transcendance/docs/architecture><span title="Architecture Overview" class=linkLabel_WycX>Architecture Overview</span></a><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="categoryLink_V4or menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/transcendance/docs/adr/adr-001-sveltekit-as-fullstack-framework><span title="Architecture Decision Records" class=categoryLinkLabel_AkkI>Architecture Decision Records</span></a></div></ul></nav></div></div></aside><main class=docMainContainer_DTQK><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_ULJm"><div class=docItemContainer_lBp_><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_jCl1" aria-label=Breadcrumbs><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label="Home page" class=breadcrumbs__link href=/transcendance/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_N5Ya><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>Architecture Overview</span></ul></nav><div class="theme-doc-markdown markdown"><header><h1>architecture</h1></header></div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href=/transcendance/docs/engineering-guidelines><div class=pagination-nav__sublabel>Previous</div><div class=pagination-nav__label>Engineering Guidelines</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/transcendance/docs/adr/adr-001-sveltekit-as-fullstack-framework><div class=pagination-nav__sublabel>Next</div><div class=pagination-nav__label>ADR-001 — SvelteKit as Full-Stack Framework</div></a></nav></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Docs</div><ul class="footer__items clean-list"><li class=footer__item><a class=footer__link-item href=/transcendance/docs/runbook>Documentation</a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Community</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://stackoverflow.com/questions/tagged/docusaurus target=_blank rel="noopener noreferrer" class=footer__link-item>Stack Overflow<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_Xjpw><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>More</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ketodin/transcendance target=_blank rel="noopener noreferrer" class=footer__link-item>GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_Xjpw><use href=#theme-svg-external-link /></svg></a></ul></div></div><div class="footer__bottom text--center"><div class=footer__copyright>2026 Transcendence. Built with Docusaurus.</div></div></div></footer></div></body>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme-b79")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><link rel=preload as=image href=/transcendance/img/logo.svg /><div role=region aria-label="Skip to main content"><a class=skipToContent_YBAt href=#__docusaurus_skipToContent_fallback>Skip to main content</a></div><nav aria-label=Main class="theme-layout-navbar navbar navbar--fixed-top"><div class=navbar__inner><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/transcendance/><div class=navbar__logo><img src=/transcendance/img/logo.svg alt="My Site Logo" class="themedComponent_tCrN themedComponent--light_rWo0"/><img src=/transcendance/img/logo.svg alt="My Site Logo" class="themedComponent_tCrN themedComponent--dark_sfVh"/></div><b class="navbar__title text--truncate">Transcendence docs</b></a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/transcendance/docs/runbook>Documentation</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><div class="toggle_ctWG colorModeToggle_bOb0"><button class="clean-btn toggleButton_WKZM toggleButtonDisabled_NKDR" type=button disabled title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_uVPn lightToggleIcon_slJX"><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_uVPn darkToggleIcon_z2Iw"><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 aria-hidden=true class="toggleIcon_uVPn systemToggleIcon_fFWq"><path fill=currentColor d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"/></svg></button></div><div class=navbarSearchContainer_RVnt></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="theme-layout-main main-wrapper mainWrapper_Z3ik"><div class=docsWrapper_cQgC><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_tnwo" type=button></button><div class=docRoot_yFus><aside class="theme-doc-sidebar-container docSidebarContainer_pFir"><div class=sidebarViewport_qgvH><div class=sidebar_NntE><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_jkx6"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/transcendance/docs/runbook><span title="How to Run" class=linkLabel_WycX>How to Run</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class=menu__link href=/transcendance/docs/engineering-guidelines><span title="Engineering Guidelines" class=linkLabel_WycX>Engineering Guidelines</span></a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current=page href=/transcendance/docs/architecture><span title="Architecture Overview" class=linkLabel_WycX>Architecture Overview</span></a><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="categoryLink_V4or menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/transcendance/docs/adr/adr-001-sveltekit-as-fullstack-framework><span title="Architecture Decision Records" class=categoryLinkLabel_AkkI>Architecture Decision Records</span></a></div></ul></nav></div></div></aside><main class=docMainContainer_DTQK><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_ULJm"><div class=docItemContainer_lBp_><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_jCl1" aria-label=Breadcrumbs><ul class=breadcrumbs><li class=breadcrumbs__item><a aria-label="Home page" class=breadcrumbs__link href=/transcendance/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_N5Ya><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link>Architecture Overview</span></ul></nav><div class="tocCollapsible_fo9X theme-doc-toc-mobile tocMobile_pH7B"><button type=button class="clean-btn tocCollapsibleButton_jBNF">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Architecture Overview</h1></header>
+<p>SvelteKit + Colyseus + Prisma monorepo for a multiplayer browser game.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Z9og" id=stack>Stack<a href=#stack class=hash-link aria-label="Direct link to Stack" title="Direct link to Stack" translate=no>​</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Layer<th>Technology<tbody><tr><td>Frontend<td>SvelteKit 2, Svelte 5 (runes), TailwindCSS 4, shadcn-svelte<tr><td>Game engine<td>Phaser 4<tr><td>Multiplayer<td>Colyseus 0.17 (authoritative server, in-process with SvelteKit)<tr><td>Auth<td>Better-Auth<tr><td>Database<td>Prisma 7 + SQLite (better-sqlite3)<tr><td>i18n<td>Paraglide JS<tr><td>Package manager<td>pnpm 11.4.0<tr><td>Runtime<td>Node 24.15.0</table>
+<h2 class="anchor anchorTargetStickyNavbar_Z9og" id=process-model>Process Model<a href=#process-model class=hash-link aria-label="Direct link to Process Model" title="Direct link to Process Model" translate=no>​</a></h2>
+<p>Colyseus runs inside the same Node.js process as SvelteKit — <strong>not</strong> as a separate service.</p>
+<ul>
+<li class=""><strong>Development:</strong> custom Vite plugin (<code>colyseus-dev-server</code>) attaches Colyseus to Vite's HTTP server, correctly routing WebSocket upgrade events (HMR vs. Colyseus traffic)</li>
+<li class=""><strong>Production:</strong> <code>index.ts</code> creates a single Express + HTTP server shared by SvelteKit and Colyseus via <code>WebSocketTransport</code></li>
+<li class=""><strong>Port:</strong> 3000 for both. No separate process, no port 2567.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Z9og" id=docker-stack>Docker Stack<a href=#docker-stack class=hash-link aria-label="Direct link to Docker Stack" title="Direct link to Docker Stack" translate=no>​</a></h2>
+<p><code>compose.yaml</code> defines two services:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Service<th>Role<th>Port<tbody><tr><td>transcendance<td>SvelteKit + Colyseus app<td>3000 (internal)<tr><td>caddy<td>Reverse proxy with TLS termination<td>4443 (external)</table>
+<p>Caddy handles TLS certificate provisioning. Clients connect to <code>https://&lt;host>:4443</code>.</p>
+<p>The app container runs <code>entrypoint.sh</code> on startup: it pushes the Prisma schema to the database and symlinks the avatar directory to <code>static/uploads/</code>. The database file and avatar storage are persisted via a Docker volume at <code>./data/</code>.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Z9og" id=hook-chain>Hook Chain<a href=#hook-chain class=hash-link aria-label="Direct link to Hook Chain" title="Direct link to Hook Chain" translate=no>​</a></h2>
+<p><code>src/hooks.server.ts</code> sequences four hooks in this order:</p>
+<div class="language-text codeBlockContainer_OexN theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_Sn7P><pre tabindex=0 class="prism-code language-text codeBlock_GDR9 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_basf><div class=token-line style=color:#393A34><span class="token plain">handleColyseus → handleParaglide → handleBetterAuth → handleRouteProtection</span><br/></div></code></pre></div></div>
+<ol>
+<li class=""><strong>handleColyseus</strong> — registers Colyseus room types (<code>tank_room</code>, <code>status</code>) via <code>matchMaker.defineRoomType</code>. Uses <code>globalThis.gameServer</code> to prevent double-initialization across HMR reloads.</li>
+<li class=""><strong>handleParaglide</strong> — determines locale from the request, injects <code>%paraglide.lang%</code> and <code>%paraglide.dir%</code> placeholders into the HTML shell.</li>
+<li class=""><strong>handleBetterAuth</strong> — attaches the user session to <code>event.locals</code> via Better-Auth. On API auth routes, hands off to the Better-Auth SvelteKit handler.</li>
+<li class=""><strong>handleRouteProtection</strong> — redirects unauthenticated users away from protected routes (everything except <code>/login</code>, <code>/register</code>, and <code>favicon.png</code>).</li>
+</ol>
+<h2 class="anchor anchorTargetStickyNavbar_Z9og" id=game-server>Game Server<a href=#game-server class=hash-link aria-label="Direct link to Game Server" title="Direct link to Game Server" translate=no>​</a></h2>
+<p>All Colyseus code under <code>src/lib/game/colyseus/</code>:</p>
+<div class="language-text codeBlockContainer_OexN theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_Sn7P><pre tabindex=0 class="prism-code language-text codeBlock_GDR9 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_basf><div class=token-line style=color:#393A34><span class="token plain">src/lib/game/colyseus/</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">├── TankRoom.ts              # Main game room — tank combat</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">├── StatusRoom.ts            # Online presence tracking room</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">├── statusHub.ts             # Status broadcast utility</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">├── messageSchemas.ts        # Zod schemas for all Colyseus messages</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">├── validateMessage.ts       # Message validation dispatch</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">├── handlers/</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│   └── chatHandler.ts       # In-game chat message handling</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">└── schema/</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    ├── GameRoomState.ts     # Top-level room state</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    ├── StatusRoomState.ts   # Online status state</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    ├── TankSchema.ts        # Tank entity schema</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    ├── TerrainSchema.ts     # Terrain entity schema</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    └── ProjectileSchema.ts  # Projectile entity schema</span><br/></div></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Z9og" id=phaser-client>Phaser Client<a href=#phaser-client class=hash-link aria-label="Direct link to Phaser Client" title="Direct link to Phaser Client" translate=no>​</a></h3>
+<p>Client-side game rendering under <code>src/lib/game/</code>:</p>
+<div class="language-text codeBlockContainer_OexN theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_Sn7P><pre tabindex=0 class="prism-code language-text codeBlock_GDR9 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_basf><div class=token-line style=color:#393A34><span class="token plain">src/lib/game/</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">├── client/view/             # Client-side Phaser objects</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│   ├── ChatInput.ts         # In-game chat input</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│   ├── ProjectileView.ts    # Projectile rendering</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│   ├── speechBubble.ts      # Chat bubble rendering</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│   ├── TankSprite.ts        # Tank rendering</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│   └── TerrainView.ts       # Terrain rendering</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">├── phaser/</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│   ├── game.ts              # Phaser game factory</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│   ├── lobbyGame.ts         # Lobby scene</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│   ├── EventBus.ts          # Phaser ↔ Svelte event bridge</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│   ├── colors.ts            # Theme-synced color constants</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│   ├── commonGameConfig.ts  # Shared Phaser config</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│   └── scenes/</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│       ├── demoScene.ts     # Demo/title scene</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│       └── gameScene/       # Main gameplay scene (split into focused modules)</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│           ├── GameScene.ts</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│           ├── buttons.ts</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│           ├── effects.ts</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│           ├── hud.ts</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│           ├── server.ts</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│           ├── setup.ts</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│           ├── types.ts</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">│           └── weaponUI.ts</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">└── shared/                  # Shared logic across client and server</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    ├── state/               # State definitions (GameState, TankState, ProjectileState, TerrainState)</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    ├── logic/               # Game rules (physics, terrain)</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    ├── chatConfig.ts        # Chat constants</span><br/></div><div class=token-line style=color:#393A34><span class="token plain">    └── projectileTypes.ts   # Projectile type definitions</span><br/></div></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Z9og" id=rooms>Rooms<a href=#rooms class=hash-link aria-label="Direct link to Rooms" title="Direct link to Rooms" translate=no>​</a></h3>
+<p>Two Colyseus room types are registered in <code>hooks.server.ts</code>:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Room type<th>Class<th>Purpose<tbody><tr><td><code>tank_room</code><td><code>TankRoom</code><td>Main game room — tank combat, chat, state sync<tr><td><code>status</code><td><code>StatusRoom</code><td>Online presence tracking for friend list</table>
+<p>Room types are defined once via <code>globalThis.gameServer</code> guard to survive HMR reloads.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Z9og" id=scope-map>Scope Map<a href=#scope-map class=hash-link aria-label="Direct link to Scope Map" title="Direct link to Scope Map" translate=no>​</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Scope<th>Covers<tbody><tr><td><code>frontend</code><td>SvelteKit routes, Svelte components, shadcn-svelte, Vite config<tr><td><code>backend</code><td>Server-side services, API routes, hooks.server.ts<tr><td><code>auth</code><td>OAuth 42, Google OAuth, JWT, TOTP, session injection<tr><td><code>game</code><td>Phaser engine, Colyseus rooms, schemas, game logic<tr><td><code>db</code><td>Prisma schema, migrations, database client, queries<tr><td><code>shared</code><td>Code in <code>src/lib/game/shared/</code> used by both client and Colyseus server<tr><td><code>infra</code><td>Docker, compose.yaml, Caddy, deployment, .github<tr><td><code>i18n</code><td>Paraglide translations, messages.json</table>
+<p><code>auth</code> is intentionally separate from <code>backend</code>: auth issues are security-sensitive, span the frontend/backend boundary, and require a distinct resolution path.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Z9og" id=cicd>CI/CD<a href=#cicd class=hash-link aria-label="Direct link to CI/CD" title="Direct link to CI/CD" translate=no>​</a></h2>
+<p>6 required status checks on <code>main</code>:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Check<th>What it runs<tbody><tr><td><code>ci-lint-eslint</code><td><code>pnpm lint:eslint</code><tr><td><code>ci-lint-prettier</code><td><code>pnpm lint:prettier</code><tr><td><code>ci-lint-prisma</code><td><code>prisma format --check</code><tr><td><code>ci-typecheck-game-server</code><td><code>pnpm typecheck</code> (svelte-check + tsc --noEmit, unified)<tr><td><code>ci-docker-build</code><td>Build Dockerfile via <code>compose.yaml</code> (no push)<tr><td><code>ci-docs-deploy</code><td>Docusaurus deploy to GitHub Pages (main only, on docs/docusaurus changes)</table>
+<p>Squash-merge only. All checks must pass. 1 required approval minimum.</p>
+<p>4 automation workflows manage labels (<code>automation-label-issue</code>, <code>automation-label-pr</code>) and issue status (<code>automation-state-branch</code>, <code>automation-state-pr</code>).</p>
+<p>See <a class="" href=/transcendance/docs/engineering-guidelines>engineering-guidelines.md</a> for the full workflow specification. See <code>adr/</code> for the 9 Architecture Decision Records.</div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href=/transcendance/docs/engineering-guidelines><div class=pagination-nav__sublabel>Previous</div><div class=pagination-nav__label>Engineering Guidelines</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/transcendance/docs/adr/adr-001-sveltekit-as-fullstack-framework><div class=pagination-nav__sublabel>Next</div><div class=pagination-nav__label>ADR-001 — SvelteKit as Full-Stack Framework</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_kRvb thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#stack class="table-of-contents__link toc-highlight">Stack</a><li><a href=#process-model class="table-of-contents__link toc-highlight">Process Model</a><li><a href=#docker-stack class="table-of-contents__link toc-highlight">Docker Stack</a><li><a href=#hook-chain class="table-of-contents__link toc-highlight">Hook Chain</a><li><a href=#game-server class="table-of-contents__link toc-highlight">Game Server</a><ul><li><a href=#phaser-client class="table-of-contents__link toc-highlight">Phaser Client</a><li><a href=#rooms class="table-of-contents__link toc-highlight">Rooms</a></ul><li><a href=#scope-map class="table-of-contents__link toc-highlight">Scope Map</a><li><a href=#cicd class="table-of-contents__link toc-highlight">CI/CD</a></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Docs</div><ul class="footer__items clean-list"><li class=footer__item><a class=footer__link-item href=/transcendance/docs/runbook>Documentation</a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>Community</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://stackoverflow.com/questions/tagged/docusaurus target=_blank rel="noopener noreferrer" class=footer__link-item>Stack Overflow<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_Xjpw><use href=#theme-svg-external-link /></svg></a></ul></div><div class="theme-layout-footer-column col footer__col"><div class=footer__title>More</div><ul class="footer__items clean-list"><li class=footer__item><a href=https://github.com/ketodin/transcendance target=_blank rel="noopener noreferrer" class=footer__link-item>GitHub<svg width=13.5 height=13.5 aria-label="(opens in new tab)" class=iconExternalLink_Xjpw><use href=#theme-svg-external-link /></svg></a></ul></div></div><div class="footer__bottom text--center"><div class=footer__copyright>2026 Transcendence. Built with Docusaurus.</div></div></div></footer></div></body>
