@@ -503,7 +503,7 @@ This file is a living document. When a convention changes, open a `docs(infra): 
 | Tool             | Version       | Install                                   |
 | ---------------- | ------------- | ----------------------------------------- |
 | Node.js          | 24.x          | [nodejs.org](https://nodejs.org) or `nvm` |
-| pnpm             | 10.33.0       | `npm install -g pnpm@10.33.0`             |
+| pnpm             | 11.4.0        | `npm install -g pnpm@11.4.0`              |
 | Docker + Compose | Latest stable | [docker.com](https://www.docker.com)      |
 | Git              | 2.x+          | System package manager                    |
 

@@ -12,7 +12,7 @@ SvelteKit + Colyseus + Prisma monorepo for a multiplayer browser game.
 | Auth            | Better-Auth                                                     |
 | Database        | Prisma 7 + SQLite (better-sqlite3)                              |
 | i18n            | Paraglide JS                                                    |
-| Package manager | pnpm 10.33.0                                                    |
+| Package manager | pnpm 11.4.0                                                     |
 | Runtime         | Node 24.15.0                                                    |
 
 ## Process Model
@@ -149,4 +149,4 @@ Squash-merge only. All checks must pass. 1 required approval minimum.
 
 4 automation workflows manage labels (`automation-label-issue`, `automation-label-pr`) and issue status (`automation-state-branch`, `automation-state-pr`).
 
-See [engineering-guidelines.md](engineering-guidelines.md) for the full workflow specification. See [docs/adr/](adr/) for the 9 Architecture Decision Records.
+See [engineering-guidelines.md](engineering-guidelines.md) for the full workflow specification. See `adr/` for the 9 Architecture Decision Records.
