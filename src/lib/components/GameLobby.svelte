@@ -5,7 +5,6 @@
 	import Avatar from '$lib/components/Avatar.svelte';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
-	import { goto } from '$app/navigation';
 	import { m } from '$lib/paraglide/messages';
 
 	let { room, user }: { room: Room<GameRoomState>; user: User } = $props();
@@ -13,8 +12,6 @@
 	let opponent = $state<{ name: string; image: string | null } | null>(null);
 	let readySent = $state(false);
 	let countdown = $state(3);
-	let reconnecting = $state(false);
-	let reconnectCountdown = $state(10);
 
 	const isPlayer0 = $derived(room.sessionId === room.state.player0Id);
 
@@ -30,12 +27,10 @@
 				opponent = null;
 				readySent = false;
 				countdown = 3;
-				reconnecting = true;
-				reconnectCountdown = 10;
 			}
 		};
 		room.onStateChange(handler);
-		return () => room.onStateChange.remove(handler);
+		return () => room?.onStateChange?.remove?.(handler);
 	});
 
 	$effect(() => {
@@ -50,18 +45,6 @@
 		return () => clearInterval(interval);
 	});
 
-	$effect(() => {
-		if (!reconnecting) return;
-		const interval = setInterval(() => {
-			reconnectCountdown -= 1;
-			if (reconnectCountdown <= 0) {
-				clearInterval(interval);
-				room.send('ready');
-				void goto(resolve('/game'));
-			}
-		}, 1000);
-		return () => clearInterval(interval);
-	});
 </script>
 
 <div class="flex flex-col items-center gap-10">
