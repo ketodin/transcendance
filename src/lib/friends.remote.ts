@@ -86,3 +86,14 @@ export const send = form(z.strictObject({ email: z.email() }), async ({ email },
 	await sendOrAccept(locals.user, other);
 	void list().refresh();
 });
+
+export const notifyRemoval = command(z.void(), async () => {
+	const { locals } = getRequestEvent();
+	if (!locals.user) return;
+
+	const friends = await getFriendList(locals.user.id);
+
+	for (const friend of friends) {
+		await dismissOrRemove(locals.user, friend);
+	}
+});
