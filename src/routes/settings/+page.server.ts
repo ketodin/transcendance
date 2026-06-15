@@ -43,8 +43,7 @@ export const actions: Actions = {
 				body: { image: `/avatar/${locals.user!.id}?k=${randomInt(0, 4096)}` },
 				headers: request.headers
 			});
-		}
-		catch {
+		} catch {
 			return setError(form, 'file', m.error_generic());
 		}
 		return message(form, 'Updated Avatar');
