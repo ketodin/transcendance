@@ -38,7 +38,7 @@ const handleMatchMakeError = (err: MatchMakeError) => {
 	} else {
 		message = err.message;
 	}
-	return { status: err.code, error: { message: message } };
+	return { status: err.code >= 100 && err.code < 600 ? err.code : 400, error: { message } };
 };
 
 export const connectToRoom = async (roomId?: string) => {
