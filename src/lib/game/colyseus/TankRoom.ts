@@ -160,6 +160,20 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		const idx = this.getPlayerIndex(client);
 		if (idx !== undefined && this.playerIds[idx]) activePlayers.delete(this.playerIds[idx]);
 
+		if (!this.gameStarted) {
+			if (idx === 0) {
+				this.state.player0Id = '';
+				this.state.player0Name = '';
+				this.state.player0Image = '';
+			} else if (idx === 1) {
+				this.state.player1Id = '';
+				this.state.player1Name = '';
+				this.state.player1Image = '';
+			}
+			this.playersReady = [false, false];
+			return;
+		}
+
 		if (this.physicsState && this.physicsState.phase !== 'OVER') {
 			const winner = (idx === 0 ? 1 : 0) satisfies 0 | 1;
 			this.physicsState.phase = 'OVER';
