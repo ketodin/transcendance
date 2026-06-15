@@ -21,7 +21,10 @@
 ## 1. Bootstrap — First Time Only
 
 ```bash
-git clone <repo-url> && cd ft-transcendence
+git clone <repo-url> && cd transcendance
+
+# System dependencies (required for better-sqlite3)
+sudo apt install build-essential python3
 
 pnpm install
 
@@ -48,7 +51,7 @@ docker compose down         # stop, keep volumes
 docker compose down -v      # stop and wipe volumes (destroys local DB)
 ```
 
-> Docker exposes a single port: **3000**. SvelteKit and Colyseus share the same process and the same port.
+> Docker exposes the app on port 3000 internally. Caddy acts as a reverse proxy on port 4443 with automatic TLS. Access the app at `https://localhost:4443`.
 
 ### Without Docker (dev mode)
 
@@ -121,47 +124,14 @@ pnpm lint:prisma        # see drift
 prisma format           # auto-fix, then commit
 ```
 
-### `ci-lint-pr-title`
-
-Edit the PR title directly in GitHub. Format: `type(scope): description`.
-The workflow re-triggers automatically on PR edit.
-
-### `ci-typecheck-frontend`
-
-```bash
-pnpm typecheck          # svelte-check — fix every error and warning
-pnpm typecheck:watch    # re-run on file change while working
-```
-
 ### `ci-typecheck-game-server`
 
 ```bash
-pnpm typecheck          # tsc --noEmit uses the root tsconfig.json (no separate tsconfig.server.json)
+pnpm typecheck          # unified — runs both svelte-check and tsc --noEmit
+pnpm typecheck:watch    # re-run on file change while working
 ```
 
-### `ci-test-unit`
-
-```bash
-pnpm test:unit          # Vitest — output names the exact failing test and file
-```
-
-### `ci-test-integration`
-
-```bash
-pnpm test:integration   # docker compose up --build + healthcheck poll + assertions
-```
-
-Common causes:
-
-- Healthcheck not passing → `docker compose logs <service>`
-- Missing CI secret → verify the value exists in Settings → Secrets → Actions
-- Schema out of sync → `pnpm db:migrate` locally, commit the migration file
-
-### `ci-test-e2e`
-
-```bash
-pnpm test:e2e           # Playwright — requires the full stack to be running
-```
+Both frontend and Colyseus server code are checked in a single pass using the root `tsconfig.json`.
 
 ### `ci-docker-build`
 

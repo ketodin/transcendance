@@ -21,16 +21,9 @@
 
 ## 1. Overview
 
-This is a SvelteKit + Colyseus + Prisma monorepo (`ft-transcendence`). The stack includes:
+This is the Transcendance multiplayer browser game — SvelteKit + Colyseus + Phaser 4 + Prisma.
 
-- **Frontend:** SvelteKit 2 · Svelte 5 (runes mode) · TailwindCSS 4 · shadcn-svelte
-- **Backend:** Express 5 · Colyseus 0.17 (game server, bundled into SvelteKit via Vite) · Better-Auth
-- **Database:** Prisma 7 + SQLite (better-sqlite3)
-- **i18n:** Paraglide JS
-- **Package manager:** `pnpm 10.33.0`
-- **Runtime:** Node 24
-
-> **Architecture note:** Colyseus runs inside the same Node.js process as SvelteKit — not as a separate service. In development, a custom Vite plugin (`colyseus-dev-server`) attaches Colyseus to Vite's HTTP server. In production, `server.ts` creates a single Express + HTTP server shared by SvelteKit and Colyseus (`WebSocketTransport`). Both use **port 3000**. There is no separate game-server process, no port 2567, and no `devserver` / `devall` scripts.
+See [architecture.md](architecture.md) for the full stack, process model, file tree, scope map, hook chain, and CI gate list. This document focuses on the **rules**: coding standards, Git workflow, review process, testing, security, and tooling.
 
 **Non-negotiable rules:**
 
@@ -159,49 +152,31 @@ pnpm db:studio     # prisma studio
 
 ## 3. Architecture & Design Principles
 
+The full architecture — stack, process model, file tree, scope map, hook chain, and CI gates — lives in [architecture.md](architecture.md). This section covers the design principles that apply to every contribution.
+
 ### 3.1 Layered Separation
 
 - Clearly separate UI, business logic, data access, and external integrations.
 - No circular imports.
 - A shared vocabulary for domain concepts — no four different names for the same thing.
 
-### 3.2 Scope Map
+### 3.2 Architecture Decision Records (ADRs)
 
-| Scope      | What it covers                                                      |
-| ---------- | ------------------------------------------------------------------- |
-| `frontend` | SvelteKit routes, Svelte components, shadcn-svelte, Vite config     |
-| `backend`  | Server-side services, API routes, `hooks.server.ts`                 |
-| `auth`     | OAuth 42, JWT, TOTP, session injection                              |
-| `game`     | Phaser engine, Colyseus rooms, schemas, game logic                  |
-| `db`       | Prisma schema, migrations, database client, queries                 |
-| `shared`   | `packages/game-shared` — code used by both game-server and frontend |
-| `infra`    | Docker, `compose.yaml`, deployment, `.github`                       |
-| `i18n`     | Paraglide translations, `messages.json`                             |
-
-`auth` is intentionally separate from `backend`: auth issues are security-sensitive, span the frontend/backend boundary, and require a distinct resolution path.
-
-### 3.3 Game Server Layout
-
-All Colyseus server-side code lives under `src/lib/game/colyseus/`:
+Any architectural decision with lasting impact must be documented as an ADR. 9 ADRs exist in `docs/adr/` covering every major decision:
 
 ```
-src/lib/game/colyseus/
-├── TankRoom.ts          # Room definition — registered in hooks.server.ts
-└── schema/              # GameRoomState, TankSchema, TerrainSchema, ProjectileSchema
+docs/adr/adr-001-sveltekit-as-fullstack-framework.md
+docs/adr/adr-002-phaser-4-game.md
+docs/adr/adr-003-prisma-orm.md
+docs/adr/adr-004-sqlite-database-and-better-sqlite3.md
+docs/adr/adr-005-paraglidejs-for-internationalization.md
+docs/adr/adr-006-colyseus-for-real-time-multiplayer.md
+docs/adr/adr-007-better-auth-for-authentication.md
+docs/adr/adr-008-shared-lib-game-modules-across-client-and-server.md
+docs/adr/adr-009-docker-compose-for-deployment.md
 ```
 
-- Rooms are registered via `matchMaker.defineRoomType('tankroom', TankRoom)` inside the `handleColyseus` hook in `src/hooks.server.ts`.
-- `globalThis.gameServer` guards against double-initialisation across HMR reloads.
-- Client connections use `ws://localhost:3000` in development and `wss://<host>` in production — no port 2567.
-
-### 3.4 Architecture Decision Records (ADRs)
-
-Any architectural decision with lasting impact must be documented as an ADR:
-
-```
-docs/adr/0001-use-sveltekit-and-prisma.md
-docs/adr/0002-server-authoritative-game-state.md
-```
+Use `docs/adr/adr-template.md` for new ADRs.
 
 ### 3.5 Anti-patterns
 
@@ -403,28 +378,21 @@ Every workflow:
 
 ### 7.2 CI Triggers by Branch Prefix
 
-| Branch prefix          | CI on push                  |
-| ---------------------- | --------------------------- |
-| `feat`, `fix`, `chore` | Lint, typecheck, unit tests |
-| `ci`, `infra`          | Docker build                |
-| All other prefixes     | Full CI on PR to `main`     |
+| Branch prefix          | CI on push              |
+| ---------------------- | ----------------------- |
+| `feat`, `fix`, `chore` | Lint, typecheck         |
+| `ci`, `infra`          | Docker build            |
+| All other prefixes     | Full CI on PR to `main` |
 
 Full CI runs on every PR to `main`.
 
 ### 7.3 Required Status Checks (gate on `main`)
 
-| Check                      | What it runs                                          |
-| -------------------------- | ----------------------------------------------------- |
-| `ci-lint-eslint`           | `pnpm lint:eslint`                                    |
-| `ci-lint-prettier`         | `pnpm lint:prettier`                                  |
-| `ci-lint-prisma`           | `prisma format --check`                               |
-| `ci-lint-pr-title`         | Conventional Commit regex on PR title                 |
-| `ci-typecheck-frontend`    | `svelte-check`                                        |
-| `ci-typecheck-game-server` | `tsc --noEmit` (root `tsconfig.json`)                 |
-| `ci-test-unit`             | Vitest                                                |
-| `ci-test-e2e`              | Playwright (PR to `main` only)                        |
-| `ci-test-integration`      | Docker Compose stack + assertions (PR to `main` only) |
-| `ci-docker-build`          | Build Dockerfile via `compose.yaml` (no push)         |
+The full list of 6 checks and what they run is in [architecture.md](architecture.md#cicd). Key points:
+
+- **All checks are independently visible and re-runnable** in the GitHub Actions UI
+- **`ci-typecheck-game-server`** is a single workflow that runs both `svelte-check` and `tsc --noEmit` (unified typecheck)
+- `ci-docs-deploy` deploys the Docusaurus site to GitHub Pages on push to `main` (when docs/docusaurus files change)
 
 ### 7.4 Automation Workflows
 
@@ -440,7 +408,7 @@ Full CI runs on every PR to `main`.
 
 ### 7.5 Post-Merge Deployment
 
-`ci-docker-push.yaml` triggers on push to `main` only. It builds and pushes Docker images to the registry. This runs post-merge — it is not a gate.
+Docker images are built and pushed to the registry on push to `main`. This runs post-merge — it is not a gate.
 
 ---
 
@@ -499,14 +467,14 @@ clampExpiry(duration, MAX_TOKEN_EXPIRY_MS);
 
 ### 9.2 Required Documents
 
-| File                             | Purpose                                              |
-| -------------------------------- | ---------------------------------------------------- |
-| `README.md`                      | Project description, setup instructions, stack, team |
-| `docs/engineering-guidelines.md` | This file                                            |
-| `docs/architecture.md`           | High-level architecture, diagrams                    |
-| `docs/runbook.md`                | Operational procedures                               |
-| `docs/adr/`                      | Architecture Decision Records                        |
-| `CHANGELOG.md`                   | Notable changes per release                          |
+| File                             | Purpose                                                    |
+| -------------------------------- | ---------------------------------------------------------- |
+| `README.md`                      | Project description, setup instructions, stack, links      |
+| `docs/architecture.md`           | High-level architecture, file trees, scope map, hook chain |
+| `docs/engineering-guidelines.md` | This file                                                  |
+| `docs/runbook.md`                | Operational procedures                                     |
+| `docs/adr/`                      | Architecture Decision Records                              |
+| `CHANGELOG.md`                   | Notable changes per release                                |
 
 ### 9.3 What to Document
 
@@ -544,7 +512,6 @@ This file is a living document. When a convention changes, open a `docs(infra): 
 | Editor  | Extensions                                                              |
 | ------- | ----------------------------------------------------------------------- |
 | VS Code | Svelte for VS Code, ESLint, Prettier, Tailwind CSS IntelliSense, Prisma |
-| Any     | EditorConfig support (respect `.editorconfig`)                          |
 
 Shared settings should be committed to `.vscode/settings.json` for consistent behavior across the team.
 
