@@ -191,8 +191,8 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	}
 
 	onDrop(client: Client) {
-		const idx = this.getPlayerIndex(client);
-		if (idx !== undefined && this.playerIds[idx]) activePlayers.delete(this.playerIds[idx]);
+		//const idx = this.getPlayerIndex(client);
+		//if (idx !== undefined && this.playerIds[idx]) activePlayers.delete(this.playerIds[idx]);
 		this.allowReconnection(client, 10);
 	}
 
