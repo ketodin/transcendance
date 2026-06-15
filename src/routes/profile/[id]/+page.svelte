@@ -21,19 +21,6 @@
 		}).format(new Date(data.userProfile.createdAt))
 	);
 
-	const friendList = $derived(await friends.list());
-
-	const isFriend = $derived(
-		friendList.some(
-			(friend) => data.userProfile.id === friend.id && friend.friendRequestStatus === 'ACCEPTED'
-		)
-	);
-
-	type UserType = 'self' | 'friend' | 'someone';
-	const userType: UserType = $derived(
-		data.user!.id === data.userProfile.id ? 'self' : isFriend ? 'friend' : 'someone'
-	);
-
 	async function handleInvite() {
 		const result = await invite.send(data.userProfile.id);
 		if (result?.roomId) {
@@ -53,37 +40,47 @@
 			<p class="botinfo">{m.joined_on({ date: formattedDate })}</p>
 		</div>
 		<div class="action">
-			{#if userType === 'self'}
-				<Button href={resolve('/settings')} class="glassbutton" variant="outline">
-					{m.settings()}
-					<Settings size={20} />
-				</Button>
-			{:else if userType === 'friend'}
-				<Button
-					onclick={async () => {
-						await friends.remove(data.userProfile.id).then(() => toast.success(m.removed_friend()));
-					}}
-					class="glassbutton"
-					variant="outline"
-				>
-					<p>{m.remove_friend()}</p>
-				</Button>
-				<Button type="submit" onclick={handleInvite} class="glassbutton" variant="outline">
-					{m.invite_play()}
-				</Button>
-			{:else if userType === 'someone'}
-				<Button
-					onclick={async () => {
-						await friends
-							.accept(data.userProfile.id)
-							.then(() => toast.success(m.friend_request_sent()));
-					}}
-					class="glassbutton"
-					variant="outline"
-				>
-					{m.add_friend()}
-				</Button>
-			{/if}
+			{#await friends.list() then list}
+				{@const isFriend = list.some(
+					(f) => data.userProfile.id === f.id && f.friendRequestStatus === 'ACCEPTED'
+				)}
+				{@const userType =
+					data.user!.id === data.userProfile.id ? 'self' : isFriend ? 'friend' : 'someone'}
+
+				{#if userType === 'self'}
+					<Button href={resolve('/settings')} class="glassbutton" variant="outline">
+						{m.settings()}
+						<Settings size={20} />
+					</Button>
+				{:else if userType === 'friend'}
+					<Button
+						onclick={async () => {
+							await friends
+								.remove(data.userProfile.id)
+								.then(() => toast.success(m.removed_friend()));
+						}}
+						class="glassbutton"
+						variant="outline"
+					>
+						<p>{m.remove_friend()}</p>
+					</Button>
+					<Button type="submit" onclick={handleInvite} class="glassbutton" variant="outline">
+						{m.invite_play()}
+					</Button>
+				{:else if userType === 'someone'}
+					<Button
+						onclick={async () => {
+							await friends
+								.accept(data.userProfile.id)
+								.then(() => toast.success(m.friend_request_sent()));
+						}}
+						class="glassbutton"
+						variant="outline"
+					>
+						{m.add_friend()}
+					</Button>
+				{/if}
+			{/await}
 		</div>
 	</div>
 </div>
