@@ -7,7 +7,7 @@ export function registerChatHandler(
 	room: Room,
 	getPlayerIndex: (client: Client) => number | undefined
 ) {
-	const lastMessage = new Map<string, number>(); // anti-spam
+	const lastMessage = new Map<string, number>();
 
 	room.onMessage(
 		'chat',

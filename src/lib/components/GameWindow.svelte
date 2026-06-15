@@ -19,13 +19,9 @@
 			syncFromCSS();
 			game = StartGame('game-container', room);
 
-			// Refit the Phaser canvas whenever its container changes size — covers
-			// window resizes and the initial hidden -> visible transition, which
-			// Scale.FIT alone doesn't pick up.
 			const container = document.getElementById('game-container');
 			if (container) {
 				resizeObserver = new ResizeObserver(() => {
-					// Only refit once the renderer is live; refreshing during boot crashes.
 					if (game?.isRunning) game.scale.refresh();
 				});
 				resizeObserver.observe(container);

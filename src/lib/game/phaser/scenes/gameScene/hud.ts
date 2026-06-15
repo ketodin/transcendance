@@ -26,8 +26,6 @@ export function updateHealthBar(scene: GameScene, health: number) {
 }
 
 export function showGameOver(scene: GameScene, winner: number, reason?: string) {
-	// If the player had the leave-confirm window open, close it so the two
-	// modals don't overlap when the opponent leaves / the game ends.
 	scene.dismissLeaveConfirm?.();
 
 	const w = scene.scale.width;
@@ -37,7 +35,6 @@ export function showGameOver(scene: GameScene, winner: number, reason?: string) 
 	overlay.fillStyle(0x000000, 0.65);
 	overlay.fillRect(0, 0, w, h);
 
-	// Block clicks from reaching the game behind the overlay.
 	scene.add
 		.zone(w / 2, h / 2, w, h)
 		.setDepth(30)
@@ -69,7 +66,6 @@ export function showGameOver(scene: GameScene, winner: number, reason?: string) 
 		.setOrigin(0.5)
 		.setDepth(32);
 
-	// Long titles (e.g. French "Vous avez gagné !") must not overflow the panel
 	const maxTitleW = panelW - scene.sw(30);
 	if (titleText.width > maxTitleW) titleText.setScale(maxTitleW / titleText.width);
 
