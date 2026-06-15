@@ -25,7 +25,7 @@
 		page.url.pathname.startsWith('/login') || page.url.pathname.startsWith('/register')
 	);
 
-	const isError = $derived(page.status > 400);
+	const isError = $derived(page.status >= 400 && !!page.error);
 	const baseTheme = $derived($shaderTheme === 'dark');
 </script>
 
