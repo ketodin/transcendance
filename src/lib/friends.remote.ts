@@ -23,8 +23,7 @@ async function sendOrAccept(me: User, other: User) {
 		});
 		statusHub.notify(other.id, 'friend_request_received', {});
 	} catch (e) {
-		if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
-		} else {
+		if (!(e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002')) {
 			throw e;
 		}
 	}
