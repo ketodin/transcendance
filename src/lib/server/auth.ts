@@ -1,6 +1,6 @@
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { betterAuth, } from 'better-auth';
-import { createAuthMiddleware, APIError } from "better-auth/api";
+import { betterAuth } from 'better-auth';
+import { createAuthMiddleware, APIError } from 'better-auth/api';
 import db from '$lib/server/db';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
@@ -36,10 +36,12 @@ export const auth = betterAuth({
 
 			if (!isSignUp && !isUpdate) return;
 
-			const name = ctx.body?.name;
-			if (name !== undefined) {
+			const body = ctx.body as Record<string, unknown> | undefined;
+			const name = body?.name;
+			if (typeof name === 'string') {
 				validateName(name);
 			}
+			return Promise.resolve();
 		})
 	},
 	plugins: [
