@@ -48,10 +48,18 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		await auth.api.updateUser({
-			body: { name: form.data.name },
-			headers: request.headers
-		});
+		try {
+			await auth.api.updateUser({
+				body: { name: form.data.name },
+				headers: request.headers
+			});
+		} catch (error: unknown) {
+			const body = (error as { body?: { message?: string } })?.body;
+			if (body?.message?.includes('Unique constraint')) {
+				return setError(form, 'name', 'This name is already taken');
+			}
+			return setError(form, 'name', m.error_generic());
+		}
 		return message(form, 'Updated Name');
 	},
 	changePassword: async ({ request }) => {
