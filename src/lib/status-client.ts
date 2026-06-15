@@ -7,15 +7,17 @@ import { attachNotificationListeners } from './notification-client';
 
 export const presenceById = writable<Record<string, boolean>>({});
 
+let connected = false;
 let roomLeave: (() => Promise<void> | void) | null = null;
 let disconnecting = false;
 
 export async function connectStatusRoom() {
 	if (!browser) return () => {};
 	if (disconnecting) return () => {};
-	if (roomLeave) return roomLeave;
+	if (connected) return roomLeave;
 
 	const room = await colyseusClient!.joinOrCreate<StatusState>('status');
+	connected = true;
 	attachNotificationListeners(room);
 	const cb = Callbacks.get(room);
 	const stops = new Map<string, () => void>();
@@ -42,6 +44,7 @@ export async function connectStatusRoom() {
 	});
 
 	roomLeave = async () => {
+		connected = false;
 		for (const stop of stops.values()) stop();
 		stops.clear();
 		presenceById.set({});
