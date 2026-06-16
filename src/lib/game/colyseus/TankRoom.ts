@@ -148,7 +148,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		_options: unknown,
 		user: { id: string; name: string; image?: string | null }
 	) {
-		const idx = this.clients.length - 1;
+		const idx = this.state.player0Id === '' ? 0 : 1;
 		activePlayers.add(user.id);
 		this.log(`onJoin - sessionId=${client.sessionId}, idx=${idx}`);
 		if (idx === 0) {
