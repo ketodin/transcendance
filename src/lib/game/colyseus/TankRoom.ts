@@ -38,10 +38,20 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	private playerIds: [string, string] = ['', ''];
 	private playersReady: [boolean, boolean] = [false, false];
 
+	private log(...args: unknown[]) {
+		console.log(`[TankRoom ${this.roomId}]`, ...args);
+	}
+
+	private error(...args: unknown[]) {
+		console.log(`[TankRoom ${this.roomId}]`, ...args);
+	}
+
 	async onCreate(options: unknown = {}) {
 		this.maxClients = 2;
 		this.patchRate = 16;
 		this.setState(new GameRoomState());
+
+		this.log('create room');
 
 		const opts = RoomOptionsSchema.safeParse(options);
 		if (opts.success && opts.data.private) {
@@ -104,15 +114,17 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 				const idx = this.getPlayerIndex(client);
 				if (idx !== undefined) this.playersReady[idx] = true;
 
+				this.log(`player ${idx} is ready`, this.playersReady);
+
 				if (this.playersReady.every((v) => v)) {
 					if (this.gameStarted) {
 						this.sendGameStartOnReconnect(client);
 					} else {
 						try {
-							console.log('[TankRoom] initGame() OK, phase =', this.state.phase);
+							this.log('initGame() OK, phase =', this.state.phase);
 							this.initGame();
 						} catch (e) {
-							console.error('[TankRoom] initGame() threw:', e);
+							this.error(`initGame() threw:`, e);
 						}
 					}
 				}
@@ -123,8 +135,9 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		registerChatHandler(this, (client) => this.getPlayerIndex(client));
 	}
 
-	async onAuth(_client: Client, _options: unknown, ctx: { headers: Headers }) {
+	async onAuth(client: Client, _options: unknown, ctx: { headers: Headers }) {
 		const session = await auth.api.getSession({ headers: ctx.headers });
+		this.log(`onAuth - sessionId=${client.sessionId}, name=${session?.user.name}`);
 		if (!session?.user) throw new ServerError(4001, 'UNAUTHORIZED');
 		if (activePlayers.has(session.user.id)) throw new ServerError(4002, 'ALREADY_IN_A_GAME');
 		return session.user;
@@ -137,27 +150,26 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	) {
 		const idx = this.clients.length - 1;
 		activePlayers.add(user.id);
-		console.log(`[TankRoom] onJoin — idx=${idx}, sessionId=${client.sessionId}`);
+		this.log(`onJoin - sessionId=${client.sessionId}, idx=${idx}`);
 		if (idx === 0) {
 			this.state.player0Id = client.sessionId;
 			this.state.player0Name = user.name;
 			this.state.player0Image = user.image ?? '';
 			this.player0Name = user.name;
 			this.playerIds[0] = user.id;
-			console.log('[TankRoom] Player 1 registered, waiting for Player 2...');
 		} else if (idx === 1) {
 			this.state.player1Id = client.sessionId;
 			this.state.player1Name = user.name;
 			this.state.player1Image = user.image ?? '';
 			this.player1Name = user.name;
 			this.playerIds[1] = user.id;
-			console.log('[TankRoom] Player 2 joined — starting game...');
 		}
 	}
 
 	onLeave(client: Client) {
 		const idx = this.getPlayerIndex(client);
 		if (idx !== undefined && this.playerIds[idx]) activePlayers.delete(this.playerIds[idx]);
+		this.log(`onLeave - sessionId=${client.sessionId}, idx=${idx}`);
 
 		if (!this.gameStarted) {
 			if (idx === 0) {
@@ -190,9 +202,19 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	}
 
 	onDrop(client: Client) {
-		//const idx = this.getPlayerIndex(client);
+		const idx = this.getPlayerIndex(client);
 		//if (idx !== undefined && this.playerIds[idx]) activePlayers.delete(this.playerIds[idx]);
+		this.log(`onDrop - sessionId=${client.sessionId}, idx=${idx}`);
 		this.allowReconnection(client, 10);
+	}
+
+	onReconnect(client: Client) {
+		const idx = this.getPlayerIndex(client);
+		this.log(`onReconnect - sessionId=${client.sessionId}, idx=${idx}`);
+	}
+
+	onDispose() {
+		this.log('dispose room');
 	}
 
 	private sendGameStartOnReconnect(client: Client) {
