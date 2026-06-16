@@ -18,6 +18,12 @@ const reconnectRoom = async (roomId?: string) => {
 		localStorage.removeItem('reconnectionTokenParamsId');
 		return null;
 	}
+	const exist = await checkRoomReconnectExists(reconnectionToken.split(':')[0]);
+	if (!exist) {
+		localStorage.removeItem('reconnectionToken');
+		localStorage.removeItem('reconnectionTokenParamsId');
+		return null;
+	}
 	try {
 		return (await colyseusClient!.reconnect(reconnectionToken)) as Room<GameRoomState>;
 	} catch {
@@ -44,6 +50,16 @@ const handleMatchMakeError = (err: MatchMakeError) => {
 const checkRoomExists = async (roomId: string): Promise<boolean> => {
 	try {
 		const res = await fetch(`/game/check-room?id=${encodeURIComponent(roomId)}`);
+		const data = (await res.json()) as { exists: boolean };
+		return data.exists;
+	} catch {
+		return false;
+	}
+};
+
+const checkRoomReconnectExists = async (roomId: string): Promise<boolean> => {
+	try {
+		const res = await fetch(`/game/check-room-reconnect?id=${encodeURIComponent(roomId)}`);
 		const data = (await res.json()) as { exists: boolean };
 		return data.exists;
 	} catch {
