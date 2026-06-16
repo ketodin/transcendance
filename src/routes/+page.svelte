@@ -5,6 +5,50 @@
 	import { enhance } from '$app/forms';
 	import { syncFromCSS } from '$lib/game/phaser/colors';
 
+	// export function destroyAllPhaserGames() {
+	// 	// Cherche tous les canvas WebGL dans le DOM et force la perte de contexte
+	// 	document.querySelectorAll('canvas').forEach((canvas) => {
+	// 		const gl = canvas.getContext('webgl') || canvas.getContext('webgl2');
+	// 		if (gl) {
+	// 			const ext = gl.getExtension('WEBGL_lose_context');
+	// 			if (ext) {
+	// 				ext.loseContext();
+	// 				console.log('[Phaser] Canvas orphelin nettoyé :', canvas);
+	// 			}
+	// 		}
+	// 		canvas.remove();
+	// 	});
+
+	// 	// Nettoyer le registre global
+	// 	if (window.__phaserInstances) {
+	// 		window.__phaserInstances.forEach((g) => {
+	// 			try { if (!g.isDestroyed) g.destroy(false); } catch (_) {}
+	// 		});
+	// 		window.__phaserInstances = [];
+	// 	}
+	// }
+
+
+  function forceDestroyGame(g: Game) {
+        // Step 2: Stop the RAF loop so no more frames fire.
+        g.loop.stop();
+
+        // Step 1: Release the WebGL context NOW.
+        // game.context is public (typed CanvasRenderingContext2D | WebGLRenderingContext).
+        const gl = g.context as WebGLRenderingContext | null;
+        if (gl) {
+            const loseExt = gl.getExtension('WEBGL_lose_context');
+            if (loseExt) {
+                loseExt.loseContext();
+            }
+        }
+
+        // Step 3: Run the internal destroy (scenes, renderer, canvas DOM removal).
+        // runDestroy is @private in the source, so a cast is needed here.
+        (g as any).removeCanvas = true;
+        (g as any).runDestroy();
+    }
+
 	onMount(() => {
 		let game: import('phaser').Game | null = null;
 		let observer: MutationObserver | undefined;
@@ -24,8 +68,8 @@
 		})();
 
 		return () => {
-			game?.destroy(true);
 			observer?.disconnect();
+			forceDestroyGame(game);
 		};
 	});
 </script>

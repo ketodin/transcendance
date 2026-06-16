@@ -18,6 +18,7 @@
 				<Input
 					{...props}
 					type="password"
+					autocomplete="off"
 					bind:value={$formData.password}
 					placeholder={m.current_password_placeholder()}
 					class="h-11"

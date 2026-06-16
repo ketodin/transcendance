@@ -127,6 +127,7 @@
 							id="email"
 							type="text"
 							bind:value={email}
+							autocomplete="email"
 							placeholder={m.mail_place_holder()}
 							class="h-11"
 						/>
@@ -140,6 +141,7 @@
 						<Input
 							id="password"
 							type="password"
+							autocomplete="current-password"
 							bind:value={password}
 							placeholder="••••••••"
 							class="h-11"
