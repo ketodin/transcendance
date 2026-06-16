@@ -214,7 +214,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	}
 
 	onDispose() {
-		this.log('dispose room')
+		this.log('dispose room');
 	}
 
 	private sendGameStartOnReconnect(client: Client) {
