@@ -41,16 +41,42 @@ const handleMatchMakeError = (err: MatchMakeError) => {
 	return { status: 404, error: { message } };
 };
 
+const checkRoomExists = async (roomId: string): Promise<boolean> => {
+	try {
+		const res = await fetch(`/game/check-room?id=${encodeURIComponent(roomId)}`);
+		const data = (await res.json()) as { exists: boolean };
+		return data.exists;
+	} catch {
+		return false;
+	}
+};
+
 export const connectToRoom = async (roomId?: string) => {
 	try {
-		const room =
-			(await reconnectRoom(roomId)) ??
-			(roomId
-				? await colyseusClient!.joinById(roomId, {})
-				: await colyseusClient!.joinOrCreate('tank_room', {}));
-		localStorage.setItem('reconnectionToken', room.reconnectionToken);
+		const room = await reconnectRoom(roomId);
+		if (room) {
+			localStorage.setItem('reconnectionToken', room.reconnectionToken);
+			localStorage.setItem('reconnectionTokenParamsId', roomId ?? '');
+			return room;
+		}
+		if (roomId) {
+			const exists = await checkRoomExists(roomId);
+			if (!exists) {
+				await applyAction({
+					type: 'error',
+					status: 404,
+					error: { message: m.error_room_not_exist() }
+				});
+				return null;
+			}
+		}
+		const newRoom = roomId
+			? await colyseusClient!.joinById(roomId, {})
+			: await colyseusClient!.joinOrCreate('tank_room', {});
+
+		localStorage.setItem('reconnectionToken', newRoom.reconnectionToken);
 		localStorage.setItem('reconnectionTokenParamsId', roomId ?? '');
-		return room;
+		return newRoom;
 	} catch (err) {
 		const msg =
 			err instanceof MatchMakeError
