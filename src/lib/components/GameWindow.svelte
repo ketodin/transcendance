@@ -46,14 +46,16 @@
 			resizeObserver?.disconnect();
 
 			if (game) {
-				const renderer = game.renderer as Phaser.Renderer.WebGL.WebGLRenderer;
+				const renderer = game.renderer as Phaser.Renderer.WebGL.WebGLRenderer & {
+					contextLostHandler?: EventListener;
+					onContextLost?: EventListener;
+					_contextLostHandler?: EventListener;
+				};
 				const canvas = game.canvas;
-				// @ts-expect-error Phaser internal WebGL context lost handler
 				const contextLostHandler =
 					renderer.contextLostHandler || renderer.onContextLost || renderer._contextLostHandler;
 
 				if (canvas && contextLostHandler) {
-					// @ts-expect-error webglcontextlost is not included in HTMLElementEventMap
 					canvas.removeEventListener('webglcontextlost', contextLostHandler);
 				}
 
