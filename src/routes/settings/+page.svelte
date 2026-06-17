@@ -25,6 +25,9 @@
 	const nameForm = superForm(
 		untrack(() => data.nameForm),
 		{
+			warnings: {
+				duplicateId: false
+			},
 			validators: zod4Client(nameSchema),
 			onUpdated({ form }) {
 				if (form.valid) {
@@ -41,6 +44,9 @@
 	const avatarForm = superForm(
 		untrack(() => data.avatarForm),
 		{
+			warnings: {
+				duplicateId: false
+			},
 			validators: zod4Client(avatarSchema),
 			onUpdated({ form }) {
 				if (!form.valid && form.errors.file) {
@@ -59,6 +65,9 @@
 	const passwordForm = superForm(
 		untrack(() => data.changePasswordForm),
 		{
+			warnings: {
+				duplicateId: false
+			},
 			validators: zod4Client(changePasswordSchema),
 			onUpdated({ form }) {
 				if (form.valid) {
