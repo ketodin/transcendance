@@ -20,12 +20,17 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {
 		user: locals.user!,
 		hasPassword: credentialAccount !== null,
-		nameForm: await superValidate({ name: locals.user!.name }, zod4(nameSchema)),
-		avatarForm: await superValidate(zod4(avatarSchema)),
-		changePasswordForm: await superValidate(zod4(changePasswordSchema)),
-		enableForm: await superValidate(zod4(enableSchema)),
-		verifyForm: await superValidate(zod4(verifySchema)),
-		disableForm: await superValidate(zod4(disableSchema))
+		nameForm: await superValidate({ name: locals.user!.name }, zod4(nameSchema), { id: 'name' }),
+
+		avatarForm: await superValidate(zod4(avatarSchema), { id: 'avatar' }),
+
+		changePasswordForm: await superValidate(zod4(changePasswordSchema), { id: 'password' }),
+
+		enableForm: await superValidate(zod4(enableSchema), { id: 'totp-enable' }),
+
+		verifyForm: await superValidate(zod4(verifySchema), { id: 'totp-verify' }),
+
+		disableForm: await superValidate(zod4(disableSchema), { id: 'totp-disable' })
 	};
 };
 
