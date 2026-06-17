@@ -1,3 +1,4 @@
+import './patchTextShadow';
 import DemoScene from './scenes/demoScene';
 import { commonGameConfig } from './commonGameConfig';
 import { Game } from 'phaser';

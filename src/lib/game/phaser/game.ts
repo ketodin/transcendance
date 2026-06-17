@@ -1,3 +1,4 @@
+import './patchTextShadow';
 import GameScene from './scenes/gameScene/GameScene';
 import { Game } from 'phaser';
 import type { Room } from '@colyseus/sdk';
