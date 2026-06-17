@@ -9,7 +9,9 @@ import type { Room } from '@colyseus/sdk';
 import type { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 import { m } from '$lib/paraglide/messages';
 
-// TODO remove duplicate message handlers  //
+function isSceneAlive(scene: GameScene): boolean {
+	return Boolean(scene.sys?.isActive() && scene.sys?.game?.isRunning);
+}
 
 function setupRoomHandlers(scene: GameScene, room: Room<GameRoomState>) {
 	room.onMessage('game_update', (data: GameUpdateData) => {
@@ -64,6 +66,7 @@ function setupRoomHandlers(scene: GameScene, room: Room<GameRoomState>) {
 	});
 
 	room.onLeave.once(() => {
+		if (!isSceneAlive(scene)) return;
 		scene.statusText.setText(m.game_disconnected()).setVisible(true);
 	});
 
@@ -124,67 +127,8 @@ export function connectToServer(scene: GameScene) {
 			}
 		);
 
-		room.onMessage('game_update', (data: GameUpdateData) => {
-			if (data.weaponCooldowns) scene.weaponCooldowns = data.weaponCooldowns;
-			scene.localGameData = data;
-		});
-
-		room.onMessage(
-			'phase_change',
-			(data: { phase: string; currentPlayer: number; winner?: number; reason?: string }) => {
-				scene.localPhase = data.phase;
-				scene.localCurrentPlayer = data.currentPlayer;
-				if (data.phase === 'AIMING') {
-					scene.isGrabbing = false;
-				}
-				if (data.phase === 'FLYING') {
-					scene.flyingProjectileIsMine = data.currentPlayer === scene.myPlayerIndex;
-					if (scene.flyingProjectileIsMine) {
-						scene.fullFlightTrail = [];
-						scene.lastShotTrail = [];
-						scene.lastShotGfx?.clear();
-					}
-				}
-				if (data.winner !== undefined) scene.localWinner = data.winner;
-				if (data.phase === 'OVER') showGameOver(scene, scene.localWinner, data.reason);
-			}
-		);
-
-		room.onMessage(
-			'explosion',
-			(data: {
-				x: number;
-				y: number;
-				craterRadius: number;
-				blastRadius: number;
-				terrainHeights: number[];
-				tanks: [TankState, TankState];
-			}) => {
-				handleExplosionFx(scene, data.x, data.y, data.craterRadius, data.blastRadius);
-				if (scene.localTerrain) {
-					scene.localTerrain.heights = data.terrainHeights;
-					scene.terrainView?.sync(scene.localTerrain);
-				}
-				if (scene.localGameData) {
-					scene.localGameData.tanks = data.tanks;
-				}
-			}
-		);
-
-		room.onMessage('airstrike_incoming', (data: { x: number }) => {
-			showAirstrikeZone(scene, data.x);
-		});
-
-		room.onLeave.once(() => {
-			scene.statusText.setText(m.game_disconnected()).setVisible(true);
-		});
-
 		setupRoomHandlers(scene, room);
 		scene.statusText.setText(m.game_waiting_player2());
-		room.onMessage('chat', (data: { playerIndex: number; text: string }) => {
-			const tank = scene.localGameData!.tanks[data.playerIndex];
-			scene.speechBubbles[data.playerIndex].setText(data.text, tank);
-		});
 	} catch (err) {
 		const message =
 			err instanceof Error

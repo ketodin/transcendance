@@ -25,7 +25,31 @@
 
 		return () => {
 			observer?.disconnect();
-			game?.destroy(true);
+
+			if (game) {
+				const renderer = game.renderer as import('phaser').Renderer.WebGL.WebGLRenderer & {
+					contextLostHandler?: EventListener;
+					onContextLost?: EventListener;
+					_contextLostHandler?: EventListener;
+				};
+
+				const canvas = game.canvas;
+
+				const contextLostHandler =
+					renderer.contextLostHandler || renderer.onContextLost || renderer._contextLostHandler;
+
+				if (canvas && contextLostHandler) {
+					canvas.removeEventListener('webglcontextlost', contextLostHandler);
+				}
+
+				const gl = renderer.gl;
+				const loseContextExt = gl?.getExtension('WEBGL_lose_context');
+
+				loseContextExt?.loseContext();
+
+				game.destroy(true);
+				game = null;
+			}
 		};
 	});
 </script>
