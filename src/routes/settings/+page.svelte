@@ -198,6 +198,7 @@
 				{m.change_password()}
 			</h2>
 			<form method="POST" action="?/changePassword" use:passwordEnhance>
+				<input hidden type="text" name="username" autocomplete="username" value={data.user.email} />
 				<div class="password-fields">
 					<Form.Field form={passwordForm} name="currentPassword">
 						<Form.Control>

@@ -75,7 +75,5 @@
 		overflow: hidden;
 
 		mask-image: linear-gradient(to right, black 0%, black 80%, transparent 100%);
-
-		-webkit-mask-image: linear-gradient(to right, black 0%, black 80%, transparent 100%);
 	}
 </style>

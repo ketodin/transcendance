@@ -24,8 +24,8 @@
 		})();
 
 		return () => {
-			game?.destroy(true);
 			observer?.disconnect();
+			game?.destroy(true);
 		};
 	});
 </script>

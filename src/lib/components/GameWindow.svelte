@@ -37,6 +37,7 @@
 		return () => {
 			themeObserver?.disconnect();
 			resizeObserver?.disconnect();
+			game?.destroy(true);
 		};
 	});
 </script>

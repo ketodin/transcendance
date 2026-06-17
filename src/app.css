@@ -105,7 +105,6 @@
 .glass {
 	background: rgba(var(--color-background), 0.15);
 	/* autoprefixer: off */
-	-webkit-backdrop-filter: blur(24px);
 	backdrop-filter: blur(24px);
 	/* autoprefixer: on */
 	border-radius: var(--radius-xl);
@@ -117,7 +116,6 @@
 .glassbutton {
 	background: rgba(var(--color-background), 0.15);
 	/* autoprefixer: off */
-	-webkit-backdrop-filter: blur(64px);
 	backdrop-filter: blur(64px);
 	/* autoprefixer: on */
 	border-radius: var(--radius-xl);

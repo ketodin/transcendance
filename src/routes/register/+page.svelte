@@ -50,6 +50,7 @@
 							{...props}
 							type="text"
 							bind:value={$formData.name}
+							autocomplete="username"
 							placeholder={m.name_place_holder()}
 							class="h-11"
 						/>
@@ -65,6 +66,7 @@
 							{...props}
 							type="text"
 							bind:value={$formData.email}
+							autocomplete="email"
 							placeholder={m.mail_place_holder()}
 							class="h-11"
 						/>
@@ -80,6 +82,7 @@
 							{...props}
 							type="password"
 							bind:value={$formData.password}
+							autocomplete="new-password"
 							placeholder="••••••••"
 							class="h-11"
 						/>
@@ -97,6 +100,7 @@
 							{...props}
 							type="password"
 							bind:value={$formData.repeatPassword}
+							autocomplete="new-password"
 							placeholder="••••••••"
 							class="h-11"
 						/>

@@ -48,7 +48,7 @@ float fbm(vec2 p) {
 	float v = 0.0;
 	float a = 0.5;
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 3; i++) {
 		v += a * noise(p);
 		p *= 2.0;
 		a *= 0.5;
@@ -187,8 +187,14 @@ if (u_error > 0.0) {
 		resize();
 		window.addEventListener('resize', resize);
 
+		let lastFrame = 0;
 		const draw = (t: number) => {
 			if (!running) return;
+
+			animId = requestAnimationFrame(draw);
+
+			if (t - lastFrame < 32) return;
+			lastFrame = t;
 
 			animate();
 
@@ -199,8 +205,6 @@ if (u_error > 0.0) {
 			if (uError) ctx.uniform1f(uError, currentError);
 
 			ctx.drawArrays(ctx.TRIANGLE_STRIP, 0, 4);
-
-			animId = requestAnimationFrame(draw);
 		};
 
 		animId = requestAnimationFrame(draw);

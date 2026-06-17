@@ -23,7 +23,7 @@ export const nameSchema = z.strictObject({
 });
 
 export const changePasswordSchema = z
-	.strictObject({
+	.object({
 		currentPassword: z.string().min(8).max(128),
 		newPassword: z.string().min(8).max(128),
 		confirmPassword: z.string().min(8).max(128)
