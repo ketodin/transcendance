@@ -22,10 +22,10 @@ export const auth = betterAuth({
 	database: prismaAdapter(db, {
 		provider: 'sqlite'
 	}),
-	trustedOrigins: (request) => {
-		if (!request) return [];
-		const origin = request.headers.get('origin');
-		return origin ? [origin] : [];
+	rateLimit: {
+		enabled: true,
+		window: 60, // time window in seconds
+		max: 100 // max requests in the window
 	},
 	experimental: { joins: true },
 	emailAndPassword: { enabled: true },
