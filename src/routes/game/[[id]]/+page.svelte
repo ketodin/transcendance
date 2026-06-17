@@ -33,7 +33,7 @@
 			.catch(() => {});
 
 		return () => {
-			void room?.leave();
+			if (room?.connection.isOpen) void room?.leave();
 			localStorage.removeItem('reconnectionToken');
 			localStorage.removeItem('reconnectionTokenParamsId');
 			room = null;

@@ -109,7 +109,6 @@ export function showGameOver(scene: GameScene, winner: number, reason?: string) 
 		.setInteractive({ useHandCursor: true });
 
 	homeZone.on('pointerdown', async () => {
-		void scene.room?.leave();
 		await goto(resolve('/'));
 	});
 }
@@ -230,7 +229,6 @@ export function showLeaveConfirm(scene: GameScene) {
 	stayZone.on('pointerdown', dismiss);
 	leaveZone.on('pointerdown', async () => {
 		dismiss();
-		void scene.room?.leave();
 		await goto(resolve('/'));
 	});
 }
