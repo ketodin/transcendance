@@ -205,7 +205,6 @@ if (u_error > 0.0) {
 			if (uError) ctx.uniform1f(uError, currentError);
 
 			ctx.drawArrays(ctx.TRIANGLE_STRIP, 0, 4);
-
 		};
 
 		animId = requestAnimationFrame(draw);

@@ -7,27 +7,6 @@
 
 	let { room }: { room: Room<GameRoomState> } = $props();
 
-  function forceDestroyGame(g: Game) {
-        // Step 2: Stop the RAF loop so no more frames fire.
-        g.loop.stop();
-
-        // Step 1: Release the WebGL context NOW.
-        // game.context is public (typed CanvasRenderingContext2D | WebGLRenderingContext).
-        const gl = g.context as WebGLRenderingContext | null;
-        if (gl) {
-            const loseExt = gl.getExtension('WEBGL_lose_context');
-            if (loseExt) {
-                loseExt.loseContext();
-            }
-        }
-
-        // Step 3: Run the internal destroy (scenes, renderer, canvas DOM removal).
-        // runDestroy is @private in the source, so a cast is needed here.
-        (g as any).removeCanvas = true;
-        (g as any).runDestroy();
-    }
-
-
 	onMount(() => {
 		let themeObserver: MutationObserver | undefined;
 		let resizeObserver: ResizeObserver | undefined;
@@ -58,7 +37,7 @@
 		return () => {
 			themeObserver?.disconnect();
 			resizeObserver?.disconnect();
-			forceDestroyGame(game);
+			game?.destroy(true);
 		};
 	});
 </script>
