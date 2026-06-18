@@ -81,7 +81,7 @@ export const send = form(z.strictObject({ email: z.email() }), async ({ email },
 	const { locals } = getRequestEvent();
 	if (!locals.user) return redirect(303, '/login');
 	const other = await db.user.findUnique({ where: { email } });
-	if (!other) return invalid(issue.email('No such user'));
+	if (!other) return invalid(issue.email(m.no_user()));
 	if (locals.user.id == other.id) return invalid(issue.email(m.cannot_send_self()));
 	await sendOrAccept(locals.user, other);
 	void list().refresh();

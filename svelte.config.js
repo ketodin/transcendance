@@ -8,7 +8,10 @@ const config = {
 	},
 	kit: {
 		adapter: adapter(),
-		experimental: { remoteFunctions: true }
+		experimental: {
+			remoteFunctions: true,
+			handleRenderingErrors: true
+		}
 	}
 };
 
