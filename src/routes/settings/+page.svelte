@@ -89,7 +89,7 @@
 	async function handleDelete() {
 		await friends.notifyRemoval();
 		await authClient.deleteUser();
-		window.location.pathname = "/register"
+		window.location.pathname = '/register';
 	}
 </script>
 
