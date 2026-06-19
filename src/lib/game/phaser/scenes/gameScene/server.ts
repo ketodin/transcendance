@@ -15,6 +15,7 @@ function isSceneAlive(scene: GameScene): boolean {
 
 function setupRoomHandlers(scene: GameScene, room: Room<GameRoomState>) {
 	room.onMessage('game_update', (data: GameUpdateData) => {
+		if (!isSceneAlive(scene)) return;
 		if (data.weaponCooldowns) scene.weaponCooldowns = data.weaponCooldowns;
 		scene.localGameData = data;
 	});
@@ -22,6 +23,7 @@ function setupRoomHandlers(scene: GameScene, room: Room<GameRoomState>) {
 	room.onMessage(
 		'phase_change',
 		(data: { phase: string; currentPlayer: number; winner?: number; reason?: string }) => {
+			if (!isSceneAlive(scene)) return;
 			scene.localPhase = data.phase;
 			scene.localCurrentPlayer = data.currentPlayer;
 			if (data.phase === 'AIMING') {
@@ -50,6 +52,7 @@ function setupRoomHandlers(scene: GameScene, room: Room<GameRoomState>) {
 			terrainHeights: number[];
 			tanks: [TankState, TankState];
 		}) => {
+			if (!isSceneAlive(scene)) return;
 			handleExplosionFx(scene, data.x, data.y, data.craterRadius, data.blastRadius);
 			if (scene.localTerrain) {
 				scene.localTerrain.heights = data.terrainHeights;
@@ -62,6 +65,7 @@ function setupRoomHandlers(scene: GameScene, room: Room<GameRoomState>) {
 	);
 
 	room.onMessage('airstrike_incoming', (data: { x: number }) => {
+		if (!isSceneAlive(scene)) return;
 		showAirstrikeZone(scene, data.x);
 	});
 
@@ -71,6 +75,7 @@ function setupRoomHandlers(scene: GameScene, room: Room<GameRoomState>) {
 	});
 
 	room.onMessage('chat', (data: { playerIndex: number; text: string }) => {
+		if (!isSceneAlive(scene)) return;
 		const tank = scene.localGameData!.tanks[data.playerIndex];
 		scene.speechBubbles[data.playerIndex].setText(data.text, tank);
 	});
@@ -105,6 +110,7 @@ export function connectToServer(scene: GameScene) {
 				turnTimeLeft: number;
 				weaponCooldowns?: [boolean[], boolean[]];
 			}) => {
+				if (!isSceneAlive(scene)) return;
 				scene.myPlayerIndex = data.player0Id === room.sessionId ? 0 : 1;
 				scene.localCurrentPlayer = data.currentPlayer;
 				scene.localPhase = 'AIMING';
