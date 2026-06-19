@@ -169,7 +169,6 @@
 			<Button
 				class="glassbutton group min-h-10"
 				onclick={async () => {
-					await disconnectStatusRoom();
 					await signOut();
 					await goto(resolve('/login'), { invalidateAll: true });
 				}}
