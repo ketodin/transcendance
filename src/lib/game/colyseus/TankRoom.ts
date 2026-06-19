@@ -97,7 +97,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		this.onMessage(
 			'select_weapon',
 			validated(SelectWeaponSchema, (client, data) => {
-				// TEMP: crash test — remove this line.
 				if (!this.isCurrentPlayer(client)) return;
 				if (this.physicsState?.phase !== 'AIMING') return;
 				const p = this.physicsState.currentPlayer;
