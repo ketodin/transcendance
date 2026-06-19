@@ -1,4 +1,10 @@
-import { Room, type Client, ServerError } from 'colyseus';
+import {
+	Room,
+	type Client,
+	ServerError,
+	type RoomException,
+	type RoomMethodName
+} from 'colyseus';
 import { auth } from '$lib/server/auth';
 import { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 import { generateTerrain, getHeightAt, applyCrater } from '$lib/game/shared/logic/terrain';
@@ -97,6 +103,7 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 		this.onMessage(
 			'select_weapon',
 			validated(SelectWeaponSchema, (client, data) => {
+				// TEMP: crash test — remove this line.
 				if (!this.isCurrentPlayer(client)) return;
 				if (this.physicsState?.phase !== 'AIMING') return;
 				const p = this.physicsState.currentPlayer;
@@ -215,6 +222,11 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 
 	onDispose() {
 		this.log('dispose room');
+	}
+
+	onUncaughtException(err: RoomException, methodName: RoomMethodName) {
+		this.error(`uncaught exception in ${methodName}:`, err.cause ?? err);
+		void this.disconnect();
 	}
 
 	private sendGameStartOnReconnect(client: Client) {
