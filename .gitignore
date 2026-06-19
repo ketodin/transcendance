@@ -28,6 +28,7 @@ src/lib/paraglide
 
 /src/lib/server/prisma
 *.db
+/data
 
 /certs
 
