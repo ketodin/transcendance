@@ -18,7 +18,6 @@ interface ProjectileType {
 }
 
 export const PROJECTILE_TYPES: ProjectileType[] = [
-	// indices: 0=Shell 1=Heavy 2=Bouncer 3=Split 4=Airstrike 5=StrikeBomb 6=Sniper
 	{
 		name: 'Shell',
 		color: COLORS.shell,

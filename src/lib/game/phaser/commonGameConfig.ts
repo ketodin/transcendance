@@ -18,10 +18,6 @@ export const commonGameConfig: Types.Core.GameConfig = {
 	},
 	disableContextMenu: true,
 	render: {
-		// premultipliedAlpha must stay at its default (true): Phaser's WebGL
-		// pipeline outputs premultiplied alpha, and on a transparent canvas
-		// `false` makes the compositor apply alpha twice, darkening every
-		// semi-transparent effect (aiming cone, trails, stars, glows).
 		pixelArt: false,
 		transparent: true
 	}

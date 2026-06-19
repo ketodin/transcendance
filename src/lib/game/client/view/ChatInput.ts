@@ -40,10 +40,6 @@ export class ChatInput {
 		});
 		this.container.appendChild(this.input);
 
-		// Parent to the game canvas container (not document.body) so the input is
-		// removed together with the canvas when the game view unmounts, instead of
-		// lingering on the page. It stays position:fixed, so the parent doesn't
-		// affect where it renders.
 		const host = this.scene.game.canvas.parentElement ?? document.body;
 		host.appendChild(this.container);
 
