@@ -170,7 +170,7 @@
 				class="glassbutton group min-h-10"
 				onclick={async () => {
 					await signOut();
-					await goto(resolve('/login'), { invalidateAll: true });
+					window.location.pathname = '/login';
 				}}
 			>
 				{m.logout()}
