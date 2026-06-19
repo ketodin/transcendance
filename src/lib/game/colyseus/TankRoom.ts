@@ -1,10 +1,4 @@
-import {
-	Room,
-	type Client,
-	ServerError,
-	type RoomException,
-	type RoomMethodName
-} from 'colyseus';
+import { Room, type Client, ServerError, type RoomException, type RoomMethodName } from 'colyseus';
 import { auth } from '$lib/server/auth';
 import { GameRoomState } from '$lib/game/colyseus/schema/GameRoomState';
 import { generateTerrain, getHeightAt, applyCrater } from '$lib/game/shared/logic/terrain';
