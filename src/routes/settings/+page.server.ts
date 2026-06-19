@@ -11,6 +11,7 @@ import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { randomInt } from 'crypto';
 import type { Actions, PageServerLoad } from './$types';
+import {fileTypeFromBuffer} from 'file-type';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const credentialAccount = await db.account.findFirst({
@@ -43,6 +44,10 @@ export const actions: Actions = {
 		try {
 			const filePath = path.join(path.resolve('static/uploads'), locals.user!.id);
 			const buffer = Buffer.from(await form.data.file.arrayBuffer());
+			const type = await fileTypeFromBuffer(buffer);
+			if (!type || !['image/jpeg', 'image/png'].includes(type.mime)) {
+				return setError(form, 'file', m.error_generic());
+			}
 			await writeFile(filePath, buffer);
 			await auth.api.updateUser({
 				body: { image: `/avatar/${locals.user!.id}?k=${randomInt(0, 4096)}` },
