@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by jaubry--, pabellis, amidigov, tdaclin, okientzl.*
+_This project has been created as part of the 42 curriculum by jaubry--, pabellis, amidigov, tdaclin, okientzl._
 
 ---
 
@@ -153,31 +153,31 @@ All relations use `onDelete: Cascade` on the User side, deleting a user cleans u
 
 ## Features List
 
-| Feature | Who worked on it |
-|---|---|
-| GitHub infrastructure (CI, templates, labels, guidelines, docs, Docker, Makefile, Caddy) | jaubry-- |
-| Colyseus integration rework, friend status, invites, notification logic, check-room endpoints | jaubry--, tdaclin |
-| Reconnection logic (allowReconnection, reconnection tokens, pre-game cleanup) | tdaclin, jaubry-- |
-| Phaser 4 game client (scenes, rendering, input, HUD, tanks, weapons, aiming) | amidigov |
-| 7 weapon types with distinct stats and behaviours | amidigov |
-| Initial Colyseus TankRoom structure | amidigov |
-| Colyseus message validation with Zod | amidigov |
-| Game i18n and in-game text | amidigov |
-| Frontend design (UI, shader, error pages, CSS, settings, profile, home, friends UI) | pabellis |
-| Mobile adaptation | pabellis, okientzl |
-| In-game chat and text bubbles | okientzl |
-| Authentication (Better-Auth setup, Google OAuth, TOTP 2FA, password change, rate limiting) | okientzl |
-| Google OAuth username collision handling | okientzl |
-| Lobby UI and UX design | okientzl |
-| Registration hardening and account deletion | pabellis |
-| Privacy Policy and Terms of Service pages | pabellis |
-| Route protection and profile page API | tdaclin |
-| Game reconnection and invite system wiring | tdaclin |
-| Database seeding | tdaclin |
-| Dark/light theme system (CSS variables, game canvas sync) | jaubry--, pabellis |
-| i18n in 3 languages (134 keys each) | pabellis (frontend), amidigov (game) |
-| Project documentation and ADRs | jaubry-- |
-| WebSocket fixes and console error cleanup | tdaclin |
+| Feature                                                                                       | Who worked on it                     |
+| --------------------------------------------------------------------------------------------- | ------------------------------------ |
+| GitHub infrastructure (CI, templates, labels, guidelines, docs, Docker, Makefile, Caddy)      | jaubry--                             |
+| Colyseus integration rework, friend status, invites, notification logic, check-room endpoints | jaubry--, tdaclin                    |
+| Reconnection logic (allowReconnection, reconnection tokens, pre-game cleanup)                 | tdaclin, jaubry--                    |
+| Phaser 4 game client (scenes, rendering, input, HUD, tanks, weapons, aiming)                  | amidigov                             |
+| 7 weapon types with distinct stats and behaviours                                             | amidigov                             |
+| Initial Colyseus TankRoom structure                                                           | amidigov                             |
+| Colyseus message validation with Zod                                                          | amidigov                             |
+| Game i18n and in-game text                                                                    | amidigov                             |
+| Frontend design (UI, shader, error pages, CSS, settings, profile, home, friends UI)           | pabellis                             |
+| Mobile adaptation                                                                             | pabellis, okientzl                   |
+| In-game chat and text bubbles                                                                 | okientzl                             |
+| Authentication (Better-Auth setup, Google OAuth, TOTP 2FA, password change, rate limiting)    | okientzl                             |
+| Google OAuth username collision handling                                                      | okientzl                             |
+| Lobby UI and UX design                                                                        | okientzl                             |
+| Registration hardening and account deletion                                                   | pabellis                             |
+| Privacy Policy and Terms of Service pages                                                     | pabellis                             |
+| Route protection and profile page API                                                         | tdaclin                              |
+| Game reconnection and invite system wiring                                                    | tdaclin                              |
+| Database seeding                                                                              | tdaclin                              |
+| Dark/light theme system (CSS variables, game canvas sync)                                     | jaubry--, pabellis                   |
+| i18n in 3 languages (134 keys each)                                                           | pabellis (frontend), amidigov (game) |
+| Project documentation and ADRs                                                                | jaubry--                             |
+| WebSocket fixes and console error cleanup                                                     | tdaclin                              |
 
 ---
 
@@ -185,24 +185,24 @@ All relations use `onDelete: Cascade` on the User side, deleting a user cleans u
 
 6 Major modules (12 pts) + 9 Minor modules (9 pts) = **21 points** (minimum required: 14).
 
-| # | Module | Type | Points |
-|---|---|---|---|
-| 1 | Use a framework for both frontend and backend | Major | 2 |
-| 2 | Real-time features with WebSockets | Major | 2 |
-| 3 | User interaction (chat, profiles, friends) | Major | 2 |
-| 4 | ORM for the database | Minor | 1 |
-| 5 | [TEMP] Notification system | Minor | 1 |
-| 6 | Server-Side Rendering | Minor | 1 |
-| 7 | [TEMP] Custom-made design system | Minor | 1 |
-| 8 | Multiple languages (3+) | Minor | 1 |
-| 9 | [TEMP] Additional browser support | Minor | 1 |
-| 10 | Standard user management and authentication | Major | 2 |
-| 11 | OAuth 2.0 remote authentication | Minor | 1 |
-| 12 | 2FA (TOTP) | Minor | 1 |
-| 13 | Web-based game | Major | 2 |
-| 14 | Remote players (real-time on separate computers) | Major | 2 |
-| 15 | Custom module: dynamic theme system | Minor | 1 |
-| | **Total** | | **21** |
+| #   | Module                                           | Type  | Points |
+| --- | ------------------------------------------------ | ----- | ------ |
+| 1   | Use a framework for both frontend and backend    | Major | 2      |
+| 2   | Real-time features with WebSockets               | Major | 2      |
+| 3   | User interaction (chat, profiles, friends)       | Major | 2      |
+| 4   | ORM for the database                             | Minor | 1      |
+| 5   | [TEMP] Notification system                       | Minor | 1      |
+| 6   | Server-Side Rendering                            | Minor | 1      |
+| 7   | [TEMP] Custom-made design system                 | Minor | 1      |
+| 8   | Multiple languages (3+)                          | Minor | 1      |
+| 9   | [TEMP] Additional browser support                | Minor | 1      |
+| 10  | Standard user management and authentication      | Major | 2      |
+| 11  | OAuth 2.0 remote authentication                  | Minor | 1      |
+| 12  | 2FA (TOTP)                                       | Minor | 1      |
+| 13  | Web-based game                                   | Major | 2      |
+| 14  | Remote players (real-time on separate computers) | Major | 2      |
+| 15  | Custom module: dynamic theme system              | Minor | 1      |
+|     | **Total**                                        |       | **21** |
 
 ---
 
@@ -280,16 +280,16 @@ Who: jaubry-- (schema design), tdaclin (seeding script), all members (queries).
 
 Real-time notifications via StatusRoom + statusHub, delivered as toast notifications.
 
-| Action | Notification | Toast |
-|---|---|---|
-| Friend request sent (create) | `notification_friend_request_received` | "New friend request received" |
-| Friend request accepted (update) | `notification_friend_request_accepted` | "{name} accepted your friend request" |
-| Friend request denied (delete) | `notification_friend_request_denied` | "{name} declined your friend request" |
-| Friend removed (delete) | `notification_friend_request_removed` | Friend list refresh |
-| Game invite sent (create) | `notification_invite_request_received` | Custom toast with Accept/Deny buttons |
-| Game invite accepted (update) | `notification_invite_request_accepted` | "{name} accepted your game invite" |
-| Game invite denied (delete) | `notification_invite_request_denied` | Toast + redirect home |
-| Account deletion (delete) | Notifies all friends of removal | `notifyRemoval()` iterates all friends |
+| Action                           | Notification                           | Toast                                  |
+| -------------------------------- | -------------------------------------- | -------------------------------------- |
+| Friend request sent (create)     | `notification_friend_request_received` | "New friend request received"          |
+| Friend request accepted (update) | `notification_friend_request_accepted` | "{name} accepted your friend request"  |
+| Friend request denied (delete)   | `notification_friend_request_denied`   | "{name} declined your friend request"  |
+| Friend removed (delete)          | `notification_friend_request_removed`  | Friend list refresh                    |
+| Game invite sent (create)        | `notification_invite_request_received` | Custom toast with Accept/Deny buttons  |
+| Game invite accepted (update)    | `notification_invite_request_accepted` | "{name} accepted your game invite"     |
+| Game invite denied (delete)      | `notification_invite_request_denied`   | Toast + redirect home                  |
+| Account deletion (delete)        | Notifies all friends of removal        | `notifyRemoval()` iterates all friends |
 
 Architecture: `statusHub.ts` is the in-memory registry (userId → StatusRoom). `notify(userId, type, payload)` sends to the user's status room. `notification-client.ts` attaches listeners on the client and shows toasts via `svelte-sonner`. `GameInviteToast.svelte` is a custom toast with action buttons.
 
@@ -533,4 +533,3 @@ AI was used as a small helper throughout the project, not to write code for us, 
 - **Translation:** the Spanish translations in `messages/es.json` were produced with AI assistance, then reviewed by team members for accuracy.
 
 Everything AI touched was reviewed, tested, and understood by the team members who integrated it. We take full responsibility for all code in this repository.
-
