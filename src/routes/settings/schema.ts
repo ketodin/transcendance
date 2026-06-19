@@ -9,7 +9,7 @@ export const avatarSchema = z.strictObject({
 		.instanceof(File, {
 			message: m.please_upload_file()
 		})
-		.refine((f) => f.size > 0, 'File is required')
+		.refine((f) => f.size > 0, { error : m.unknow_upload_file })
 		.refine((f) => f.size <= MAX_FILE_SIZE, { error: m.max_upload_size })
 		.refine((f) => ACCEPTED_TYPES.includes(f.type), { error: m.unknow_upload_file })
 });
