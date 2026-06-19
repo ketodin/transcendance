@@ -68,6 +68,8 @@ const checkRoomReconnectExists = async (roomId: string): Promise<boolean> => {
 };
 
 export const connectToRoom = async (roomId?: string) => {
+	const originalWarn = console.warn;
+	console.warn = () => {};
 	try {
 		const room = await reconnectRoom(roomId);
 		if (room) {
@@ -100,5 +102,7 @@ export const connectToRoom = async (roomId?: string) => {
 				: { status: 400, error: { message: err instanceof Error ? err.message : String(err) } };
 		await applyAction({ type: 'error', ...msg });
 		return null;
+	} finally {
+		console.warn = originalWarn;
 	}
 };
