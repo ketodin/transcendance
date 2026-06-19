@@ -29,6 +29,11 @@
 					started = true;
 				});
 				room.onMessage('game_update', () => {});
+				room.onMessage('phase_change', ({ phase }: { phase: string }) => {
+					if (phase === 'OVER') {
+						started = true;
+					}
+				});
 			})
 			.catch(() => {});
 
