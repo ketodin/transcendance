@@ -203,7 +203,6 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 
 	onDrop(client: Client) {
 		const idx = this.getPlayerIndex(client);
-		//if (idx !== undefined && this.playerIds[idx]) activePlayers.delete(this.playerIds[idx]);
 		this.log(`onDrop - sessionId=${client.sessionId}, idx=${idx}`);
 		this.allowReconnection(client, 10);
 	}
@@ -218,8 +217,10 @@ export class TankRoom extends Room<{ state: GameRoomState }> {
 	}
 
 	onUncaughtException(err: RoomException, methodName: RoomMethodName) {
-		this.error(`uncaught exception in ${methodName}:`, err.cause ?? err);
-		void this.disconnect();
+		if (methodName !== 'onAuth') {
+			this.error(`uncaught exception in ${methodName}:`, err.cause ?? err);
+			void this.disconnect();
+		}
 	}
 
 	private sendGameStartOnReconnect(client: Client) {
