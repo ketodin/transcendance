@@ -1,13 +1,11 @@
 <script lang="ts">
 	import TOTPSection from '$lib/components/totp/TOTPSection.svelte';
 	import { signOut } from '$lib/auth-client';
-	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { m } from '$lib/paraglide/messages';
 	import { Input } from '$lib/components/ui/input';
 	import Avatar from '$lib/components/Avatar.svelte';
 	import type { PageProps } from './$types';
-	import { disconnectStatusRoom } from '$lib/status-client';
 	import { LogOut, Camera, KeyRound, Pencil, Save } from '@lucide/svelte';
 	import * as Form from '$lib/components/ui/form';
 	import { superForm, fileProxy } from 'sveltekit-superforms';
@@ -15,7 +13,6 @@
 	import { avatarSchema, nameSchema, changePasswordSchema } from './schema';
 	import { untrack } from 'svelte';
 	import { toast } from '$lib/components/toast';
-	import { resolve } from '$app/paths';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { authClient } from '$lib/auth-client';
 	import * as friends from '$lib/friends.remote';
