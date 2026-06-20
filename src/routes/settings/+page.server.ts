@@ -11,7 +11,7 @@ import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { randomInt } from 'crypto';
 import type { Actions, PageServerLoad } from './$types';
-import {fileTypeFromBuffer} from 'file-type';
+import { fileTypeFromBuffer } from 'file-type';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const credentialAccount = await db.account.findFirst({
