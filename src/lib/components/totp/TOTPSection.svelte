@@ -33,6 +33,9 @@
 	const enableSF = superForm(
 		untrack(() => enableFormData),
 		{
+			warnings: {
+				duplicateId: false
+			},
 			id: 'enable',
 			validators: zod4Client(enableSchema)
 		}
@@ -42,6 +45,9 @@
 	const verifySF = superForm(
 		untrack(() => verifyFormData),
 		{
+			warnings: {
+				duplicateId: false
+			},
 			id: 'verify',
 			validators: zod4Client(verifySchema)
 		}
@@ -51,6 +57,9 @@
 	const disableSF = superForm(
 		untrack(() => disableFormData),
 		{
+			warnings: {
+				duplicateId: false
+			},
 			id: 'disable',
 			validators: zod4Client(disableSchema)
 		}

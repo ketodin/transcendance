@@ -24,7 +24,14 @@
 
 	let { data }: PageProps = $props();
 
-	const form = $derived(superForm(data.form, { validators: zod4Client(formSchema) }));
+	const form = $derived(
+		superForm(data.form, {
+			validators: zod4Client(formSchema),
+			warnings: {
+				duplicateId: false
+			}
+		})
+	);
 	const { form: formData, enhance } = $derived(form);
 
 	const redirectTo = page.url.searchParams.get('redirectTo');

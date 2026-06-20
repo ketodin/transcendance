@@ -16,7 +16,7 @@
 <div class="space-y-5">
 	<h2 class="text-lg font-medium text-green-600">{m.two_fa_enabled_title()} ✓</h2>
 	<p class="text-muted-foreground text-sm">{m.backup_codes_description()}</p>
-	<div class="bg-muted rounded-lg p-4">
+	<div class="rounded-lg p-4">
 		<div class="flex flex-col gap-2">
 			{#each backupCodes as c, i (i)}
 				<div class="flex items-center font-mono text-sm">

@@ -1,11 +1,6 @@
 import { z } from 'zod';
 import { PROJECTILE_TYPES } from '$lib/game/shared/projectileTypes';
 
-// Runtime validation for every client → server Colyseus payload. The
-// TypeScript types on the handlers are compile-time only; any client can
-// send arbitrary data over the WebSocket, so each message is checked
-// against its schema before the handler logic runs.
-
 export const InputSchema = z.object({
 	moveLeft: z.boolean(),
 	moveRight: z.boolean()
@@ -33,7 +28,6 @@ export const ChatSchema = z.object({
 	text: z.string().trim().min(1).max(80)
 });
 
-// 'ready' carries no payload
 export const ReadySchema = z.union([z.undefined(), z.null(), z.object({}).strict()]);
 
 export const RoomOptionsSchema = z.object({
